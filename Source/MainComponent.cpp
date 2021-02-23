@@ -16,6 +16,9 @@ MainComponent::MainComponent()
 	label_level_.setText("Noise Level", NotificationType::dontSendNotification);
 	addAndMakeVisible(label_level_);
 
+	recorder_ = std::make_unique<Recorder>();
+	addAndMakeVisible(recorder_.get());
+
 	// Make sure you set the size of the component after
 	// you add any child components.
 	setSize(800, 600);
@@ -98,5 +101,8 @@ void MainComponent::paint(Graphics& g)
 
 void MainComponent::resized()
 {
+	Rectangle<int> rectangle = getLocalBounds();
 	slider_noise_level_.setBounds(10, 30, getWidth() - 60, 90);
+
+	recorder_->setBounds(rectangle.removeFromBottom(200));
 }
