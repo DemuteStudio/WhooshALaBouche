@@ -8,6 +8,9 @@ WhooshGeneratorAudioProcessorEditor::WhooshGeneratorAudioProcessorEditor (Whoosh
 	addAndMakeVisible(recorder_);
 	addAndMakeVisible(parameters_box_);
 
+	parameters_box_.threshold_slider->addListener(this);
+
+
 	// Make sure you set the size of the component after
 	// you add any child components.
 	setSize(1000, 900);
@@ -38,3 +41,10 @@ void WhooshGeneratorAudioProcessorEditor::resized()
 
 }
 
+void WhooshGeneratorAudioProcessorEditor::sliderValueChanged(Slider* slider)
+{
+	if (slider->getName() == "threshold")
+	{
+		audioProcessor.threshold_value = slider->getValue();
+	}
+}

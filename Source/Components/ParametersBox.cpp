@@ -19,7 +19,7 @@ ParametersBox::ParametersBox()
 	addAndMakeVisible(threshold_slider.get());
 	threshold_slider->setTextBoxStyle(Slider::NoTextBox, true, 0, 0);
 	threshold_slider->setName("threshold");
-	threshold_slider->addListener(this);
+	threshold_slider->setRange(0.0, 1.0);
 
 	addAndMakeVisible(threshold_label);
 	threshold_label.setText("Threshold", NotificationType::dontSendNotification);
@@ -60,10 +60,3 @@ void ParametersBox::resized()
 
 }
 
-void ParametersBox::sliderValueChanged(Slider* slider)
-{
-	if (slider->getName() == "threshold")
-	{
-		threshold_value = slider->getValue();
-	}
-}

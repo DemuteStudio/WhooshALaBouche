@@ -62,6 +62,9 @@ public:
 	//==============================================================================
 	TenFtAudioSource& getAudioSource();
 
+
+	float threshold_value;
+
 private:
 	TenFtAudioSource audioSource;
 

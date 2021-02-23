@@ -17,7 +17,7 @@ using namespace juce;
 //==============================================================================
 /*
 */
-class ParametersBox : public juce::Component, public Slider::Listener
+class ParametersBox : public juce::Component
 {
 public:
 	ParametersBox();
@@ -26,11 +26,9 @@ public:
 	void paint(juce::Graphics&) override;
 	void resized() override;
 
-	void sliderValueChanged(Slider* slider) override;
 
 	std::unique_ptr<Slider> threshold_slider;
 	Label threshold_label;
-	float threshold_value;
 
 private:
 
