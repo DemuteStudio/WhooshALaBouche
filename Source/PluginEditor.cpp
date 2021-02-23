@@ -5,13 +5,6 @@
 WhooshGeneratorAudioProcessorEditor::WhooshGeneratorAudioProcessorEditor (WhooshGeneratorAudioProcessor& p)
     : AudioProcessorEditor (&p), audioProcessor (p), recorder_(p.getAudioSource())
 {
-	slider_noise_level_.setRange(0.0, 1.0, 0.1);
-	slider_noise_level_.setTextBoxStyle(Slider::TextBoxRight, false, 100, 50);
-	addAndMakeVisible(slider_noise_level_);
-
-	label_level_.setText("Noise Level", NotificationType::dontSendNotification);
-	addAndMakeVisible(label_level_);
-
 	addAndMakeVisible(recorder_);
 
 	// Make sure you set the size of the component after
@@ -37,7 +30,6 @@ void WhooshGeneratorAudioProcessorEditor::paint (juce::Graphics& g)
 void WhooshGeneratorAudioProcessorEditor::resized()
 {
 	Rectangle<int> rectangle = getLocalBounds();
-	slider_noise_level_.setBounds(10, 30, getWidth() - 60, 90);
 
-	recorder_.setBounds(rectangle.removeFromBottom(500));
+	recorder_.setBounds(rectangle);
 }

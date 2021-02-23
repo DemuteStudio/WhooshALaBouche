@@ -22,10 +22,6 @@ private:
     // access the processor object that created it.
     WhooshGeneratorAudioProcessor& audioProcessor;
 
-
-	Slider slider_noise_level_;
-	Label label_level_;
-
 	Recorder recorder_;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (WhooshGeneratorAudioProcessorEditor)

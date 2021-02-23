@@ -49,7 +49,6 @@ private:
 	void timerCallback() override;
 
 private:
-	TextButton openButton;
 	TextButton recordButton;
 	TextButton playButton;
 	TextButton stopButton;

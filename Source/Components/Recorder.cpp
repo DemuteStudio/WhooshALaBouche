@@ -4,13 +4,6 @@ Recorder::Recorder(TenFtAudioSource& audioSourceToUse): audioSource(audioSourceT
 {
 	setLookAndFeel(&tenFtLookAndFeel);
 
-	addAndMakeVisible(&openButton);
-	openButton.setButtonText("Open...");
-	openButton.onClick = [this]
-	{
-		openButtonClicked();
-	};
-
 	addAndMakeVisible(&recordButton);
 	recordButton.setButtonText("Record");
 	recordButton.setClickingTogglesState(false);
@@ -140,9 +133,6 @@ void Recorder::resized()
 	                       row5 = bounds.removeFromBottom(0.05f * height),
 	                       row4 = bounds;
 
-	openButton.setBounds(
-		row1.removeFromLeft(width * 0.5f).reduced(delta).toNearestInt()
-	);
 	recordButton.setBounds(
 		row1.removeFromLeft(width * 0.5f).reduced(delta).toNearestInt()
 	);
@@ -193,82 +183,55 @@ void Recorder::paint(Graphics& g)
 
 // ==============================================================================
 
-void Recorder::openButtonClicked()
-{
-	FileChooser chooser(
-		"Select a Wave file to play...",
-		File::getSpecialLocation(File::userMusicDirectory),
-		"*.wav"
-	);
-	bool fileSelected = chooser.browseForFileToOpen();
 
-	if (fileSelected)
-	{
-		File file = chooser.getResult();
-
-		std::unique_ptr<AudioFormatReader> audioReader(
-			formatManager.createReaderFor(file)
-		);
-
-		if (audioReader != nullptr)
-		{
-			loadFile(audioReader.get());
-		}
-		else
-		{
-			unloadFile();
-		}
-	}
-}
-
-void Recorder::loadFile(AudioFormatReader* audioReader)
-{
-	std::unique_ptr<AudioSampleBuffer> tempAudioBuffer(
-		new AudioSampleBuffer(
-			audioReader->numChannels,
-			(int)audioReader->lengthInSamples
-		)
-	);
-
-	audioReader->read(
-		tempAudioBuffer.get(),
-		0,
-		(int)audioReader->lengthInSamples,
-		0,
-		true,
-		true
-	);
-
-	audioSource.loadAudio(tempAudioBuffer.get(), audioReader->sampleRate);
-	waveform.loadWaveform(tempAudioBuffer.get(), audioReader->sampleRate);
-
-	audioBuffer.swap(tempAudioBuffer);
-
-	setupButton(playButton, "Play", true);
-	setupButton(stopButton, "Stop", false);
-	enableButtons({
-		              &loopButton, &muteButton, &fadeInButton,
-		              &fadeOutButton, &normalizeButton
-	              }, true);
-}
-
-void Recorder::unloadFile()
-{
-	waveform.clearWaveform();
-	audioSource.unloadAudio();
-
-	scroller.disable();
-	setupButton(playButton, "Play", false);
-	setupButton(stopButton, "Stop", false);
-	loopButton.setToggleState(
-		false,
-		NotificationType::dontSendNotification
-	);
-	enableButtons({
-		              &loopButton, &muteButton, &fadeInButton,
-		              &fadeOutButton, &normalizeButton
-	              }, false);
-}
+// void Recorder::loadFile(AudioFormatReader* audioReader)
+// {
+// 	std::unique_ptr<AudioSampleBuffer> tempAudioBuffer(
+// 		new AudioSampleBuffer(
+// 			audioReader->numChannels,
+// 			(int)audioReader->lengthInSamples
+// 		)
+// 	);
+//
+// 	audioReader->read(
+// 		tempAudioBuffer.get(),
+// 		0,
+// 		(int)audioReader->lengthInSamples,
+// 		0,
+// 		true,
+// 		true
+// 	);
+//
+// 	audioSource.loadAudio(tempAudioBuffer.get(), audioReader->sampleRate);
+// 	waveform.loadWaveform(tempAudioBuffer.get(), audioReader->sampleRate);
+//
+// 	audioBuffer.swap(tempAudioBuffer);
+//
+// 	setupButton(playButton, "Play", true);
+// 	setupButton(stopButton, "Stop", false);
+// 	enableButtons({
+// 		              &loopButton, &muteButton, &fadeInButton,
+// 		              &fadeOutButton, &normalizeButton
+// 	              }, true);
+// }
+//
+// void Recorder::unloadFile()
+// {
+// 	waveform.clearWaveform();
+// 	audioSource.unloadAudio();
+//
+// 	scroller.disable();
+// 	setupButton(playButton, "Play", false);
+// 	setupButton(stopButton, "Stop", false);
+// 	loopButton.setToggleState(
+// 		false,
+// 		NotificationType::dontSendNotification
+// 	);
+// 	enableButtons({
+// 		              &loopButton, &muteButton, &fadeInButton,
+// 		              &fadeOutButton, &normalizeButton
+// 	              }, false);
+// }
 
 void Recorder::recordButtonClicked()
 {
@@ -291,7 +254,7 @@ void Recorder::enableRecording()
 	startTimer(100);
 
 	enableButtons({
-		              &openButton, &playButton, &stopButton, &loopButton,
+		              &playButton, &stopButton, &loopButton,
 		              &muteButton, &fadeInButton, &fadeOutButton, &normalizeButton
 	              }, false);
 	recordButton.setButtonText("Stop Recording");
@@ -305,7 +268,7 @@ void Recorder::disableRecording()
 	audioSource.stopRecording();
 
 	enableButtons({
-		              &openButton, &playButton, &stopButton, &loopButton,
+		              &playButton, &stopButton, &loopButton,
 		              &muteButton, &fadeInButton, &fadeOutButton, &normalizeButton
 	              }, true);
 	recordButton.setButtonText("Record");
@@ -359,8 +322,6 @@ void Recorder::enableButtons(
 
 void Recorder::timerCallback()
 {
-	auto x = audioBuffer->getNumSamples();
-	auto y = audioSource.getSampleRate();
 	double newEndTime =
 		(double)audioBuffer->getNumSamples() / audioSource.getSampleRate();
 	waveform.updateVisibleRegion(0.0, newEndTime);

@@ -7,7 +7,7 @@
 TenFtLookAndFeel::TenFtLookAndFeel()
 {
 	Colour mainColour =
-		       Colours::yellow.withBrightness(0.8f).withSaturation(0.5f),
+		       Colour(50,62,68),
 	       contrastingColour = mainColour.contrasting(1.0f);
 	setColour(TextButton::ColourIds::buttonColourId, mainColour.brighter());
 	setColour(TextButton::ColourIds::buttonOnColourId, mainColour.brighter());
