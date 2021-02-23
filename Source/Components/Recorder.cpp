@@ -317,27 +317,27 @@ void Recorder::loopButtonClicked()
 	audioSource.setLooping(loopButton.getToggleState());
 }
 
-// void Recorder::onAudioSourceStateChange(
-// 	TenFtAudioSource::State state
-// )
-// {
-// 	if (state == TenFtAudioSource::Stopped)
-// 	{
-// 		setupButton(playButton, "Play", true);
-// 		setupButton(stopButton, "Stop", false);
-// 		waveform.clearSelectedRegion();
-// 	}
-// 	else if (state == TenFtAudioSource::Playing)
-// 	{
-// 		setupButton(playButton, "Pause", true);
-// 		setupButton(stopButton, "Stop", true);
-// 	}
-// 	else if (state == TenFtAudioSource::Paused)
-// 	{
-// 		setupButton(playButton, "Play", true);
-// 		setupButton(stopButton, "Return To Zero", true);
-// 	}
-// }
+void Recorder::onAudioSourceStateChange(
+	TenFtAudioSource::State state
+)
+{
+	if (state == TenFtAudioSource::Stopped)
+	{
+		setupButton(playButton, "Play", true);
+		setupButton(stopButton, "Stop", false);
+		waveform.clearSelectedRegion();
+	}
+	else if (state == TenFtAudioSource::Playing)
+	{
+		setupButton(playButton, "Pause", true);
+		setupButton(stopButton, "Stop", true);
+	}
+	else if (state == TenFtAudioSource::Paused)
+	{
+		setupButton(playButton, "Play", true);
+		setupButton(stopButton, "Return To Zero", true);
+	}
+}
 
 void Recorder::setupButton(
 	TextButton& button, std::string buttonText, bool enabled
@@ -359,29 +359,9 @@ void Recorder::enableButtons(
 
 void Recorder::timerCallback()
 {
+	auto x = audioBuffer->getNumSamples();
+	auto y = audioSource.getSampleRate();
 	double newEndTime =
 		(double)audioBuffer->getNumSamples() / audioSource.getSampleRate();
 	waveform.updateVisibleRegion(0.0, newEndTime);
-}
-
-void Recorder::onAudioSourceStateChange(
-	TenFtAudioSource::State state
-)
-{
-	if (state == TenFtAudioSource::Stopped)
-	{
-		setupButton(playButton, "Play", true);
-		setupButton(stopButton, "Stop", false);
-		waveform.clearSelectedRegion();
-	}
-	else if (state == TenFtAudioSource::Playing)
-	{
-		setupButton(playButton, "Pause", true);
-		setupButton(stopButton, "Stop", true);
-	}
-	else if (state == TenFtAudioSource::Paused)
-	{
-		setupButton(playButton, "Play", true);
-		setupButton(stopButton, "Return To Zero", true);
-	}
 }
