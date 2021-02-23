@@ -37,7 +37,7 @@ public:
 
 	//==============================================================================
 	juce::AudioProcessorEditor* createEditor() override;
-	bool hasEditor() const override;
+	// bool hasEditor() const override;
 
 	//==============================================================================
 	const juce::String getName() const override;
@@ -58,6 +58,7 @@ public:
 	void getStateInformation(juce::MemoryBlock& destData) override;
 	void setStateInformation(const void* data, int sizeInBytes) override;
 
+	bool hasEditor() const override;
 	//==============================================================================
 	TenFtAudioSource& getAudioSource();
 

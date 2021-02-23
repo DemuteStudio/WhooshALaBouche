@@ -35,6 +35,9 @@
               resource="0" file="Source/Components/AudioWaveformSelectedRegionComponent.h"/>
         <FILE id="eN60mY" name="OpenGLComponent.h" compile="0" resource="0"
               file="Source/Components/OpenGLComponent.h"/>
+        <FILE id="L4cLYz" name="ParametersBox.cpp" compile="1" resource="0"
+              file="Source/Components/ParametersBox.cpp"/>
+        <FILE id="e1mr4v" name="ParametersBox.h" compile="0" resource="0" file="Source/Components/ParametersBox.h"/>
         <FILE id="XzJNMV" name="Recorder.cpp" compile="1" resource="0" file="Source/Components/Recorder.cpp"/>
         <FILE id="FhKfD8" name="Recorder.h" compile="0" resource="0" file="Source/Components/Recorder.h"/>
         <FILE id="Ytcwcv" name="TenFtAudioSource.cpp" compile="1" resource="0"
