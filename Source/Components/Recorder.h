@@ -11,16 +11,17 @@
 using namespace juce;
 
 class Recorder : public Component,
-	private Timer
+                 private Timer
 {
 public:
-	Recorder();
+	Recorder(TenFtAudioSource& audioSource);
 
 	~Recorder();
 
 	void resized() override;
 
 	void paint(Graphics& g) override;
+	void Recorder::onAudioSourceStateChange(TenFtAudioSource::State state);
 
 private:
 	void openButtonClicked();
@@ -73,4 +74,3 @@ private:
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Recorder)
 };
-

@@ -22,6 +22,8 @@ WhooshGeneratorAudioProcessor::WhooshGeneratorAudioProcessor()
                        )
 #endif
 {
+
+	
 }
 
 WhooshGeneratorAudioProcessor::~WhooshGeneratorAudioProcessor()
@@ -93,14 +95,12 @@ void WhooshGeneratorAudioProcessor::changeProgramName (int index, const juce::St
 //==============================================================================
 void WhooshGeneratorAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
-    // Use this method as the place to do any pre-playback
-    // initialisation that you need..
+	audioSource.prepareToPlay(samplesPerBlock, sampleRate);
 }
 
 void WhooshGeneratorAudioProcessor::releaseResources()
 {
-    // When playback stops, you can use this as an opportunity to free up any
-    // spare memory, etc.
+	audioSource.releaseResources();
 }
 
 #ifndef JucePlugin_PreferredChannelConfigurations
@@ -181,6 +181,12 @@ void WhooshGeneratorAudioProcessor::setStateInformation (const void* data, int s
 {
     // You should use this method to restore your parameters from this memory block,
     // whose contents will have been created by the getStateInformation() call.
+}
+
+TenFtAudioSource& WhooshGeneratorAudioProcessor::getAudioSource()
+{
+		return audioSource;
+
 }
 
 //==============================================================================
