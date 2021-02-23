@@ -15,6 +15,7 @@ MainComponent::MainComponent()
 
 	label_level_.setText("Noise Level", NotificationType::dontSendNotification);
 	addAndMakeVisible(label_level_);
+
 	// Make sure you set the size of the component after
 	// you add any child components.
 	setSize(800, 600);
@@ -51,29 +52,29 @@ void MainComponent::prepareToPlay(int samplesPerBlockExpected, double sampleRate
 void MainComponent::getNextAudioBlock(const AudioSourceChannelInfo& bufferToFill)
 {
 	auto* device = deviceManager.getCurrentAudioDevice();
-	auto activeInputChannels = device->getActiveInputChannels();
-	auto activeOutputChannels = device->getActiveOutputChannels();
-	auto maxInputChannels = activeInputChannels.getHighestBit() + 1;
-	auto maxOutputChannels = activeOutputChannels.getHighestBit() + 1;
-	// std::cout << "maxOutputChannels: " << maxOutputChannels;
-	auto sldrLevel = (float)slider_noise_level_.getValue();
+	const auto active_input_channels = device->getActiveInputChannels();
+	const auto active_output_channels = device->getActiveOutputChannels();
+	const auto max_input_channels = active_input_channels.getHighestBit() + 1;
+	const auto max_output_channels = active_output_channels.getHighestBit() + 1;
 
-	for (auto channel = 0; channel < maxOutputChannels; ++channel)
+	auto slider_level = (float)slider_noise_level_.getValue();
+
+	for (auto channel = 0; channel < max_output_channels; ++channel)
 	{
-		if (!activeOutputChannels[channel] || maxInputChannels == 0)
+		if (!active_output_channels[channel] || max_input_channels == 0)
 			bufferToFill.buffer->clear(channel, bufferToFill.startSample, bufferToFill.numSamples);
 		else
 		{
-			auto actualInputChannel = channel % maxInputChannels;
-			if (!activeInputChannels[channel])
+			auto actualInputChannel = channel % max_input_channels;
+			if (!active_input_channels[channel])
 				bufferToFill.buffer->clear(channel, bufferToFill.startSample, bufferToFill.numSamples);
 			else
 			{
-				auto* inputBuffer = bufferToFill.buffer->getReadPointer(actualInputChannel, bufferToFill.startSample);
+				auto*inputBuffer = bufferToFill.buffer->getReadPointer(actualInputChannel, bufferToFill.startSample);
 				auto* outputBuffer = bufferToFill.buffer->getWritePointer(channel, bufferToFill.startSample);
 				for (auto sample = 0; sample < bufferToFill.numSamples; ++sample)
 				{
-					outputBuffer[sample] = inputBuffer[sample] * sldrLevel;
+					outputBuffer[sample] = inputBuffer[sample] * slider_level;
 				}
 			}
 		}
