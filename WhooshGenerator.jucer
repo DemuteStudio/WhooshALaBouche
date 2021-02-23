@@ -1,78 +1,82 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<JUCERPROJECT id="vFJhNE" name="WhooshGenerator" projectType="guiapp" useAppConfig="0"
+<JUCERPROJECT id="GolJTi" name="WhooshGenerator" projectType="audioplug" useAppConfig="0"
               addUsingNamespaceToJuceHeader="0" jucerFormatVersion="1">
-  <MAINGROUP id="aloHBM" name="WhooshGenerator">
-    <GROUP id="{EEA80747-9640-2EFB-67BF-219404D66E3F}" name="Source">
-      <GROUP id="{04BA2B29-EC80-9B46-7BFA-1F910BBC8AD4}" name="Components">
-        <FILE id="XT2cqc" name="AudioBufferSource.cpp" compile="1" resource="0"
+  <MAINGROUP id="MGtDsZ" name="WhooshGenerator">
+    <GROUP id="{5BEADBA9-EE88-C0EB-E7A8-52E1335C79AC}" name="Source">
+      <GROUP id="{5432A927-7F5C-12C5-3DE5-D3A25A65DD70}" name="Components">
+        <FILE id="o5dZpx" name="AudioBufferSource.cpp" compile="1" resource="0"
               file="Source/Components/AudioBufferSource.cpp"/>
-        <FILE id="BwYHoO" name="AudioBufferSource.h" compile="0" resource="0"
+        <FILE id="LdZwxI" name="AudioBufferSource.h" compile="0" resource="0"
               file="Source/Components/AudioBufferSource.h"/>
-        <FILE id="TjAVW0" name="AudioClockComponent.cpp" compile="1" resource="0"
+        <FILE id="nYEUtp" name="AudioClockComponent.cpp" compile="1" resource="0"
               file="Source/Components/AudioClockComponent.cpp"/>
-        <FILE id="s9u47o" name="AudioClockComponent.h" compile="0" resource="0"
+        <FILE id="flTT2E" name="AudioClockComponent.h" compile="0" resource="0"
               file="Source/Components/AudioClockComponent.h"/>
-        <FILE id="uP6mSK" name="AudioPlaybackPositionComponent.cpp" compile="1"
+        <FILE id="zkxvg1" name="AudioPlaybackPositionComponent.cpp" compile="1"
               resource="0" file="Source/Components/AudioPlaybackPositionComponent.cpp"/>
-        <FILE id="Z8kwev" name="AudioPlaybackPositionComponent.h" compile="0"
+        <FILE id="febaL7" name="AudioPlaybackPositionComponent.h" compile="0"
               resource="0" file="Source/Components/AudioPlaybackPositionComponent.h"/>
-        <FILE id="zc9wkJ" name="AudioScrollerComponent.cpp" compile="1" resource="0"
+        <FILE id="esuDha" name="AudioScrollerComponent.cpp" compile="1" resource="0"
               file="Source/Components/AudioScrollerComponent.cpp"/>
-        <FILE id="ZGYHqq" name="AudioScrollerComponent.h" compile="0" resource="0"
+        <FILE id="poPuCG" name="AudioScrollerComponent.h" compile="0" resource="0"
               file="Source/Components/AudioScrollerComponent.h"/>
-        <FILE id="DTzBKh" name="AudioWaveformComponent.cpp" compile="1" resource="0"
+        <FILE id="Dp9Wdv" name="AudioWaveformComponent.cpp" compile="1" resource="0"
               file="Source/Components/AudioWaveformComponent.cpp"/>
-        <FILE id="kxp8KP" name="AudioWaveformComponent.h" compile="0" resource="0"
+        <FILE id="wDMR9b" name="AudioWaveformComponent.h" compile="0" resource="0"
               file="Source/Components/AudioWaveformComponent.h"/>
-        <FILE id="SX8Gzm" name="AudioWaveformOpenGLComponent.cpp" compile="1"
+        <FILE id="C9Wk5S" name="AudioWaveformOpenGLComponent.cpp" compile="1"
               resource="0" file="Source/Components/AudioWaveformOpenGLComponent.cpp"/>
-        <FILE id="YYFQMY" name="AudioWaveformOpenGLComponent.h" compile="0"
+        <FILE id="XHLSKi" name="AudioWaveformOpenGLComponent.h" compile="0"
               resource="0" file="Source/Components/AudioWaveformOpenGLComponent.h"/>
-        <FILE id="GSr61e" name="AudioWaveformSelectedRegionComponent.cpp" compile="1"
+        <FILE id="i9ei2L" name="AudioWaveformSelectedRegionComponent.cpp" compile="1"
               resource="0" file="Source/Components/AudioWaveformSelectedRegionComponent.cpp"/>
-        <FILE id="R505un" name="AudioWaveformSelectedRegionComponent.h" compile="0"
+        <FILE id="DjZeXv" name="AudioWaveformSelectedRegionComponent.h" compile="0"
               resource="0" file="Source/Components/AudioWaveformSelectedRegionComponent.h"/>
-        <FILE id="erLKur" name="OpenGLComponent.h" compile="0" resource="0"
+        <FILE id="eN60mY" name="OpenGLComponent.h" compile="0" resource="0"
               file="Source/Components/OpenGLComponent.h"/>
-        <FILE id="zop6Ej" name="Recorder.cpp" compile="1" resource="0" file="Source/Components/Recorder.cpp"/>
-        <FILE id="a21PnN" name="Recorder.h" compile="0" resource="0" file="Source/Components/Recorder.h"/>
-        <FILE id="C9F0S2" name="TenFtAudioSource.cpp" compile="1" resource="0"
+        <FILE id="XzJNMV" name="Recorder.cpp" compile="1" resource="0" file="Source/Components/Recorder.cpp"/>
+        <FILE id="FhKfD8" name="Recorder.h" compile="0" resource="0" file="Source/Components/Recorder.h"/>
+        <FILE id="Ytcwcv" name="TenFtAudioSource.cpp" compile="1" resource="0"
               file="Source/Components/TenFtAudioSource.cpp"/>
-        <FILE id="JbCWgh" name="TenFtAudioSource.h" compile="0" resource="0"
+        <FILE id="sazW4c" name="TenFtAudioSource.h" compile="0" resource="0"
               file="Source/Components/TenFtAudioSource.h"/>
-        <FILE id="vb7kr4" name="TenFtLookAndFeel.cpp" compile="1" resource="0"
+        <FILE id="Yws4ix" name="TenFtLookAndFeel.cpp" compile="1" resource="0"
               file="Source/Components/TenFtLookAndFeel.cpp"/>
-        <FILE id="ytjwtW" name="TenFtLookAndFeel.h" compile="0" resource="0"
+        <FILE id="RoKsYj" name="TenFtLookAndFeel.h" compile="0" resource="0"
               file="Source/Components/TenFtLookAndFeel.h"/>
-        <FILE id="KgLFbg" name="TenFtUtil.cpp" compile="1" resource="0" file="Source/Components/TenFtUtil.cpp"/>
-        <FILE id="VivYdj" name="TenFtUtil.h" compile="0" resource="0" file="Source/Components/TenFtUtil.h"/>
+        <FILE id="P60Jxj" name="TenFtUtil.cpp" compile="1" resource="0" file="Source/Components/TenFtUtil.cpp"/>
+        <FILE id="q7JrDL" name="TenFtUtil.h" compile="0" resource="0" file="Source/Components/TenFtUtil.h"/>
       </GROUP>
-      <FILE id="mEK9wI" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
-      <FILE id="aYNFLw" name="MainComponent.h" compile="0" resource="0" file="Source/MainComponent.h"/>
-      <FILE id="wIgqsB" name="MainComponent.cpp" compile="1" resource="0"
-            file="Source/MainComponent.cpp"/>
+      <FILE id="cM8to7" name="PluginProcessor.cpp" compile="1" resource="0"
+            file="Source/PluginProcessor.cpp"/>
+      <FILE id="J64V9j" name="PluginProcessor.h" compile="0" resource="0"
+            file="Source/PluginProcessor.h"/>
+      <FILE id="VV7Vgl" name="PluginEditor.cpp" compile="1" resource="0"
+            file="Source/PluginEditor.cpp"/>
+      <FILE id="tyjnxm" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
     </GROUP>
   </MAINGROUP>
-  <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1"/>
+  <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1" JUCE_VST3_CAN_REPLACE_VST2="0"/>
   <EXPORTFORMATS>
     <VS2017 targetFolder="Builds/VisualStudio2017">
       <CONFIGURATIONS>
-        <CONFIGURATION isDebug="1" name="Debug"/>
-        <CONFIGURATION isDebug="0" name="Release"/>
+        <CONFIGURATION isDebug="1" name="Debug" targetName="WhooshGenerator"/>
+        <CONFIGURATION isDebug="0" name="Release" targetName="WhooshGenerator"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
-        <MODULEPATH id="juce_gui_extra"/>
-        <MODULEPATH id="juce_gui_basics"/>
-        <MODULEPATH id="juce_graphics"/>
-        <MODULEPATH id="juce_events"/>
-        <MODULEPATH id="juce_data_structures"/>
-        <MODULEPATH id="juce_core"/>
-        <MODULEPATH id="juce_audio_utils"/>
-        <MODULEPATH id="juce_audio_processors"/>
-        <MODULEPATH id="juce_audio_formats"/>
-        <MODULEPATH id="juce_audio_devices"/>
-        <MODULEPATH id="juce_audio_basics"/>
+        <MODULEPATH id="juce_audio_basics" path="C:/Users/arnau/Documents/JUCE/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_devices" path="C:/Users/arnau/Documents/JUCE/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="C:/Users/arnau/Documents/JUCE/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_plugin_client" path="C:/Users/arnau/Documents/JUCE/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_processors" path="C:/Users/arnau/Documents/JUCE/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_utils" path="C:/Users/arnau/Documents/JUCE/JUCE/modules"/>
+        <MODULEPATH id="juce_core" path="C:/Users/arnau/Documents/JUCE/JUCE/modules"/>
+        <MODULEPATH id="juce_data_structures" path="C:/Users/arnau/Documents/JUCE/JUCE/modules"/>
+        <MODULEPATH id="juce_events" path="C:/Users/arnau/Documents/JUCE/JUCE/modules"/>
+        <MODULEPATH id="juce_graphics" path="C:/Users/arnau/Documents/JUCE/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="C:/Users/arnau/Documents/JUCE/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="C:/Users/arnau/Documents/JUCE/JUCE/modules"/>
         <MODULEPATH id="juce_opengl" path="C:/Users/arnau/Documents/JUCE/JUCE/modules"/>
       </MODULEPATHS>
     </VS2017>
@@ -81,6 +85,8 @@
     <MODULE id="juce_audio_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
     <MODULE id="juce_audio_devices" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
     <MODULE id="juce_audio_formats" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_plugin_client" showAllCode="1" useLocalCopy="0"
+            useGlobalPath="1"/>
     <MODULE id="juce_audio_processors" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
     <MODULE id="juce_audio_utils" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
     <MODULE id="juce_core" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
