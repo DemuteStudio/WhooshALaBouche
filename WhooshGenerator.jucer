@@ -4,6 +4,10 @@
               addUsingNamespaceToJuceHeader="0" jucerFormatVersion="1">
   <MAINGROUP id="aloHBM" name="WhooshGenerator">
     <GROUP id="{EEA80747-9640-2EFB-67BF-219404D66E3F}" name="Source">
+      <GROUP id="{04BA2B29-EC80-9B46-7BFA-1F910BBC8AD4}" name="Components">
+        <FILE id="JHX61t" name="Waveform.cpp" compile="1" resource="0" file="Source/Components/Waveform.cpp"/>
+        <FILE id="LoLZ9B" name="Waveform.h" compile="0" resource="0" file="Source/Components/Waveform.h"/>
+      </GROUP>
       <FILE id="mEK9wI" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
       <FILE id="aYNFLw" name="MainComponent.h" compile="0" resource="0" file="Source/MainComponent.h"/>
       <FILE id="wIgqsB" name="MainComponent.cpp" compile="1" resource="0"
