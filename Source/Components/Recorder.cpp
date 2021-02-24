@@ -82,7 +82,7 @@ Recorder::Recorder(TenFtAudioSource& audioSourceToUse): audioSource(audioSourceT
 	formatManager.registerBasicFormats();
 
 	audioSource.addListener(&clock);
-	audioSource.addListener(&playbackPosition);
+	audioSource.addListener((TenFtAudioSource::Listener*)&playbackPosition);
 	audioSource.onStateChange = [this](
 		TenFtAudioSource::State state
 	)
@@ -91,6 +91,7 @@ Recorder::Recorder(TenFtAudioSource& audioSourceToUse): audioSource(audioSourceT
 		};
 
 	addAndMakeVisible(&waveform);
+	addAndMakeVisible(envelope_);
 	addAndMakeVisible(&scroller);
 	addAndMakeVisible(&clock);
 	waveform.addAndMakeVisible(&selectedRegion);
@@ -99,7 +100,7 @@ Recorder::Recorder(TenFtAudioSource& audioSourceToUse): audioSource(audioSourceT
 	waveform.addListener(&audioSource);
 	waveform.addListener(&scroller);
 	waveform.addListener(&selectedRegion);
-	waveform.addListener(&playbackPosition);
+	waveform.addListener((AudioWaveformComponent::Listener*)&playbackPosition);
 	waveform.onPositionChange = [this](double newPosition)
 	{
 		audioSource.setPosition(newPosition);
@@ -122,52 +123,55 @@ Recorder::~Recorder()
 
 void Recorder::resized()
 {
-	juce::Rectangle<float> bounds =
-		getLocalBounds().toFloat().reduced(10.0f);
+	juce::Rectangle<int> bounds =
+		getLocalBounds().reduced(10);
 	float width = bounds.getWidth(),
 	      height = bounds.getHeight(),
 	      delta = 5.0f;
-	juce::Rectangle<float> row1 = bounds.removeFromTop(0.05f * height),
-	                       row2 = bounds.removeFromTop(0.05f * height),
-	                       row3 = bounds.removeFromTop(0.05f * height),
-	                       row5 = bounds.removeFromBottom(0.05f * height),
-	                       row4 = bounds;
+	int button_row_height = height / 20;
+	juce::Rectangle<int> row1 = bounds.removeFromTop(button_row_height),
+	                     row2 = bounds.removeFromTop(button_row_height),
+	                     row3 = bounds.removeFromTop(button_row_height),
+	                     row5 = bounds.removeFromBottom(button_row_height),
+	                     row4 = bounds.reduced(delta);
 
 	recordButton.setBounds(
-		row1.removeFromLeft(width * 0.5f).reduced(delta).toNearestInt()
+		row1.removeFromLeft(width * 0.5f).reduced(delta)
 	);
 	playButton.setBounds(
-		row2.removeFromLeft(width * 0.42f).reduced(delta).toNearestInt()
+		row2.removeFromLeft(width * 0.42f).reduced(delta)
 	);
 	stopButton.setBounds(
-		row2.removeFromLeft(width * 0.42f).reduced(delta).toNearestInt()
+		row2.removeFromLeft(width * 0.42f).reduced(delta)
 	);
 	loopButton.setBounds(
-		row2.removeFromLeft(width * 0.07f).reduced(delta).toNearestInt()
+		row2.removeFromLeft(width * 0.07f).reduced(delta)
 	);
 	clock.setBounds(
-		row2.reduced(delta).toNearestInt()
+		row2.reduced(delta)
 	);
 	muteButton.setBounds(
-		row3.removeFromLeft(width / 4.0f).reduced(delta).toNearestInt()
+		row3.removeFromLeft(width / 4.0f).reduced(delta)
 	);
 	fadeInButton.setBounds(
-		row3.removeFromLeft(width / 4.0f).reduced(delta).toNearestInt()
+		row3.removeFromLeft(width / 4.0f).reduced(delta)
 	);
 	fadeOutButton.setBounds(
-		row3.removeFromLeft(width / 4.0f).reduced(delta).toNearestInt()
+		row3.removeFromLeft(width / 4.0f).reduced(delta)
 	);
 	normalizeButton.setBounds(
-		row3.removeFromLeft(width / 4.0f).reduced(delta).toNearestInt()
+		row3.removeFromLeft(width / 4.0f).reduced(delta)
 	);
+	auto main_rectangle = row4;
 	waveform.setBounds(
-		row4.reduced(delta).toNearestInt()
+		main_rectangle.removeFromTop(main_rectangle.getHeight()/2).reduced(delta)
 	);
+	envelope_.setBounds(main_rectangle.reduced(delta));
 	selectedRegion.setBounds(
-		waveform.getBounds()
+		row4.reduced(delta)
 	);
 	playbackPosition.setBounds(
-		waveform.getBounds()
+		row4.reduced(delta)
 	);
 	scroller.setBounds(
 		row5.reduced(delta).toNearestInt()

@@ -37,7 +37,7 @@ void AudioPlaybackPositionComponent::paint (Graphics& g)
             )
             * localBounds.getWidth () + localBounds.getX ();
 
-        g.setColour (findColour (ColourIds::lineColour));
+        g.setColour (findColour (ColourIds::line_colour));
         g.drawLine (
             drawPosition,
             localBounds.getY (),

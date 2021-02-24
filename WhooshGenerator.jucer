@@ -5,6 +5,20 @@
   <MAINGROUP id="MGtDsZ" name="WhooshGenerator">
     <GROUP id="{5BEADBA9-EE88-C0EB-E7A8-52E1335C79AC}" name="Source">
       <GROUP id="{5432A927-7F5C-12C5-3DE5-D3A25A65DD70}" name="Components">
+        <GROUP id="{4CA38E45-F534-3132-344F-20E20F6CB587}" name="EnveloppeDrawer">
+          <FILE id="lVNdIp" name="EnvelopeComponent.cpp" compile="1" resource="0"
+                file="Source/Components/EnvelopeDrawer/EnvelopeComponent.cpp"/>
+          <FILE id="mMd1Bb" name="EnvelopeComponent.h" compile="0" resource="0"
+                file="Source/Components/EnvelopeDrawer/EnvelopeComponent.h"/>
+          <FILE id="McJpiT" name="EnvelopeOpenGLComponent.cpp" compile="1" resource="0"
+                file="Source/Components/EnvelopeDrawer/EnvelopeOpenGLComponent.cpp"/>
+          <FILE id="POiwdq" name="EnvelopeOpenGLComponent.h" compile="0" resource="0"
+                file="Source/Components/EnvelopeDrawer/EnvelopeOpenGLComponent.h"/>
+          <FILE id="TdCtDb" name="EnvelopeSelectedRegionComponent.cpp" compile="1"
+                resource="0" file="Source/Components/EnvelopeDrawer/EnvelopeSelectedRegionComponent.cpp"/>
+          <FILE id="HvL0nk" name="EnvelopeSelectedRegionComponent.h" compile="0"
+                resource="0" file="Source/Components/EnvelopeDrawer/EnvelopeSelectedRegionComponent.h"/>
+        </GROUP>
         <FILE id="o5dZpx" name="AudioBufferSource.cpp" compile="1" resource="0"
               file="Source/Components/AudioBufferSource.cpp"/>
         <FILE id="LdZwxI" name="AudioBufferSource.h" compile="0" resource="0"

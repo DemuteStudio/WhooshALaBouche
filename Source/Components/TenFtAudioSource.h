@@ -1,20 +1,4 @@
-/*
-  ==============================================================================
-
-    AudioPlayer.h
-    Created: 18 May 2018 9:53:34pm
-    Author:  DBANKOV
-
-  ==============================================================================
-*/
-
-
 #pragma once
-
-#include <string>
-#include <iostream>
-#include <sstream>
-#include <iomanip>
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
@@ -22,162 +6,167 @@
 #include "AudioWaveformComponent.h"
 
 
-class TenFtAudioSource :    public AudioSource,
-                            public AudioWaveformComponent::Listener,
-                            private ChangeListener,
-                            private Timer
+class TenFtAudioSource : public AudioSource,
+                         public AudioWaveformComponent::Listener,
+                         private ChangeListener,
+                         private Timer
 {
 public:
-    enum State
-    {
-        NoAudioLoaded,
-        StartRecording,
-        Recording,
-        Starting,
-        Playing,
-        Stopping,
-        Stopped,
-        Pausing,
-        Paused
-    };
+	enum State
+	{
+		NoAudioLoaded,
+		StartRecording,
+		Recording,
+		Starting,
+		Playing,
+		Stopping,
+		Stopped,
+		Pausing,
+		Paused
+	};
 
-    class Listener
-    {
-    public:
-        virtual ~Listener () {}
+	class Listener
+	{
+	public:
+		virtual ~Listener()
+		{
+		}
 
-        virtual void currentPositionChanged (TenFtAudioSource*) {}
+		virtual void currentPositionChanged(TenFtAudioSource*)
+		{
+		}
 
-        virtual void stateChanged (TenFtAudioSource*) {}
-    };
+		virtual void stateChanged(TenFtAudioSource*)
+		{
+		}
+	};
 
-    std::function<void (State)> onStateChange;
+	std::function<void (State)> onStateChange;
 
 public:
-    TenFtAudioSource ();
+	TenFtAudioSource();
 
-    ~TenFtAudioSource ();
+	~TenFtAudioSource();
 
-    void prepareToPlay (
-        int samplesPerBlockExpected,
-        double sampleRate
-    ) override;
-    
-    void releaseResources () override;
+	void prepareToPlay(
+		int samplesPerBlockExpected,
+		double sampleRate
+	) override;
 
-    void getNextAudioBlock (
-        const AudioSourceChannelInfo& bufferToFill
-    ) override;
+	void releaseResources() override;
 
-    void loadAudio (
-        AudioSampleBuffer* newAudioSampleBuffer,
-        double newSampleRate
-    );
+	void getNextAudioBlock(
+		const AudioSourceChannelInfo& bufferToFill
+	) override;
 
-    void unloadAudio ();
+	void loadAudio(
+		AudioSampleBuffer* newAudioSampleBuffer,
+		double newSampleRate
+	);
 
-    AudioSampleBuffer* loadRecordingBuffer ();
+	void unloadAudio();
 
-    void stopRecording ();
+	AudioSampleBuffer* loadRecordingBuffer();
 
-    void playAudio ();
+	void stopRecording();
 
-    void stopAudio ();
+	void playAudio();
 
-    void pauseAudio ();
+	void stopAudio();
 
-    void muteAudio ();
+	void pauseAudio();
 
-    void fadeInAudio ();
+	void muteAudio();
 
-    void fadeOutAudio ();
+	void fadeInAudio();
 
-    void normalizeAudio ();
+	void fadeOutAudio();
 
-    State getState () const;
+	void normalizeAudio();
 
-    double getCurrentPosition () const;
+	State getState() const;
 
-    double getLengthInSeconds () const;
+	double getCurrentPosition() const;
 
-    double getSampleRate () const;
+	double getLengthInSeconds() const;
 
-    void setPosition (double newPosition);
+	double getSampleRate() const;
 
-    void setLooping (bool shouldLoop);
+	void setPosition(double newPosition);
 
-    void addListener (Listener* newListener);
+	void setLooping(bool shouldLoop);
 
-    void removeListener (Listener* listener);
+	void addListener(Listener* newListener);
 
-    const CriticalSection* getBufferUpdateLock () const noexcept;
+	void removeListener(Listener* listener);
 
-private:
-    void selectedRegionCreated (AudioWaveformComponent* waveform) override;
-
-    void selectedRegionCleared (AudioWaveformComponent* waveform) override;
-
-    void timerCallback () override;
-
-    void changeListenerCallback (ChangeBroadcaster* broadcaster) override;
-
-    void changeState (State newState);
-
-    void loadAudioSubregion (
-        double startTime,
-        double endTime,
-        bool subregionSelected,
-        bool shouldLoop
-    );
+	const CriticalSection* getBufferUpdateLock() const noexcept;
 
 private:
-    class BufferPreallocationThread;
+	void selectedRegionCreated(AudioWaveformComponent* waveform) override;
+
+	void selectedRegionCleared(AudioWaveformComponent* waveform) override;
+
+	void timerCallback() override;
+
+	void changeListenerCallback(ChangeBroadcaster* broadcaster) override;
+
+	void changeState(State newState);
+
+	void loadAudioSubregion(
+		double startTime,
+		double endTime,
+		bool subregionSelected,
+		bool shouldLoop
+	);
 
 private:
-    AudioTransportSource masterSource;
-    std::unique_ptr<AudioBufferSource> bufferSource;
-
-    AudioSampleBuffer* buffer = nullptr;
-    std::unique_ptr<AudioSampleBuffer> subregionBuffer;
-
-    AudioSampleBuffer preallocatedRecordingBuffer;
-    std::unique_ptr<BufferPreallocationThread> recordingBufferPreallocationThread;
-    int numSamplesRecorded = 0;
-
-    double sampleRate = 0.0;
-    double inputSampleRate = 0.0;
-
-    bool hasSubregion = false;
-    double subregionStartTime = 0.0;
-    double subregionEndTime = 0.0;
-
-    State state = NoAudioLoaded;
-
-    ListenerList<Listener> listeners;
+	class BufferPreallocationThread;
 
 private:
-    class BufferPreallocationThread : public Thread
-    {
-    public:
-        BufferPreallocationThread (
-            AudioSampleBuffer& preallocatedRecordingBuffer,
-            int& numSamplesRecorded,
-            int numSamplesBuffer,
-            int numSamplesToAllocate,
-            AudioSampleBuffer& buffer
-        );
+	AudioTransportSource masterSource;
+	std::unique_ptr<AudioBufferSource> bufferSource;
 
-        void run () override;
+	AudioSampleBuffer* buffer = nullptr;
+	std::unique_ptr<AudioSampleBuffer> subregionBuffer;
 
-        const CriticalSection& getLock () const noexcept;
+	AudioSampleBuffer preallocatedRecordingBuffer;
+	std::unique_ptr<BufferPreallocationThread> recordingBufferPreallocationThread;
+	int numSamplesRecorded = 0;
 
-    private:
-        AudioSampleBuffer& preallocatedRecordingBuffer;
-        int& numSamplesRecorded;
-        int numSamplesBuffer;
-        int numSamplesToAllocate;
-        AudioSampleBuffer& buffer;
-        const CriticalSection bufferUpdateLock;
-    };
+	double sampleRate = 0.0;
+	double inputSampleRate = 0.0;
 
+	bool hasSubregion = false;
+	double subregionStartTime = 0.0;
+	double subregionEndTime = 0.0;
+
+	State state = NoAudioLoaded;
+
+	ListenerList<Listener> listeners;
+
+private:
+	class BufferPreallocationThread : public Thread
+	{
+	public:
+		BufferPreallocationThread(
+			AudioSampleBuffer& preallocatedRecordingBuffer,
+			int& numSamplesRecorded,
+			int numSamplesBuffer,
+			int numSamplesToAllocate,
+			AudioSampleBuffer& buffer
+		);
+
+		void run() override;
+
+		const CriticalSection& getLock() const noexcept;
+
+	private:
+		AudioSampleBuffer& preallocatedRecordingBuffer;
+		int& numSamplesRecorded;
+		int numSamplesBuffer;
+		int numSamplesToAllocate;
+		AudioSampleBuffer& buffer;
+		const CriticalSection bufferUpdateLock;
+	};
 };

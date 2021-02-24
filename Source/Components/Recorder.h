@@ -7,6 +7,7 @@
 #include "AudioWaveformComponent.h"
 #include "AudioWaveformSelectedRegionComponent.h"
 #include "TenFtLookAndFeel.h"
+#include "EnvelopeDrawer/EnvelopeComponent.h"
 
 using namespace juce;
 
@@ -64,6 +65,9 @@ private:
 	AudioWaveformComponent waveform;
 	AudioWaveformSelectedRegionComponent selectedRegion;
 	AudioPlaybackPositionComponent playbackPosition;
+
+	EnvelopeComponent envelope_;
+
 	AudioClockComponent clock;
 	AudioScrollerComponent scroller;
 	TenFtAudioSource& audioSource;

@@ -1,21 +1,9 @@
-/*
-  ==============================================================================
-
-    TrackProgressLineComponent.h
-    Created: 20 May 2018 3:33:37pm
-    Author:  DBANKOV
-
-  ==============================================================================
-*/
-
-
 #pragma once
-
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
-#include "TenFtAudioSource.h"
 #include "AudioWaveformComponent.h"
+#include "TenFtAudioSource.h"
 
 
 class AudioPlaybackPositionComponent :    public Component,
@@ -25,7 +13,7 @@ class AudioPlaybackPositionComponent :    public Component,
 public:
     enum ColourIds
     {
-        lineColour = 4
+        line_colour = 4
     };
 
 public:
