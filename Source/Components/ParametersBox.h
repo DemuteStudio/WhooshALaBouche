@@ -20,7 +20,7 @@ using namespace juce;
 class ParametersBox : public juce::Component
 {
 public:
-	ParametersBox();
+	ParametersBox(double sampleRate);
 	~ParametersBox() override;
 
 	void paint(juce::Graphics&) override;
@@ -32,6 +32,8 @@ public:
 	std::unique_ptr<Slider> threshold_slider;
 	Label threshold_label;
 
+	std::unique_ptr<Slider> rms_length_slider;
+	Label rms_length_label;
 
 private:
 

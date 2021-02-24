@@ -2,17 +2,26 @@
 #include "ParametersBox.h"
 
 //==============================================================================
-ParametersBox::ParametersBox()
+ParametersBox::ParametersBox(double sampleRate)
 {
 	threshold_slider = std::make_unique<Slider>();
 	threshold_slider->setSliderStyle(Slider::LinearHorizontal);
 	addAndMakeVisible(threshold_slider.get());
 	threshold_slider->setName("threshold");
-	threshold_slider->setRange(0.0, 0.1);
+	threshold_slider->setRange(0.0, 0.5);
 
 	addAndMakeVisible(threshold_label);
 	threshold_label.setText("Threshold", NotificationType::dontSendNotification);
 
+
+	rms_length_slider = std::make_unique<Slider>();
+	rms_length_slider->setSliderStyle(Slider::LinearHorizontal);
+	addAndMakeVisible(rms_length_slider.get());
+	rms_length_slider->setName("rms_length");
+	rms_length_slider->setRange(20.0, sampleRate*10);
+
+	addAndMakeVisible(rms_length_label);
+	rms_length_label.setText("RMS Length", NotificationType::dontSendNotification);
 }
 
 ParametersBox::~ParametersBox()
@@ -49,12 +58,17 @@ void ParametersBox::resized()
 	threshold_slider->setTextBoxStyle(Slider::TextBoxRight, true, 150, slider_height);
 
 	
+	auto rms_rectangle = rectangle.removeFromTop(slider_height);
+	rms_length_label.setBounds(rms_rectangle.removeFromLeft(150));
+	rms_length_slider->setBounds(rms_rectangle);
+	rms_length_slider->setTextBoxStyle(Slider::TextBoxRight, true, 150, slider_height);
 
 }
 
 void ParametersBox::add_listener(Slider::Listener* listener) const
 {
 	threshold_slider->addListener(listener);
+	rms_length_slider->addListener(listener);
 }
 
 

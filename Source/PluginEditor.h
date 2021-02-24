@@ -21,6 +21,7 @@ public:
 	void resized() override;
 
 	void sliderValueChanged(Slider* slider) override;
+	static int get_number_of_blocks_from_milliseconds(double sample_rate, float length_in_milliseconds, int samples_per_block);
 
 private:
 	// This reference is provided as a quick way for your editor to

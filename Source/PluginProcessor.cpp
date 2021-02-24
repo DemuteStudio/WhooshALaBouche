@@ -153,8 +153,6 @@ void WhooshGeneratorAudioProcessor::processBlock(juce::AudioBuffer<float>& buffe
 		auto bufferToFill = AudioSourceChannelInfo(audio_buffer);
 
 
-		float samples_squares_sum = 0.0;
-
 		for (auto channel = 0; channel < totalNumOutputChannels; ++channel)
 		{
 			const auto actual_input_channel = 0;
@@ -178,7 +176,13 @@ void WhooshGeneratorAudioProcessor::processBlock(juce::AudioBuffer<float>& buffe
 			}
 		}
 
-		last_rms_value = sqrt(samples_squares_sum / bufferToFill.numSamples);
+		if (block_index == rms_blocks_length)
+		{
+			last_rms_value = sqrt(samples_squares_sum / bufferToFill.numSamples);
+
+			samples_squares_sum = 0.0;
+			block_index = 0;
+		}
 
 		audioSource.getNextAudioBlock(bufferToFill);
 	}
@@ -214,10 +218,6 @@ TenFtAudioSource& WhooshGeneratorAudioProcessor::getAudioSource()
 	return audioSource;
 }
 
-int WhooshGeneratorAudioProcessor::get_number_of_samples_from_milliseconds(double sample_rate, float rms_length_value)
-{
-	return (int)((sample_rate / 1000) * rms_length_value);
-}
 
 //==============================================================================
 // This creates new instances of the plugin..
