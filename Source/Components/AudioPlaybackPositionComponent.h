@@ -4,11 +4,13 @@
 
 // #include "AudioWaveformComponent.h"
 #include "TenFtAudioSource.h"
+#include "EnvelopeDrawer/EnvelopeComponent.h"
 
 
 class AudioPlaybackPositionComponent :    public Component,
                                           public TenFtAudioSource::Listener,
-                                          public AudioWaveformComponent::Listener
+                                          public AudioWaveformComponent::Listener,
+                                          public EnvelopeComponent::Listener
 {
 public:
     enum ColourIds

@@ -8,6 +8,7 @@
 #include "AudioWaveformSelectedRegionComponent.h"
 #include "TenFtLookAndFeel.h"
 #include "EnvelopeDrawer/EnvelopeComponent.h"
+#include "EnvelopeDrawer/EnvelopeSelectedRegionComponent.h"
 
 using namespace juce;
 
@@ -66,7 +67,11 @@ private:
 	AudioWaveformSelectedRegionComponent selectedRegion;
 	AudioPlaybackPositionComponent playbackPosition;
 
+
 	EnvelopeComponent envelope_;
+	EnvelopeSelectedRegionComponent envelope_selected_region_;
+	AudioPlaybackPositionComponent envelope_playback_position_;
+	
 
 	AudioClockComponent clock;
 	AudioScrollerComponent scroller;

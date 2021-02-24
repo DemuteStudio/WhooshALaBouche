@@ -91,12 +91,17 @@ Recorder::Recorder(TenFtAudioSource& audioSourceToUse): audioSource(audioSourceT
 		};
 
 	addAndMakeVisible(&waveform);
-	addAndMakeVisible(envelope_);
 	addAndMakeVisible(&scroller);
 	addAndMakeVisible(&clock);
 	waveform.addAndMakeVisible(&selectedRegion);
 	waveform.addAndMakeVisible(&playbackPosition);
 
+	addAndMakeVisible(envelope_);
+	envelope_.addAndMakeVisible(envelope_selected_region_);
+	envelope_.addAndMakeVisible(envelope_playback_position_);
+	envelope_.addListener(&envelope_selected_region_);
+	envelope_.addListener((EnvelopeComponent::Listener*)&envelope_playback_position_);
+	
 	waveform.addListener(&audioSource);
 	waveform.addListener(&scroller);
 	waveform.addListener(&selectedRegion);
@@ -107,6 +112,7 @@ Recorder::Recorder(TenFtAudioSource& audioSourceToUse): audioSource(audioSourceT
 	};
 
 	scroller.addListener(&waveform);
+	scroller.addListener(&envelope_);
 	scroller.onMouseWheelMove = [this](
 		const MouseEvent& event,
 		const MouseWheelDetails& wheelDetails
@@ -202,6 +208,9 @@ void Recorder::enableRecording()
 	waveform.loadWaveform(
 		tempAudioBuffer, audioSource.getSampleRate(), audioSource.getBufferUpdateLock()
 	);
+	envelope_.loadWaveform(
+		tempAudioBuffer, audioSource.getSampleRate(), audioSource.getBufferUpdateLock()
+	);
 
 	audioBuffer.reset(tempAudioBuffer);
 
@@ -278,4 +287,5 @@ void Recorder::timerCallback()
 {
 	double newEndTime = (double)audioBuffer->getNumSamples() / audioSource.getSampleRate();
 	waveform.updateVisibleRegion(0.0, newEndTime);
+	envelope_.updateVisibleRegion(0.0, newEndTime);
 }
