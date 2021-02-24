@@ -1,5 +1,6 @@
 #include "AudioWaveformComponent.h"
 
+#include "TenFtUtil.h"
 
 
 AudioWaveformComponent::AudioWaveformComponent()

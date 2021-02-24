@@ -2,7 +2,7 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
-#include "AudioWaveformComponent.h"
+// #include "AudioWaveformComponent.h"
 #include "TenFtAudioSource.h"
 
 

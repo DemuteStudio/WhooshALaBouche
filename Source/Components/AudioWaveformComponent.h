@@ -3,11 +3,9 @@
 #include <string>
 
 
-#include "AudioPlaybackPositionComponent.h"
 #include "../JuceLibraryCode/JuceHeader.h"
 
 #include "AudioWaveformOpenGLComponent.h"
-#include "TenFtUtil.h"
 
 
 using namespace juce;

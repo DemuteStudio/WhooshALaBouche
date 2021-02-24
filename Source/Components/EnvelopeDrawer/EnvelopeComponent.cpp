@@ -1,5 +1,7 @@
 #include "EnvelopeComponent.h"
 
+#include "../TenFtUtil.h"
+
 
 EnvelopeComponent::EnvelopeComponent()
 {

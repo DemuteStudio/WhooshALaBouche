@@ -4,7 +4,6 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 
 #include "EnvelopeComponent.h"
-#include "../TenFtUtil.h"
 
 
 class EnvelopeSelectedRegionComponent : public Component,

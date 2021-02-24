@@ -4,7 +4,6 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
-#include "../TenFtUtil.h"
 #include "EnvelopeOpenGLComponent.h"
 
 

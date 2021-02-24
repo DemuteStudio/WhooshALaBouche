@@ -1,13 +1,3 @@
-/*
-  ==============================================================================
-
-    AudioWaveformSelectedRegionComponent.cpp
-    Created: 25 Jun 2018 1:54:44pm
-    Author:  DBANKOV
-
-  ==============================================================================
-*/
-
 #include "AudioWaveformSelectedRegionComponent.h"
 
 AudioWaveformSelectedRegionComponent::AudioWaveformSelectedRegionComponent ()

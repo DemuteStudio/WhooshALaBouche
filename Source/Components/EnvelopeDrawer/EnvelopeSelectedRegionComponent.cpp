@@ -1,5 +1,7 @@
 #include "EnvelopeSelectedRegionComponent.h"
 
+#include "../TenFtUtil.h"
+
 EnvelopeSelectedRegionComponent::EnvelopeSelectedRegionComponent ()
 {
     setInterceptsMouseClicks (false, true);
