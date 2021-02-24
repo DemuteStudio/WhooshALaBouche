@@ -1,14 +1,3 @@
-/*
-  ==============================================================================
-
-    AudioWaveformComponent.h
-    Created: 20 May 2018 3:33:07pm
-    Author:  DBANKOV
-
-  ==============================================================================
-*/
-
-
 #pragma once
 
 #include <string>
@@ -20,6 +9,7 @@
 
 
 using namespace juce;
+
 class AudioWaveformComponent :    public Component,
                                   public OpenGLRenderer,
                                   public Slider::Listener

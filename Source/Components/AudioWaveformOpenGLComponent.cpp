@@ -1,13 +1,3 @@
-/*
-  ==============================================================================
-
-    AudioWaveformOpenGLComponent.cpp
-    Created: 9 Jul 2018 12:16:15pm
-    Author:  DBANKOV
-
-  ==============================================================================
-*/
-
 #include "AudioWaveformOpenGLComponent.h"
 
 
@@ -187,7 +177,6 @@ void AudioWaveformOpenGLComponent::refresh ()
 
 void AudioWaveformOpenGLComponent::calculateVertices (unsigned int channel)
 {
-    //auto start = std::chrono::system_clock::now ();
 
     // More accurate because we depend on the count of the samples 
     // of the current file. The larger the file the less samples 
@@ -225,15 +214,6 @@ void AudioWaveformOpenGLComponent::calculateVertices (unsigned int channel)
 
         vertices[channel][vertice] = vertex;
     }
-
-    //auto end = std::chrono::system_clock::now ();
-    //std::chrono::duration<double> diff = end - start;
-    //Logger::outputDebugString (
-    //    String (buffer->getNumSamples ()) + " samples / " +
-    //    String (numVertices) + " vertices / " +
-    //    String (skipSamples) + " skipping / " +
-    //    String (diff.count ()) + " s / " +
-    //    String (vertices[channel].capacity ()) + " capacity");
 }
 
 GLfloat AudioWaveformOpenGLComponent::getAverageSampleValue (
