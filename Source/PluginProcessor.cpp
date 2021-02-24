@@ -93,6 +93,7 @@ void WhooshGeneratorAudioProcessor::changeProgramName(int index, const juce::Str
 //==============================================================================
 void WhooshGeneratorAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock)
 {
+	sample_rate = sampleRate;
 	audioSource.prepareToPlay(samplesPerBlock, sampleRate);
 }
 
@@ -127,6 +128,7 @@ bool WhooshGeneratorAudioProcessor::isBusesLayoutSupported(const BusesLayout& la
 }
 #endif
 
+
 void WhooshGeneratorAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
 	ScopedNoDenormals noDenormals;
@@ -143,32 +145,40 @@ void WhooshGeneratorAudioProcessor::processBlock(juce::AudioBuffer<float>& buffe
 
 	int intputBusesCount = getBusCount(true);
 
+
 	for (int busIndex = 0; busIndex < intputBusesCount; ++busIndex)
 	{
-		AudioBuffer<float> inputBuffer = getBusBuffer(buffer, true, busIndex);
+		AudioBuffer<float> audio_buffer = getBusBuffer(buffer, true, busIndex);
 
-		auto bufferToFill = AudioSourceChannelInfo(inputBuffer);
+		auto bufferToFill = AudioSourceChannelInfo(audio_buffer);
 
+
+		float samples_squares_sum = 0.0;
 
 		for (auto channel = 0; channel < totalNumOutputChannels; ++channel)
 		{
-			auto actualInputChannel = 0;
-			auto* inputBuffer = bufferToFill.buffer->getReadPointer(actualInputChannel, bufferToFill.startSample);
+			const auto actual_input_channel = 0;
+			const auto* inputBuffer = bufferToFill.buffer->getReadPointer(
+				actual_input_channel, bufferToFill.startSample);
 			auto* outputBuffer = bufferToFill.buffer->getWritePointer(channel, bufferToFill.startSample);
+
+
 			for (auto sample = 0; sample < bufferToFill.numSamples; ++sample)
 			{
-				if (abs(inputBuffer[sample]) >= threshold_value)
+				samples_squares_sum += inputBuffer[sample] * inputBuffer[sample];
+
+				if (last_rms_value >= threshold_value)
 				{
 					outputBuffer[sample] = inputBuffer[sample];
 				}
 				else
 				{
-					
 					outputBuffer[sample] = 0;
 				}
 			}
 		}
 
+		last_rms_value = sqrt(samples_squares_sum / bufferToFill.numSamples);
 
 		audioSource.getNextAudioBlock(bufferToFill);
 	}
@@ -202,6 +212,11 @@ void WhooshGeneratorAudioProcessor::setStateInformation(const void* data, int si
 TenFtAudioSource& WhooshGeneratorAudioProcessor::getAudioSource()
 {
 	return audioSource;
+}
+
+int WhooshGeneratorAudioProcessor::get_number_of_samples_from_milliseconds(double sample_rate, float rms_length_value)
+{
+	return (int)((sample_rate / 1000) * rms_length_value);
 }
 
 //==============================================================================

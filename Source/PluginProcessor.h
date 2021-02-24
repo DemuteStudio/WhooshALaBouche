@@ -61,9 +61,13 @@ public:
 	bool hasEditor() const override;
 	//==============================================================================
 	TenFtAudioSource& getAudioSource();
+	int get_number_of_samples_from_milliseconds(double sample_rate, float rms_length_value);
 
+	double sample_rate;
+	float last_rms_value = 1.0;
 
-	float threshold_value;
+	float threshold_value = 0.0;
+	float rms_length_value = 20;//ms
 
 private:
 	TenFtAudioSource audioSource;

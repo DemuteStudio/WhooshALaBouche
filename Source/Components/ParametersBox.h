@@ -26,9 +26,12 @@ public:
 	void paint(juce::Graphics&) override;
 	void resized() override;
 
+	void add_listener(Slider::Listener* listener) const;
+
 
 	std::unique_ptr<Slider> threshold_slider;
 	Label threshold_label;
+
 
 private:
 

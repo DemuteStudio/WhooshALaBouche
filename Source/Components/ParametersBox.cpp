@@ -1,13 +1,3 @@
-/*
-  ==============================================================================
-
-    ParametersBox.cpp
-    Created: 23 Feb 2021 3:47:28pm
-    Author:  arnau
-
-  ==============================================================================
-*/
-
 #include <JuceHeader.h>
 #include "ParametersBox.h"
 
@@ -17,12 +7,12 @@ ParametersBox::ParametersBox()
 	threshold_slider = std::make_unique<Slider>();
 	threshold_slider->setSliderStyle(Slider::LinearHorizontal);
 	addAndMakeVisible(threshold_slider.get());
-	threshold_slider->setTextBoxStyle(Slider::NoTextBox, true, 0, 0);
 	threshold_slider->setName("threshold");
-	threshold_slider->setRange(0.0, 1.0);
+	threshold_slider->setRange(0.0, 0.1);
 
 	addAndMakeVisible(threshold_label);
 	threshold_label.setText("Threshold", NotificationType::dontSendNotification);
+
 }
 
 ParametersBox::~ParametersBox()
@@ -51,12 +41,20 @@ void ParametersBox::resized()
 	const int height = rectangle.getHeight();
 	int width = rectangle.getWidth();
 
-	int slider_height = 50;
-	int label_height = 30;
+	const int slider_height = 50;
 
 	auto threshold_rectangle = rectangle.removeFromTop(slider_height);
 	threshold_label.setBounds(threshold_rectangle.removeFromLeft(150));
 	threshold_slider->setBounds(threshold_rectangle);
+	threshold_slider->setTextBoxStyle(Slider::TextBoxRight, true, 150, slider_height);
+
+	
 
 }
+
+void ParametersBox::add_listener(Slider::Listener* listener) const
+{
+	threshold_slider->addListener(listener);
+}
+
 
