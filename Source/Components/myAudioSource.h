@@ -6,7 +6,7 @@
 #include "AudioWaveformComponent.h"
 
 
-class TenFtAudioSource : public AudioSource,
+class my_audio_source : public AudioSource,
                          public AudioWaveformComponent::Listener,
                          private ChangeListener,
                          private Timer
@@ -32,11 +32,11 @@ public:
 		{
 		}
 
-		virtual void currentPositionChanged(TenFtAudioSource*)
+		virtual void currentPositionChanged(my_audio_source*)
 		{
 		}
 
-		virtual void stateChanged(TenFtAudioSource*)
+		virtual void stateChanged(my_audio_source*)
 		{
 		}
 	};
@@ -44,9 +44,9 @@ public:
 	std::function<void (State)> onStateChange;
 
 public:
-	TenFtAudioSource();
+	my_audio_source();
 
-	~TenFtAudioSource();
+	~my_audio_source();
 
 	void prepareToPlay(
 		int samplesPerBlockExpected,

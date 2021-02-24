@@ -9,23 +9,23 @@ Author:  Nikolay Tsenkov
 */
 
 
-#include "TenFtAudioSource.h"
+#include "myAudioSource.h"
 
 
-TenFtAudioSource::TenFtAudioSource ()
+my_audio_source::my_audio_source ()
 {
     masterSource.addChangeListener (this);
     startTimer (100);
 }
 
-TenFtAudioSource::~TenFtAudioSource ()
+my_audio_source::~my_audio_source ()
 {
     stopTimer ();
     masterSource.setSource (nullptr);
     buffer = nullptr;
 }
 
-void TenFtAudioSource::prepareToPlay (
+void my_audio_source::prepareToPlay (
     int samplesPerBlockExpected,
     double masterSourceSampleRate
 )
@@ -35,7 +35,7 @@ void TenFtAudioSource::prepareToPlay (
         samplesPerBlockExpected, masterSourceSampleRate);
 }
 
-void TenFtAudioSource::releaseResources ()
+void my_audio_source::releaseResources ()
 {
     if (state == Recording)
     {
@@ -45,7 +45,7 @@ void TenFtAudioSource::releaseResources ()
     masterSource.releaseResources ();
 }
 
-void TenFtAudioSource::getNextAudioBlock (
+void my_audio_source::getNextAudioBlock (
     const AudioSourceChannelInfo& bufferToFill
 )
 {
@@ -81,7 +81,7 @@ void TenFtAudioSource::getNextAudioBlock (
     }
 }
 
-void TenFtAudioSource::loadAudio (
+void my_audio_source::loadAudio (
     AudioSampleBuffer* newAudioSampleBuffer,
     double newSampleRate
 )
@@ -91,12 +91,12 @@ void TenFtAudioSource::loadAudio (
     loadAudioSubregion (0.0, getLengthInSeconds (), false, false);
 }
 
-void TenFtAudioSource::unloadAudio ()
+void my_audio_source::unloadAudio ()
 {
     changeState (NoAudioLoaded);
 }
 
-AudioSampleBuffer* TenFtAudioSource::loadRecordingBuffer ()
+AudioSampleBuffer* my_audio_source::loadRecordingBuffer ()
 {
     // TODO fix hardcoded number of channels
     buffer = new AudioSampleBuffer (2, 0); 
@@ -136,13 +136,13 @@ AudioSampleBuffer* TenFtAudioSource::loadRecordingBuffer ()
     return buffer;
 }
 
-void TenFtAudioSource::stopRecording ()
+void my_audio_source::stopRecording ()
 {
     recordingBufferPreallocationThread->stopThread (1000);
     changeState (Stopping);
 }
 
-void TenFtAudioSource::playAudio ()
+void my_audio_source::playAudio ()
 {
     if (state == Playing)
     {
@@ -154,7 +154,7 @@ void TenFtAudioSource::playAudio ()
     }
 }
 
-void TenFtAudioSource::stopAudio ()
+void my_audio_source::stopAudio ()
 {
     if (hasSubregion && state == Paused)
     {
@@ -184,12 +184,12 @@ void TenFtAudioSource::stopAudio ()
     }
 }
 
-void TenFtAudioSource::pauseAudio ()
+void my_audio_source::pauseAudio ()
 {
     changeState (Pausing);
 }
 
-void TenFtAudioSource::muteAudio ()
+void my_audio_source::muteAudio ()
 {
     int startSample = (int)(subregionStartTime * sampleRate),
         numSamples = (int)((subregionEndTime - subregionStartTime) * sampleRate);
@@ -197,7 +197,7 @@ void TenFtAudioSource::muteAudio ()
     buffer->clear (startSample, numSamples);
 }
 
-void TenFtAudioSource::fadeInAudio ()
+void my_audio_source::fadeInAudio ()
 {
     int startSample = (int)(subregionStartTime * sampleRate),
         numSamples = (int)((subregionEndTime - subregionStartTime) * sampleRate);
@@ -207,7 +207,7 @@ void TenFtAudioSource::fadeInAudio ()
     buffer->applyGainRamp (startSample, numSamples, 0.0f, gain);
 }
 
-void TenFtAudioSource::fadeOutAudio ()
+void my_audio_source::fadeOutAudio ()
 {
     int startSample = (int)(subregionStartTime * sampleRate),
         numSamples = (int)((subregionEndTime - subregionStartTime) * sampleRate);
@@ -217,7 +217,7 @@ void TenFtAudioSource::fadeOutAudio ()
     buffer->applyGainRamp (startSample, numSamples, gain, 0.0f);
 }
 
-void TenFtAudioSource::normalizeAudio ()
+void my_audio_source::normalizeAudio ()
 {
     int startSample = (int)(subregionStartTime * sampleRate),
         numSamples = (int)((subregionEndTime - subregionStartTime) * sampleRate);
@@ -227,12 +227,12 @@ void TenFtAudioSource::normalizeAudio ()
     buffer->applyGain (startSample, numSamples, gain);
 }
 
-TenFtAudioSource::State TenFtAudioSource::getState () const
+my_audio_source::State my_audio_source::getState () const
 {
     return state;
 }
 
-double TenFtAudioSource::getCurrentPosition () const
+double my_audio_source::getCurrentPosition () const
 {
     double currentPosition = masterSource.getCurrentPosition ();
     if (hasSubregion)
@@ -242,7 +242,7 @@ double TenFtAudioSource::getCurrentPosition () const
     return currentPosition;
 }
 
-double TenFtAudioSource::getLengthInSeconds () const
+double my_audio_source::getLengthInSeconds () const
 {
     if (buffer != nullptr)
     {
@@ -254,32 +254,32 @@ double TenFtAudioSource::getLengthInSeconds () const
     }
 }
 
-double TenFtAudioSource::getSampleRate () const
+double my_audio_source::getSampleRate () const
 {
     return sampleRate;
 }
 
-void TenFtAudioSource::setPosition (double newPosition)
+void my_audio_source::setPosition (double newPosition)
 {
     masterSource.setPosition (newPosition);
 }
 
-void TenFtAudioSource::setLooping (bool shouldLoop)
+void my_audio_source::setLooping (bool shouldLoop)
 {
     bufferSource->setLooping (shouldLoop);
 }
 
-void TenFtAudioSource::addListener (Listener * newListener)
+void my_audio_source::addListener (Listener * newListener)
 {
     listeners.add (newListener);
 }
 
-void TenFtAudioSource::removeListener (Listener * listener)
+void my_audio_source::removeListener (Listener * listener)
 {
     listeners.remove (listener);
 }
 
-const CriticalSection* TenFtAudioSource::getBufferUpdateLock () const noexcept
+const CriticalSection* my_audio_source::getBufferUpdateLock () const noexcept
 {
     if (recordingBufferPreallocationThread)
     {
@@ -293,7 +293,7 @@ const CriticalSection* TenFtAudioSource::getBufferUpdateLock () const noexcept
 
 // ==============================================================================
 
-void TenFtAudioSource::selectedRegionCreated (AudioWaveformComponent* waveform)
+void my_audio_source::selectedRegionCreated (AudioWaveformComponent* waveform)
 {
     loadAudioSubregion (
         waveform->getSelectedRegionStartTime (),
@@ -308,7 +308,7 @@ void TenFtAudioSource::selectedRegionCreated (AudioWaveformComponent* waveform)
     }
 }
 
-void TenFtAudioSource::selectedRegionCleared (AudioWaveformComponent* waveform)
+void my_audio_source::selectedRegionCleared (AudioWaveformComponent* waveform)
 {
     if (hasSubregion && !waveform->getHasSelectedRegion ())
     {
@@ -323,12 +323,12 @@ void TenFtAudioSource::selectedRegionCleared (AudioWaveformComponent* waveform)
     }
 }
 
-void TenFtAudioSource::timerCallback ()
+void my_audio_source::timerCallback ()
 {
     listeners.call ([this](Listener& l) { l.currentPositionChanged (this); });
 }
 
-void TenFtAudioSource::changeListenerCallback (
+void my_audio_source::changeListenerCallback (
     ChangeBroadcaster*
 )
 {
@@ -355,8 +355,8 @@ void TenFtAudioSource::changeListenerCallback (
     }
 }
 
-void TenFtAudioSource::changeState (
-    TenFtAudioSource::State newState
+void my_audio_source::changeState (
+    my_audio_source::State newState
 )
 {
     if (state != newState)
@@ -407,7 +407,7 @@ void TenFtAudioSource::changeState (
     }
 }
 
-void TenFtAudioSource::loadAudioSubregion (
+void my_audio_source::loadAudioSubregion (
     double startTime,
     double endTime,
     bool subregionSelected,
@@ -447,7 +447,7 @@ void TenFtAudioSource::loadAudioSubregion (
 
 // ==============================================================================
 
-TenFtAudioSource::BufferPreallocationThread::BufferPreallocationThread (
+my_audio_source::BufferPreallocationThread::BufferPreallocationThread (
     AudioSampleBuffer& preallocatedRecordingBuffer,
     int& numSamplesRecorded,
     int numSamplesBuffer,
@@ -463,7 +463,7 @@ TenFtAudioSource::BufferPreallocationThread::BufferPreallocationThread (
 {
 }
 
-void TenFtAudioSource::BufferPreallocationThread::run ()
+void my_audio_source::BufferPreallocationThread::run ()
 {
     while (!threadShouldExit ())
     {
@@ -487,7 +487,7 @@ void TenFtAudioSource::BufferPreallocationThread::run ()
     }
 }
 
-const CriticalSection& TenFtAudioSource::BufferPreallocationThread::getLock () const noexcept
+const CriticalSection& my_audio_source::BufferPreallocationThread::getLock () const noexcept
 {
     return bufferUpdateLock;
 }

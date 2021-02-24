@@ -16,14 +16,14 @@ class Recorder : public Component,
                  private Timer
 {
 public:
-	Recorder(TenFtAudioSource& audioSource);
+	Recorder(my_audio_source& audioSource);
 
 	~Recorder();
 
 	void resized() override;
 
 	void paint(Graphics& g) override;
-	void Recorder::onAudioSourceStateChange(TenFtAudioSource::State state);
+	void Recorder::onAudioSourceStateChange(my_audio_source::State state);
 
 private:
 	void openButtonClicked();
@@ -50,6 +50,7 @@ private:
 
 	void timerCallback() override;
 
+
 private:
 	TextButton recordButton;
 	TextButton playButton;
@@ -75,7 +76,8 @@ private:
 
 	AudioClockComponent clock;
 	AudioScrollerComponent scroller;
-	TenFtAudioSource& audioSource;
+
+	my_audio_source& audioSource;
 
 
 	TenFtLookAndFeel tenFtLookAndFeel;

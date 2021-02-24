@@ -9,7 +9,7 @@
 #pragma once
 
 #include <JuceHeader.h>
-#include "Components/TenFtAudioSource.h"
+#include "Components/myAudioSource.h"
 
 
 using namespace juce;
@@ -60,7 +60,7 @@ public:
 
 	bool hasEditor() const override;
 	//==============================================================================
-	TenFtAudioSource& getAudioSource();
+	my_audio_source& getAudioSource();
 
 	double sample_rate;
 	float last_rms_value = 1.0;
@@ -70,8 +70,9 @@ public:
 	float threshold_value = 0.0;
 	float rms_blocks_length = 1; 
 
+
 private:
-	TenFtAudioSource audioSource;
+	my_audio_source audioSource;
 
 
 	//==============================================================================

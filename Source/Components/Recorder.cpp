@@ -1,6 +1,6 @@
 #include "Recorder.h"
 
-Recorder::Recorder(TenFtAudioSource& audioSourceToUse): audioSource(audioSourceToUse)
+Recorder::Recorder(my_audio_source& audioSourceToUse): audioSource(audioSourceToUse)
 {
 	setLookAndFeel(&tenFtLookAndFeel);
 
@@ -82,9 +82,9 @@ Recorder::Recorder(TenFtAudioSource& audioSourceToUse): audioSource(audioSourceT
 	formatManager.registerBasicFormats();
 
 	audioSource.addListener(&clock);
-	audioSource.addListener((TenFtAudioSource::Listener*)&playbackPosition);
+	audioSource.addListener((my_audio_source::Listener*)&playbackPosition);
 	audioSource.onStateChange = [this](
-		TenFtAudioSource::State state
+		my_audio_source::State state
 	)
 		{
 			onAudioSourceStateChange(state);
@@ -244,21 +244,21 @@ void Recorder::loopButtonClicked()
 }
 
 void Recorder::onAudioSourceStateChange(
-	TenFtAudioSource::State state
+	my_audio_source::State state
 )
 {
-	if (state == TenFtAudioSource::Stopped)
+	if (state == my_audio_source::Stopped)
 	{
 		setupButton(playButton, "Play", true);
 		setupButton(stopButton, "Stop", false);
 		waveform.clearSelectedRegion();
 	}
-	else if (state == TenFtAudioSource::Playing)
+	else if (state == my_audio_source::Playing)
 	{
 		setupButton(playButton, "Pause", true);
 		setupButton(stopButton, "Stop", true);
 	}
-	else if (state == TenFtAudioSource::Paused)
+	else if (state == my_audio_source::Paused)
 	{
 		setupButton(playButton, "Play", true);
 		setupButton(stopButton, "Return To Zero", true);

@@ -32,7 +32,7 @@ void AudioClockComponent::resized ()
 // ==============================================================================
 
 void AudioClockComponent::currentPositionChanged (
-    TenFtAudioSource* audioSource
+    my_audio_source* audioSource
 )
 {
     std::string currentPositionFormatted =

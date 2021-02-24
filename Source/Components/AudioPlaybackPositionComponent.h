@@ -3,12 +3,12 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 
 // #include "AudioWaveformComponent.h"
-#include "TenFtAudioSource.h"
+#include "myAudioSource.h"
 #include "EnvelopeDrawer/EnvelopeComponent.h"
 
 
 class AudioPlaybackPositionComponent :    public Component,
-                                          public TenFtAudioSource::Listener,
+                                          public my_audio_source::Listener,
                                           public AudioWaveformComponent::Listener,
                                           public EnvelopeComponent::Listener
 {
@@ -28,7 +28,7 @@ public:
     void resized () override;
 
 private:
-    void currentPositionChanged (TenFtAudioSource* audioSource) override;
+    void currentPositionChanged (my_audio_source* audioSource) override;
 
     void visibleRegionChanged (AudioWaveformComponent* waveform) override;
     
