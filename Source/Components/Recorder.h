@@ -7,16 +7,18 @@
 #include "AudioWaveformComponent.h"
 #include "AudioWaveformSelectedRegionComponent.h"
 #include "TenFtLookAndFeel.h"
+#include "EnvelopeDrawer/Envelope.h"
 #include "EnvelopeDrawer/EnvelopeComponent.h"
 #include "EnvelopeDrawer/EnvelopeSelectedRegionComponent.h"
 
+class envelope;
 using namespace juce;
 
 class Recorder : public Component,
                  private Timer
 {
 public:
-	Recorder(my_audio_source& audioSource);
+	Recorder(my_audio_source& audioSource, envelope& _envelope);
 
 	~Recorder();
 
@@ -72,6 +74,7 @@ private:
 	EnvelopeComponent envelope_;
 	EnvelopeSelectedRegionComponent envelope_selected_region_;
 	AudioPlaybackPositionComponent envelope_playback_position_;
+	envelope* envelope_array_;
 	
 
 	AudioClockComponent clock;

@@ -143,13 +143,13 @@ void EnvelopeOpenGLComponent::render (OpenGLContext& openGLContext)
     glDisable (GL_BLEND);
 }
 
-void EnvelopeOpenGLComponent::load (AudioSampleBuffer* newBuffer,
+void EnvelopeOpenGLComponent::load (envelope* new_envelope,
     const CriticalSection* bufferUpdateLock)
 {
-    buffer = newBuffer;
-    bufferNumChannels = buffer->getNumChannels ();
+    envelope_= new_envelope;
+    // bufferNumChannels = ->getNumChannels ();
     visibleRegionStartSample = 0;
-    visibleRegionNumSamples = buffer->getNumSamples ();
+    // visibleRegionNumSamples = buffer->getNumSamples ();
     bufferUpdateLock_ = bufferUpdateLock;
 
     vertices.clear ();
@@ -198,14 +198,13 @@ void EnvelopeOpenGLComponent::calculateVertices (unsigned int channel)
 
     const ScopedNullableLock lock (bufferUpdateLock_);
 
-    const float* samples = buffer->getReadPointer (channel);
 
+	auto iterator = 
     for (int64 sample = visibleRegionStartSample, vertice = 0;
         sample < endSample;
         sample += skipSamples, vertice++)
     {
-        GLfloat sampleValue = getPeakSampleValue (samples, sample,
-            jmin ((int64)skipSamples, endSample - sample));
+        GLfloat sampleValue = ;
 
         Vertex vertex;
         // should be in the [-1,+1] range

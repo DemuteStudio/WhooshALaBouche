@@ -6,6 +6,8 @@
     <GROUP id="{5BEADBA9-EE88-C0EB-E7A8-52E1335C79AC}" name="Source">
       <GROUP id="{5432A927-7F5C-12C5-3DE5-D3A25A65DD70}" name="Components">
         <GROUP id="{4CA38E45-F534-3132-344F-20E20F6CB587}" name="EnveloppeDrawer">
+          <FILE id="hzN9tP" name="Envelope.cpp" compile="1" resource="0" file="Source/Components/EnvelopeDrawer/Envelope.cpp"/>
+          <FILE id="g9qmGq" name="Envelope.h" compile="0" resource="0" file="Source/Components/EnvelopeDrawer/Envelope.h"/>
           <FILE id="lVNdIp" name="EnvelopeComponent.cpp" compile="1" resource="0"
                 file="Source/Components/EnvelopeDrawer/EnvelopeComponent.cpp"/>
           <FILE id="mMd1Bb" name="EnvelopeComponent.h" compile="0" resource="0"

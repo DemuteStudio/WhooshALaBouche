@@ -1,5 +1,7 @@
 #include "EnvelopeComponent.h"
 
+
+#include "Envelope.h"
 #include "../TenFtUtil.h"
 
 
@@ -10,7 +12,7 @@ EnvelopeComponent::EnvelopeComponent()
 	openGLContext.setRenderer(this);
 	openGLContext.attachTo(*this);
 
-	addAndMakeVisible(&waveform);
+	addAndMakeVisible(&envelope_graphic_);
 
 	setInterceptsMouseClicks(true, false);
 }
@@ -23,17 +25,17 @@ EnvelopeComponent::~EnvelopeComponent()
 
 void EnvelopeComponent::newOpenGLContextCreated()
 {
-	waveform.initialise(openGLContext);
+	envelope_graphic_.initialise(openGLContext);
 }
 
 void EnvelopeComponent::openGLContextClosing()
 {
-	waveform.shutdown(openGLContext);
+	envelope_graphic_.shutdown(openGLContext);
 }
 
 void EnvelopeComponent::renderOpenGL()
 {
-	waveform.render(openGLContext);
+	envelope_graphic_.render(openGLContext);
 }
 
 void EnvelopeComponent::paint(Graphics& g)
@@ -46,7 +48,7 @@ void EnvelopeComponent::paint(Graphics& g)
 
 void EnvelopeComponent::resized()
 {
-	waveform.setBounds(getLocalBounds());
+	envelope_graphic_.setBounds(getLocalBounds());
 }
 
 void EnvelopeComponent::mouseWheelMove(
@@ -233,17 +235,17 @@ void EnvelopeComponent::removeListener(Listener* listener)
 	listeners.remove(listener);
 }
 
-void EnvelopeComponent::loadWaveform(
-	AudioSampleBuffer* newAudioBuffer,
+void EnvelopeComponent::load_envelope(
+	envelope* new_envelope,
 	double newSampleRate,
 	const CriticalSection* bufferUpdateLock
 )
 {
-	audioBuffer = newAudioBuffer;
+	envelope_ = new_envelope;
 	sampleRate = newSampleRate;
 
 	openGLContext.detach();
-	waveform.load(audioBuffer, bufferUpdateLock);
+	envelope_graphic_.load(, bufferUpdateLock);
 	openGLContext.attachTo(*this);
 
 	updateVisibleRegion(0.0f, getTotalLength());
@@ -287,7 +289,7 @@ void EnvelopeComponent::updateVisibleRegion(
 	int64 startSample = (int64)(visibleRegionStartTime * sampleRate),
 	      endSample = (int64)(visibleRegionEndTime * sampleRate),
 	      numSamples = endSample - startSample;
-	waveform.display(startSample, numSamples);
+	envelope_graphic_.display(startSample, numSamples);
 
 	listeners.call([this](Listener& l) { l.visibleRegionChanged(this); });
 
@@ -318,7 +320,7 @@ void EnvelopeComponent::clearSelectedRegion()
 
 void EnvelopeComponent::refresh()
 {
-	waveform.refresh();
+	envelope_graphic_.refresh();
 }
 
 double EnvelopeComponent::getVisibleRegionStartTime()

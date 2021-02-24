@@ -7,6 +7,7 @@
 #include "EnvelopeOpenGLComponent.h"
 
 
+class envelope;
 using namespace juce;
 
 class EnvelopeComponent :    public Component,
@@ -66,8 +67,8 @@ public:
 
     void removeListener (Listener* listener);
 
-    void loadWaveform (
-        AudioSampleBuffer* newAudioBuffer,
+    void load_envelope (
+        envelope* new_envelope,
         double newSampleRate,
         const CriticalSection* bufferUpdateLock = nullptr
     );
@@ -114,9 +115,9 @@ private:
 
 private:
     OpenGLContext openGLContext;
-    AudioSampleBuffer* audioBuffer = nullptr;
+    envelope* envelope_ = nullptr;
     double sampleRate = 0.0;
-    EnvelopeOpenGLComponent waveform;
+    EnvelopeOpenGLComponent envelope_graphic_;
     double visibleRegionStartTime = 0.0;
     double visibleRegionEndTime = 0.0;
     bool hasSelectedRegion = false;

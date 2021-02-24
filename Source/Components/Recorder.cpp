@@ -1,6 +1,7 @@
 #include "Recorder.h"
 
-Recorder::Recorder(my_audio_source& audioSourceToUse): audioSource(audioSourceToUse)
+Recorder::Recorder(my_audio_source& audioSourceToUse, envelope& _envelope): audioSource(audioSourceToUse),
+                                                                           envelope_array_(&_envelope)
 {
 	setLookAndFeel(&tenFtLookAndFeel);
 
@@ -101,7 +102,7 @@ Recorder::Recorder(my_audio_source& audioSourceToUse): audioSource(audioSourceTo
 	envelope_.addAndMakeVisible(envelope_playback_position_);
 	envelope_.addListener(&envelope_selected_region_);
 	envelope_.addListener((EnvelopeComponent::Listener*)&envelope_playback_position_);
-	
+
 	waveform.addListener(&audioSource);
 	waveform.addListener(&scroller);
 	waveform.addListener(&selectedRegion);
@@ -170,7 +171,7 @@ void Recorder::resized()
 	);
 	auto main_rectangle = row4;
 	waveform.setBounds(
-		main_rectangle.removeFromTop(main_rectangle.getHeight()/2).reduced(delta)
+		main_rectangle.removeFromTop(main_rectangle.getHeight() / 2).reduced(delta)
 	);
 	envelope_.setBounds(main_rectangle.reduced(delta));
 	selectedRegion.setBounds(
@@ -208,8 +209,8 @@ void Recorder::enableRecording()
 	waveform.loadWaveform(
 		tempAudioBuffer, audioSource.getSampleRate(), audioSource.getBufferUpdateLock()
 	);
-	envelope_.loadWaveform(
-		tempAudioBuffer, audioSource.getSampleRate(), audioSource.getBufferUpdateLock()
+	envelope_.load_envelope(
+		envelope_array_, audioSource.getSampleRate(), audioSource.getBufferUpdateLock()
 	);
 
 	audioBuffer.reset(tempAudioBuffer);

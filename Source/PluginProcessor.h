@@ -10,6 +10,7 @@
 
 #include <JuceHeader.h>
 #include "Components/myAudioSource.h"
+#include "Components/EnvelopeDrawer/Envelope.h"
 
 
 using namespace juce;
@@ -70,9 +71,11 @@ public:
 	float threshold_value = 0.0;
 	float rms_blocks_length = 1; 
 
+	envelope rms_envelope;
 
 private:
 	my_audio_source audioSource;
+
 
 
 	//==============================================================================

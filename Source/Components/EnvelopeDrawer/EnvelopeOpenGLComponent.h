@@ -4,6 +4,7 @@
 
 #include "../OpenGLComponent.h"
 
+class envelope;
 using namespace juce;
 
 class EnvelopeOpenGLComponent : public OpenGLComponent
@@ -53,7 +54,7 @@ private:
 	std::unique_ptr<OpenGLShaderProgram::Uniform> uniform;
 	std::unique_ptr<VertexBuffer> vertexBuffer;
 
-	AudioSampleBuffer* buffer = nullptr;
+	envelope* envelope_= nullptr;
 	int bufferNumChannels = 0;
 	int64 visibleRegionStartSample = 0;
 	int64 visibleRegionNumSamples = 0;
