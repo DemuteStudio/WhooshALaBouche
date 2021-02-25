@@ -1,14 +1,3 @@
-/*
-  ==============================================================================
-
-    TrackProgressLabelComponent.h
-    Created: 20 May 2018 5:48:09pm
-    Author:  DBANKOV
-
-  ==============================================================================
-*/
-
-
 #pragma once
 
 
@@ -19,12 +8,12 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
-#include "TenFtAudioSource.h"
+#include "myAudioSource.h"
 
 
 using namespace juce;
 class AudioClockComponent :    public Component,
-                               public TenFtAudioSource::Listener
+                               public my_audio_source::Listener
 {
 public:
     AudioClockComponent ();
@@ -33,7 +22,7 @@ public:
 
     void resized () override;
 
-    void currentPositionChanged (TenFtAudioSource* audioSource) override;
+    void currentPositionChanged (my_audio_source* audioSource) override;
 
 private:
     std::string getCurrentPositionFormatted (double lengthInSeconds, double currentPosition);

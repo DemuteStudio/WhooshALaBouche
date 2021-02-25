@@ -37,7 +37,7 @@ void AudioPlaybackPositionComponent::paint (Graphics& g)
             )
             * localBounds.getWidth () + localBounds.getX ();
 
-        g.setColour (findColour (ColourIds::lineColour));
+        g.setColour (findColour (ColourIds::line_colour));
         g.drawLine (
             drawPosition,
             localBounds.getY (),
@@ -56,10 +56,10 @@ void AudioPlaybackPositionComponent::resized ()
 // ==============================================================================
 
 void AudioPlaybackPositionComponent::currentPositionChanged (
-    TenFtAudioSource* audioSource
+    my_audio_source* audioSource
 )
 {
-    isRecording = (audioSource->getState () == TenFtAudioSource::State::Recording);
+    isRecording = (audioSource->getState () == my_audio_source::State::Recording);
     currentPosition = audioSource->getCurrentPosition ();
     repaint ();
 }

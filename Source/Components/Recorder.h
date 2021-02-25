@@ -7,36 +7,23 @@
 #include "AudioWaveformComponent.h"
 #include "AudioWaveformSelectedRegionComponent.h"
 #include "TenFtLookAndFeel.h"
+#include "EnvelopeDrawer/Envelope.h"
+#include "EnvelopeDrawer/EnvelopeComponent.h"
+#include "EnvelopeDrawer/EnvelopeSelectedRegionComponent.h"
+#include "EnvelopeDrawer/Envelope.h"
 
 using namespace juce;
 
-class Recorder : public Component,
-                 private Timer
+class Recorder : public Component
 {
 public:
-	Recorder(TenFtAudioSource& audioSource);
+	Recorder();
 
 	~Recorder();
 
 	void resized() override;
 
 	void paint(Graphics& g) override;
-	void Recorder::onAudioSourceStateChange(TenFtAudioSource::State state);
-
-private:
-	void openButtonClicked();
-
-	void loadFile(AudioFormatReader* audioReader);
-
-	void unloadFile();
-
-	void recordButtonClicked();
-
-	void enableRecording();
-
-	void disableRecording();
-
-	void loopButtonClicked();
 
 	void setupButton(
 		TextButton& button,
@@ -44,11 +31,7 @@ private:
 		bool enabled
 	);
 
-	void enableButtons(std::initializer_list<Button*> buttons, bool enable);
 
-	void timerCallback() override;
-
-private:
 	TextButton recordButton;
 	TextButton playButton;
 	TextButton stopButton;
@@ -57,16 +40,11 @@ private:
 	TextButton fadeInButton;
 	TextButton fadeOutButton;
 	TextButton normalizeButton;
-
-	AudioFormatManager formatManager;
-	std::unique_ptr<AudioSampleBuffer> audioBuffer;
-
-	AudioWaveformComponent waveform;
-	AudioWaveformSelectedRegionComponent selectedRegion;
-	AudioPlaybackPositionComponent playbackPosition;
 	AudioClockComponent clock;
-	AudioScrollerComponent scroller;
-	TenFtAudioSource& audioSource;
+
+
+	void enableButtons(std::initializer_list<Button*> buttons, bool enable);
+private:
 
 
 	TenFtLookAndFeel tenFtLookAndFeel;

@@ -1,31 +1,21 @@
-/*
-  ==============================================================================
-
-    TrackProgressLineComponent.h
-    Created: 20 May 2018 3:33:37pm
-    Author:  DBANKOV
-
-  ==============================================================================
-*/
-
-
 #pragma once
-
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
-#include "TenFtAudioSource.h"
-#include "AudioWaveformComponent.h"
+// #include "AudioWaveformComponent.h"
+#include "myAudioSource.h"
+#include "EnvelopeDrawer/EnvelopeComponent.h"
 
 
 class AudioPlaybackPositionComponent :    public Component,
-                                          public TenFtAudioSource::Listener,
-                                          public AudioWaveformComponent::Listener
+                                          public my_audio_source::Listener,
+                                          public AudioWaveformComponent::Listener,
+                                          public EnvelopeComponent::Listener
 {
 public:
     enum ColourIds
     {
-        lineColour = 4
+        line_colour = 4
     };
 
 public:
@@ -38,7 +28,7 @@ public:
     void resized () override;
 
 private:
-    void currentPositionChanged (TenFtAudioSource* audioSource) override;
+    void currentPositionChanged (my_audio_source* audioSource) override;
 
     void visibleRegionChanged (AudioWaveformComponent* waveform) override;
     

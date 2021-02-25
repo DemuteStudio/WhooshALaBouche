@@ -2,15 +2,15 @@
 
 #include <string>
 
-
 #include "../JuceLibraryCode/JuceHeader.h"
 
-#include "AudioWaveformOpenGLComponent.h"
+#include "EnvelopeOpenGLComponent.h"
 
 
+class envelope;
 using namespace juce;
 
-class AudioWaveformComponent :    public Component,
+class EnvelopeComponent :    public Component,
                                   public OpenGLRenderer,
                                   public Slider::Listener
 {
@@ -20,23 +20,23 @@ public:
     public:
         virtual ~Listener () {}
 
-        virtual void selectedRegionChanged (AudioWaveformComponent*) {}
+        virtual void selectedRegionChanged (EnvelopeComponent*) {}
 
-        virtual void selectedRegionCreated (AudioWaveformComponent*) {}
+        virtual void selectedRegionCreated (EnvelopeComponent*) {}
 
-        virtual void selectedRegionCleared (AudioWaveformComponent*) {}
+        virtual void selectedRegionCleared (EnvelopeComponent*) {}
 
-        virtual void visibleRegionChanged (AudioWaveformComponent*) {}
+        virtual void visibleRegionChanged (EnvelopeComponent*) {}
 
-        virtual void thumbnailCleared (AudioWaveformComponent*) {}
+        virtual void thumbnailCleared (EnvelopeComponent*) {}
     };
     
     std::function<void (double)> onPositionChange;
 
 public:
-    AudioWaveformComponent ();
+    EnvelopeComponent ();
 
-    ~AudioWaveformComponent ();
+    ~EnvelopeComponent ();
 
     void newOpenGLContextCreated () override;
 
@@ -67,9 +67,9 @@ public:
 
     void removeListener (Listener* listener);
 
-    void loadWaveform (
-        AudioSampleBuffer* newAudioBuffer,
-        double newSampleRate,
+    void load_envelope (
+        envelope* new_envelope,
+        double new_rms_sample_rate,
         const CriticalSection* bufferUpdateLock = nullptr
     );
 
@@ -115,9 +115,9 @@ private:
 
 private:
     OpenGLContext openGLContext;
-    AudioSampleBuffer* audioBuffer = nullptr;
-    double sampleRate = 0.0;
-    AudioWaveformOpenGLComponent waveform;
+    envelope* envelope_ = nullptr;
+    double rms_sample_rate_ = 0.0;
+    EnvelopeOpenGLComponent envelope_graphic_;
     double visibleRegionStartTime = 0.0;
     double visibleRegionEndTime = 0.0;
     bool hasSelectedRegion = false;
@@ -125,6 +125,5 @@ private:
     double selectedRegionEndTime = 0.0;
     ListenerList<Listener> listeners;
 
-
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AudioWaveformComponent)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (EnvelopeComponent)
 };

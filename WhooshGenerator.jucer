@@ -5,6 +5,22 @@
   <MAINGROUP id="MGtDsZ" name="WhooshGenerator">
     <GROUP id="{5BEADBA9-EE88-C0EB-E7A8-52E1335C79AC}" name="Source">
       <GROUP id="{5432A927-7F5C-12C5-3DE5-D3A25A65DD70}" name="Components">
+        <GROUP id="{4CA38E45-F534-3132-344F-20E20F6CB587}" name="EnveloppeDrawer">
+          <FILE id="hzN9tP" name="Envelope.cpp" compile="1" resource="0" file="Source/Components/EnvelopeDrawer/Envelope.cpp"/>
+          <FILE id="g9qmGq" name="Envelope.h" compile="0" resource="0" file="Source/Components/EnvelopeDrawer/Envelope.h"/>
+          <FILE id="lVNdIp" name="EnvelopeComponent.cpp" compile="1" resource="0"
+                file="Source/Components/EnvelopeDrawer/EnvelopeComponent.cpp"/>
+          <FILE id="mMd1Bb" name="EnvelopeComponent.h" compile="0" resource="0"
+                file="Source/Components/EnvelopeDrawer/EnvelopeComponent.h"/>
+          <FILE id="McJpiT" name="EnvelopeOpenGLComponent.cpp" compile="1" resource="0"
+                file="Source/Components/EnvelopeDrawer/EnvelopeOpenGLComponent.cpp"/>
+          <FILE id="POiwdq" name="EnvelopeOpenGLComponent.h" compile="0" resource="0"
+                file="Source/Components/EnvelopeDrawer/EnvelopeOpenGLComponent.h"/>
+          <FILE id="TdCtDb" name="EnvelopeSelectedRegionComponent.cpp" compile="1"
+                resource="0" file="Source/Components/EnvelopeDrawer/EnvelopeSelectedRegionComponent.cpp"/>
+          <FILE id="HvL0nk" name="EnvelopeSelectedRegionComponent.h" compile="0"
+                resource="0" file="Source/Components/EnvelopeDrawer/EnvelopeSelectedRegionComponent.h"/>
+        </GROUP>
         <FILE id="o5dZpx" name="AudioBufferSource.cpp" compile="1" resource="0"
               file="Source/Components/AudioBufferSource.cpp"/>
         <FILE id="LdZwxI" name="AudioBufferSource.h" compile="0" resource="0"
@@ -33,6 +49,9 @@
               resource="0" file="Source/Components/AudioWaveformSelectedRegionComponent.cpp"/>
         <FILE id="DjZeXv" name="AudioWaveformSelectedRegionComponent.h" compile="0"
               resource="0" file="Source/Components/AudioWaveformSelectedRegionComponent.h"/>
+        <FILE id="TdXB1N" name="myAudioSource.cpp" compile="1" resource="0"
+              file="Source/Components/myAudioSource.cpp"/>
+        <FILE id="NpZLQz" name="myAudioSource.h" compile="0" resource="0" file="Source/Components/myAudioSource.h"/>
         <FILE id="eN60mY" name="OpenGLComponent.h" compile="0" resource="0"
               file="Source/Components/OpenGLComponent.h"/>
         <FILE id="L4cLYz" name="ParametersBox.cpp" compile="1" resource="0"
@@ -40,10 +59,6 @@
         <FILE id="e1mr4v" name="ParametersBox.h" compile="0" resource="0" file="Source/Components/ParametersBox.h"/>
         <FILE id="XzJNMV" name="Recorder.cpp" compile="1" resource="0" file="Source/Components/Recorder.cpp"/>
         <FILE id="FhKfD8" name="Recorder.h" compile="0" resource="0" file="Source/Components/Recorder.h"/>
-        <FILE id="Ytcwcv" name="TenFtAudioSource.cpp" compile="1" resource="0"
-              file="Source/Components/TenFtAudioSource.cpp"/>
-        <FILE id="sazW4c" name="TenFtAudioSource.h" compile="0" resource="0"
-              file="Source/Components/TenFtAudioSource.h"/>
         <FILE id="Yws4ix" name="TenFtLookAndFeel.cpp" compile="1" resource="0"
               file="Source/Components/TenFtLookAndFeel.cpp"/>
         <FILE id="RoKsYj" name="TenFtLookAndFeel.h" compile="0" resource="0"

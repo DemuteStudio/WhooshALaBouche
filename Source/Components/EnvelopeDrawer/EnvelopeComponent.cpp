@@ -1,42 +1,44 @@
-#include "AudioWaveformComponent.h"
-
-#include "TenFtUtil.h"
+#include "EnvelopeComponent.h"
 
 
-AudioWaveformComponent::AudioWaveformComponent()
+#include "Envelope.h"
+#include "../TenFtUtil.h"
+
+
+EnvelopeComponent::EnvelopeComponent()
 {
 	openGLContext.setComponentPaintingEnabled(true);
 	openGLContext.setContinuousRepainting(true);
 	openGLContext.setRenderer(this);
 	openGLContext.attachTo(*this);
 
-	addAndMakeVisible(&waveform);
+	addAndMakeVisible(&envelope_graphic_);
 
 	setInterceptsMouseClicks(true, false);
 }
 
-AudioWaveformComponent::~AudioWaveformComponent()
+EnvelopeComponent::~EnvelopeComponent()
 {
 	openGLContext.detach();
-	audioBuffer = nullptr;
+	envelope_ = nullptr;
 }
 
-void AudioWaveformComponent::newOpenGLContextCreated()
+void EnvelopeComponent::newOpenGLContextCreated()
 {
-	waveform.initialise(openGLContext);
+	envelope_graphic_.initialise(openGLContext);
 }
 
-void AudioWaveformComponent::openGLContextClosing()
+void EnvelopeComponent::openGLContextClosing()
 {
-	waveform.shutdown(openGLContext);
+	envelope_graphic_.shutdown(openGLContext);
 }
 
-void AudioWaveformComponent::renderOpenGL()
+void EnvelopeComponent::renderOpenGL()
 {
-	waveform.render(openGLContext);
+	envelope_graphic_.render(openGLContext);
 }
 
-void AudioWaveformComponent::paint(Graphics& g)
+void EnvelopeComponent::paint(Graphics& g)
 {
 	if (getTotalLength() <= 0)
 	{
@@ -44,12 +46,12 @@ void AudioWaveformComponent::paint(Graphics& g)
 	}
 }
 
-void AudioWaveformComponent::resized()
+void EnvelopeComponent::resized()
 {
-	waveform.setBounds(getLocalBounds());
+	envelope_graphic_.setBounds(getLocalBounds());
 }
 
-void AudioWaveformComponent::mouseWheelMove(
+void EnvelopeComponent::mouseWheelMove(
 	const MouseEvent& event,
 	const MouseWheelDetails& wheelDetails
 )
@@ -91,7 +93,7 @@ void AudioWaveformComponent::mouseWheelMove(
 	}
 }
 
-void AudioWaveformComponent::mouseDoubleClick(const MouseEvent& event)
+void EnvelopeComponent::mouseDoubleClick(const MouseEvent& event)
 {
 	if (getTotalLength() <= 0)
 	{
@@ -110,7 +112,7 @@ void AudioWaveformComponent::mouseDoubleClick(const MouseEvent& event)
 	onPositionChange(newPosition);
 }
 
-void AudioWaveformComponent::mouseDrag(const MouseEvent& event)
+void EnvelopeComponent::mouseDrag(const MouseEvent& event)
 {
 	if (getTotalLength() <= 0)
 	{
@@ -163,7 +165,7 @@ void AudioWaveformComponent::mouseDrag(const MouseEvent& event)
 	repaint();
 }
 
-void AudioWaveformComponent::mouseDown(const MouseEvent& event)
+void EnvelopeComponent::mouseDown(const MouseEvent& event)
 {
 	if (getTotalLength() <= 0)
 	{
@@ -199,7 +201,7 @@ void AudioWaveformComponent::mouseDown(const MouseEvent& event)
 	}
 }
 
-void AudioWaveformComponent::mouseUp(const MouseEvent& event)
+void EnvelopeComponent::mouseUp(const MouseEvent& event)
 {
 	if (hasSelectedRegion && event.getNumberOfClicks() == 1)
 	{
@@ -207,7 +209,7 @@ void AudioWaveformComponent::mouseUp(const MouseEvent& event)
 	}
 }
 
-void AudioWaveformComponent::sliderValueChanged(Slider* slider)
+void EnvelopeComponent::sliderValueChanged(Slider* slider)
 {
 	double minValue = slider->getMinValue(),
 	       maxValue = slider->getMaxValue();
@@ -223,47 +225,47 @@ void AudioWaveformComponent::sliderValueChanged(Slider* slider)
 	updateVisibleRegion(leftPositionSeconds, rightPositionSeconds);
 }
 
-void AudioWaveformComponent::addListener(Listener* newListener)
+void EnvelopeComponent::addListener(Listener* newListener)
 {
 	listeners.add(newListener);
 }
 
-void AudioWaveformComponent::removeListener(Listener* listener)
+void EnvelopeComponent::removeListener(Listener* listener)
 {
 	listeners.remove(listener);
 }
 
-void AudioWaveformComponent::loadWaveform(
-	AudioSampleBuffer* newAudioBuffer,
-	double newSampleRate,
+void EnvelopeComponent::load_envelope(
+	envelope* new_envelope,
+	double new_rms_sample_rate,
 	const CriticalSection* bufferUpdateLock
 )
 {
-	audioBuffer = newAudioBuffer;
-	sampleRate = newSampleRate;
+	envelope_ = new_envelope;
+	rms_sample_rate_ = new_rms_sample_rate;
 
 	openGLContext.detach();
-	waveform.load(audioBuffer, bufferUpdateLock);
+	envelope_graphic_.load(envelope_, bufferUpdateLock);
 	openGLContext.attachTo(*this);
 
 	updateVisibleRegion(0.0f, getTotalLength());
 }
 
-void AudioWaveformComponent::clearWaveform()
+void EnvelopeComponent::clearWaveform()
 {
-	audioBuffer = nullptr;
-	sampleRate = 0.0;
+	envelope_= nullptr;
+	rms_sample_rate_ = 0.0;
 	clearSelectedRegion();
 	updateVisibleRegion(0.0f, 0.0f);
 	listeners.call([this](Listener& l) { l.thumbnailCleared(this); });
 }
 
-double AudioWaveformComponent::getTotalLength()
+double EnvelopeComponent::getTotalLength()
 {
-	return audioBuffer != nullptr ? audioBuffer->getNumSamples() / sampleRate : 0.0;
+	return envelope_ != nullptr ? envelope_->get_size() / rms_sample_rate_ : 0.0;
 }
 
-void AudioWaveformComponent::updateVisibleRegion(
+void EnvelopeComponent::updateVisibleRegion(
 	double newStartTime,
 	double newEndTime
 )
@@ -284,17 +286,17 @@ void AudioWaveformComponent::updateVisibleRegion(
 	visibleRegionStartTime = start_time_flattened;
 	visibleRegionEndTime = end_time_flattened;
 
-	int64 startSample = (int64)(visibleRegionStartTime * sampleRate),
-	      endSample = (int64)(visibleRegionEndTime * sampleRate),
+	int64 startSample = (int64)(visibleRegionStartTime * rms_sample_rate_),
+	      endSample = (int64)(visibleRegionEndTime * rms_sample_rate_),
 	      numSamples = endSample - startSample;
-	waveform.display(startSample, numSamples);
+	envelope_graphic_.display(startSample, numSamples);
 
 	listeners.call([this](Listener& l) { l.visibleRegionChanged(this); });
 
 	repaint();
 }
 
-void AudioWaveformComponent::updateSelectedRegion(
+void EnvelopeComponent::updateSelectedRegion(
 	double newStartTime, double newEndTime
 )
 {
@@ -306,7 +308,7 @@ void AudioWaveformComponent::updateSelectedRegion(
 	listeners.call([this](Listener& l) { l.selectedRegionChanged(this); });
 }
 
-void AudioWaveformComponent::clearSelectedRegion()
+void EnvelopeComponent::clearSelectedRegion()
 {
 	hasSelectedRegion = false;
 	selectedRegionStartTime = 0.0;
@@ -316,47 +318,46 @@ void AudioWaveformComponent::clearSelectedRegion()
 	listeners.call([this](Listener& l) { l.selectedRegionChanged(this); });
 }
 
-void AudioWaveformComponent::refresh()
+void EnvelopeComponent::refresh()
 {
-	waveform.refresh();
+	envelope_graphic_.refresh();
 }
 
-double AudioWaveformComponent::getVisibleRegionStartTime()
+double EnvelopeComponent::getVisibleRegionStartTime()
 {
 	return visibleRegionStartTime;
 }
 
-double AudioWaveformComponent::getVisibleRegionEndTime()
+double EnvelopeComponent::getVisibleRegionEndTime()
 {
 	return visibleRegionEndTime;
 }
 
-double AudioWaveformComponent::getSelectedRegionStartTime()
+double EnvelopeComponent::getSelectedRegionStartTime()
 {
 	return selectedRegionStartTime;
 }
 
-double AudioWaveformComponent::getSelectedRegionEndTime()
+double EnvelopeComponent::getSelectedRegionEndTime()
 {
 	return selectedRegionEndTime;
 }
 
-bool AudioWaveformComponent::getHasSelectedRegion()
+bool EnvelopeComponent::getHasSelectedRegion()
 {
 	return hasSelectedRegion;
 }
 
 // ==============================================================================
-
-void AudioWaveformComponent::paintIfNoFileLoaded(Graphics& g)
+void EnvelopeComponent::paintIfNoFileLoaded(Graphics& g)
 {
 	juce::Rectangle<float> thumbnailBounds = getLocalBounds().toFloat();
 	g.setColour(findColour(
-			AudioWaveformOpenGLComponent::ColourIds::waveformBackgroundColour)
+			EnvelopeOpenGLComponent::ColourIds::waveformBackgroundColour)
 	);
 	g.fillRect(thumbnailBounds);
 	g.setColour(findColour(
-			AudioWaveformOpenGLComponent::ColourIds::waveformColour)
+			EnvelopeOpenGLComponent::ColourIds::waveformColour)
 	);
 	g.drawFittedText(
 		"No File Loaded",
@@ -366,22 +367,22 @@ void AudioWaveformComponent::paintIfNoFileLoaded(Graphics& g)
 	);
 }
 
-void AudioWaveformComponent::setSelectedRegionStartTime(double newStartTime)
+void EnvelopeComponent::setSelectedRegionStartTime(double newStartTime)
 {
 	updateSelectedRegion(newStartTime, selectedRegionEndTime);
 }
 
-void AudioWaveformComponent::setSelectedRegionEndTime(double newEndTime)
+void EnvelopeComponent::setSelectedRegionEndTime(double newEndTime)
 {
 	updateSelectedRegion(selectedRegionStartTime, newEndTime);
 }
 
-double AudioWaveformComponent::getVisibleRegionLengthInSeconds()
+double EnvelopeComponent::getVisibleRegionLengthInSeconds()
 {
 	return visibleRegionEndTime - visibleRegionStartTime;
 }
 
-void AudioWaveformComponent::updateSelectedRegion(double mouseDownSeconds)
+void EnvelopeComponent::updateSelectedRegion(double mouseDownSeconds)
 {
 	double distanceFromStartOfDragSeconds =
 		       std::abs(mouseDownSeconds - selectedRegionStartTime),
@@ -398,7 +399,7 @@ void AudioWaveformComponent::updateSelectedRegion(double mouseDownSeconds)
 	}
 }
 
-bool AudioWaveformComponent::isVisibleRegionCorrect(
+bool EnvelopeComponent::isVisibleRegionCorrect(
 	double startTime, double endTime
 )
 {
@@ -412,9 +413,9 @@ bool AudioWaveformComponent::isVisibleRegionCorrect(
 			endTime <= getTotalLength());
 }
 
-unsigned int AudioWaveformComponent::getSamplesDiff(double startTime, double endTime)
+unsigned int EnvelopeComponent::getSamplesDiff(double startTime, double endTime)
 {
-	int64 startSample = (int64)(startTime * sampleRate),
-	      endSample = (int64)(endTime * sampleRate);
+	int64 startSample = (int64)(startTime * rms_sample_rate_),
+	      endSample = (int64)(endTime * rms_sample_rate_);
 	return (unsigned int)(endSample - startSample);
 }

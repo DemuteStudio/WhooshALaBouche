@@ -1,15 +1,17 @@
-#include "AudioWaveformSelectedRegionComponent.h"
+#include "EnvelopeSelectedRegionComponent.h"
 
-AudioWaveformSelectedRegionComponent::AudioWaveformSelectedRegionComponent ()
+#include "../TenFtUtil.h"
+
+EnvelopeSelectedRegionComponent::EnvelopeSelectedRegionComponent ()
 {
     setInterceptsMouseClicks (false, true);
 }
 
-AudioWaveformSelectedRegionComponent::~AudioWaveformSelectedRegionComponent ()
+EnvelopeSelectedRegionComponent::~EnvelopeSelectedRegionComponent ()
 {
 }
 
-void AudioWaveformSelectedRegionComponent::paint (Graphics& g)
+void EnvelopeSelectedRegionComponent::paint (Graphics& g)
 {
     juce::Rectangle<float> thumbnailBounds = getLocalBounds ().toFloat ();
     bool hasIntersectionWithSelectedRegion = !(
@@ -56,15 +58,15 @@ void AudioWaveformSelectedRegionComponent::paint (Graphics& g)
     }
 }
 
-void AudioWaveformSelectedRegionComponent::resized ()
+void EnvelopeSelectedRegionComponent::resized ()
 {
     setBounds (getLocalBounds ());
 }
 
 // ==============================================================================
 
-void AudioWaveformSelectedRegionComponent::visibleRegionChanged (
-    AudioWaveformComponent* waveform
+void EnvelopeSelectedRegionComponent::visibleRegionChanged (
+    EnvelopeComponent* waveform
 )
 {
     visibleRegionStartTime = waveform->getVisibleRegionStartTime ();
@@ -72,8 +74,8 @@ void AudioWaveformSelectedRegionComponent::visibleRegionChanged (
     repaint ();
 }
 
-void AudioWaveformSelectedRegionComponent::selectedRegionChanged (
-    AudioWaveformComponent* waveform
+void EnvelopeSelectedRegionComponent::selectedRegionChanged (
+    EnvelopeComponent* waveform
 )
 {
     hasSelectedRegion = waveform->getHasSelectedRegion ();

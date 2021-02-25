@@ -28,7 +28,7 @@ TenFtLookAndFeel::TenFtLookAndFeel()
 	    waveformSelectedRegionBackgroundColourId =
 		    AudioWaveformSelectedRegionComponent::ColourIds::waveformSelectedRegionBackgroundColour,
 	    lineColourId =
-		    AudioPlaybackPositionComponent::ColourIds::lineColour;
+		    AudioPlaybackPositionComponent::ColourIds::line_colour;
 
 	setColour(waveformColourId, contrastingColour);
 	setColour(waveformBackgroundColourId, mainColour.contrasting(0.2f));
