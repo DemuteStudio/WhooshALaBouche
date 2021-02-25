@@ -3,8 +3,8 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 
 #include "../OpenGLComponent.h"
+#include "Envelope.h"
 
-class envelope;
 using namespace juce;
 
 class EnvelopeOpenGLComponent : public OpenGLComponent
@@ -27,7 +27,7 @@ public:
 
 	void render(OpenGLContext& openGLContext) override;
 
-	void load(AudioSampleBuffer* buffer, const CriticalSection* bufferUpdateLock);
+	void load(envelope* buffer, const CriticalSection* bufferUpdateLock);
 
 	void display(int64 startSample, int64 numSamples);
 

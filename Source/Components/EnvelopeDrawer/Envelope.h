@@ -4,7 +4,7 @@
 class envelope
 {
 public:
-	struct envelope_node
+	class envelope_node
 	{
 		envelope_node(int _sample, int _value): sample(_sample), value(_value)
 		{
@@ -14,5 +14,9 @@ public:
 		float value = 0;
 	};
 
-	std::list<envelope_node> list_;
+	envelope();
+	~envelope();
+
+	std::vector<envelope_node> list_;
+	int get_size();
 };

@@ -1,7 +1,7 @@
 #include "EnvelopeOpenGLComponent.h"
 
 
-EnvelopeOpenGLComponent::EnvelopeOpenGLComponent ()
+EnvelopeOpenGLComponent::EnvelopeOpenGLComponent (): envelope_()
 {
     setInterceptsMouseClicks (false, true);
 }
@@ -147,6 +147,7 @@ void EnvelopeOpenGLComponent::load (envelope* new_envelope,
     const CriticalSection* bufferUpdateLock)
 {
     envelope_= new_envelope;
+	
     // bufferNumChannels = ->getNumChannels ();
     visibleRegionStartSample = 0;
     // visibleRegionNumSamples = buffer->getNumSamples ();
@@ -157,7 +158,7 @@ void EnvelopeOpenGLComponent::load (envelope* new_envelope,
     for (int i = 0; i < bufferNumChannels; i++)
     {
         vertices.push_back (std::vector<Vertex>());
-        vertices.back ().reserve (buffer->getNumSamples ());
+        vertices.back ().reserve (envelope_->get_size());
     }
 }
 
@@ -182,7 +183,7 @@ void EnvelopeOpenGLComponent::calculateVertices (unsigned int channel)
     // of the current file. The larger the file the less samples 
     // we use when zoomed out
     skipSamples = (unsigned int) (
-        visibleRegionNumSamples / (buffer->getNumSamples () * 0.04)
+        visibleRegionNumSamples / (envelope_->get_size() * 0.04)
     );
     skipSamples = (skipSamples > 0) ? skipSamples : 1;
     // Alternative approach:
