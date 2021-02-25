@@ -3,8 +3,12 @@
 
 //==============================================================================
 WhooshGeneratorAudioProcessorEditor::WhooshGeneratorAudioProcessorEditor(WhooshGeneratorAudioProcessor& p)
-	: AudioProcessorEditor(&p), audioProcessor(p), recorder_(), parameters_box_(p.sample_rate), envelope_array_(&p.rms_envelope)
+	: AudioProcessorEditor(&p), audioProcessor(p), recorder_(), parameters_box_(p.sample_rate),
+	  envelope_array_(&p.rms_envelope)
 {
+	setLookAndFeel(&tenFtLookAndFeel);
+
+	audio_source = &audioProcessor.getAudioSource();
 	addAndMakeVisible(recorder_);
 	addAndMakeVisible(parameters_box_);
 
@@ -68,7 +72,6 @@ WhooshGeneratorAudioProcessorEditor::WhooshGeneratorAudioProcessorEditor(WhooshG
 		};
 
 	addAndMakeVisible(&waveform);
-	addAndMakeVisible(&scroller);
 	waveform.addAndMakeVisible(&selectedRegion);
 	waveform.addAndMakeVisible(&playbackPosition);
 
@@ -76,12 +79,14 @@ WhooshGeneratorAudioProcessorEditor::WhooshGeneratorAudioProcessorEditor(WhooshG
 	envelope_.addAndMakeVisible(envelope_selected_region_);
 	envelope_.addAndMakeVisible(envelope_playback_position_);
 	envelope_.addListener(&envelope_selected_region_);
-	envelope_.addListener((EnvelopeComponent::Listener*)&envelope_playback_position_);
+	envelope_.addListener(&envelope_playback_position_);
+
+	addAndMakeVisible(&scroller);
 
 	waveform.addListener(audio_source);
 	waveform.addListener(&scroller);
 	waveform.addListener(&selectedRegion);
-	waveform.addListener((AudioWaveformComponent::Listener*)&playbackPosition);
+	waveform.addListener(&playbackPosition);
 	waveform.onPositionChange = [this](double newPosition)
 	{
 		audio_source->setPosition(newPosition);
@@ -103,6 +108,7 @@ WhooshGeneratorAudioProcessorEditor::WhooshGeneratorAudioProcessorEditor(WhooshG
 
 WhooshGeneratorAudioProcessorEditor::~WhooshGeneratorAudioProcessorEditor()
 {
+	setLookAndFeel(nullptr);
 }
 
 //==============================================================================
@@ -121,23 +127,29 @@ void WhooshGeneratorAudioProcessorEditor::resized()
 	const int height = rectangle.getHeight();
 	int width = rectangle.getWidth();
 
-	recorder_.setBounds(rectangle.removeFromTop((height / 5) * 4));
-	parameters_box_.setBounds(rectangle);
+	const int row_height = height / 15;
+	int delta = 5;
 
-	// auto main_rectangle = row4;
-	// waveform.setBounds(
-	// 	main_rectangle.removeFromTop(main_rectangle.getHeight() / 2).reduced(delta)
-	// );
-	// envelope_.setBounds(main_rectangle.reduced(delta));
-	// selectedRegion.setBounds(
-	// 	row4.reduced(delta)
-	// );
-	// playbackPosition.setBounds(
-	// 	row4.reduced(delta)
-	// );
-	// scroller.setBounds(
-	// 	row5.reduced(delta).toNearestInt()
-	// );
+	recorder_.setBounds(rectangle.removeFromTop(row_height * 3));
+
+	parameters_box_.setBounds(rectangle.removeFromBottom(row_height * 2));
+	scroller.setBounds(rectangle.removeFromBottom(row_height).reduced(delta));
+
+
+	auto main_rectangle = rectangle;
+	waveform.setBounds(
+		main_rectangle.removeFromTop(main_rectangle.getHeight() / 2).reduced(delta)
+	);
+	playbackPosition.setBounds(
+		waveform.getBounds()
+	);
+	envelope_playback_position_.setBounds(
+		envelope_.getBounds()
+	);
+	envelope_.setBounds(main_rectangle.reduced(delta));
+	selectedRegion.setBounds(
+		rectangle.reduced(delta)
+	);
 }
 
 void WhooshGeneratorAudioProcessorEditor::sliderValueChanged(Slider* slider)
@@ -148,7 +160,8 @@ void WhooshGeneratorAudioProcessorEditor::sliderValueChanged(Slider* slider)
 	}
 	if (slider->getName() == "rms_length")
 	{
-		audioProcessor.rms_blocks_length = get_number_of_blocks_from_milliseconds(processor.getSampleRate(), slider->getValue(), processor.getBlockSize());
+		audioProcessor.rms_blocks_length = get_number_of_blocks_from_milliseconds(
+			processor.getSampleRate(), slider->getValue(), processor.getBlockSize());
 	}
 }
 
@@ -156,7 +169,7 @@ void WhooshGeneratorAudioProcessorEditor::sliderValueChanged(Slider* slider)
 int WhooshGeneratorAudioProcessorEditor::get_number_of_blocks_from_milliseconds(
 	double sample_rate, const float length_in_milliseconds, int samples_per_block)
 {
-	return (int)(((sample_rate / 1000) * length_in_milliseconds)/samples_per_block);
+	return (int)(((sample_rate / 1000) * length_in_milliseconds) / samples_per_block);
 }
 
 void WhooshGeneratorAudioProcessorEditor::timerCallback()
@@ -191,9 +204,10 @@ void WhooshGeneratorAudioProcessorEditor::enableRecording()
 	startTimer(100);
 
 	recorder_.enableButtons({
-		              &recorder_.playButton, &recorder_.stopButton, &recorder_.loopButton,
-		              &recorder_.muteButton, &recorder_.fadeInButton, &recorder_.fadeOutButton, &recorder_.normalizeButton
-	              }, false);
+		                        &recorder_.playButton, &recorder_.stopButton, &recorder_.loopButton,
+		                        &recorder_.muteButton, &recorder_.fadeInButton, &recorder_.fadeOutButton,
+		                        &recorder_.normalizeButton
+	                        }, false);
 	recorder_.recordButton.setButtonText("Stop Recording");
 	recorder_.recordButton.setToggleState(true, NotificationType::dontSendNotification);
 }
@@ -205,9 +219,10 @@ void WhooshGeneratorAudioProcessorEditor::disableRecording()
 	audio_source->stopRecording();
 
 	recorder_.enableButtons({
-		              &recorder_.playButton, &recorder_.stopButton, &recorder_.loopButton,
-		              &recorder_.muteButton, &recorder_.fadeInButton, &recorder_.fadeOutButton, &recorder_.normalizeButton
-	              }, true);
+		                        &recorder_.playButton, &recorder_.stopButton, &recorder_.loopButton,
+		                        &recorder_.muteButton, &recorder_.fadeInButton, &recorder_.fadeOutButton,
+		                        &recorder_.normalizeButton
+	                        }, true);
 	recorder_.recordButton.setButtonText("Record");
 	recorder_.recordButton.setToggleState(false, NotificationType::dontSendNotification);
 }

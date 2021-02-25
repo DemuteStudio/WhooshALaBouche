@@ -44,7 +44,6 @@ Recorder::Recorder()
 	normalizeButton.setEnabled(false);
 
 	addAndMakeVisible(&clock);
-
 }
 
 Recorder::~Recorder()
@@ -59,12 +58,10 @@ void Recorder::resized()
 	float width = bounds.getWidth(),
 	      height = bounds.getHeight(),
 	      delta = 5.0f;
-	int button_row_height = height / 20;
+	int button_row_height = height / 3;
 	juce::Rectangle<int> row1 = bounds.removeFromTop(button_row_height),
 	                     row2 = bounds.removeFromTop(button_row_height),
-	                     row3 = bounds.removeFromTop(button_row_height),
-	                     row5 = bounds.removeFromBottom(button_row_height),
-	                     row4 = bounds.reduced(delta);
+	                     row3 = bounds.removeFromTop(button_row_height);
 
 	recordButton.setBounds(
 		row1.removeFromLeft(width * 0.5f).reduced(delta)
@@ -122,4 +119,3 @@ void Recorder::enableButtons(
 		button->setEnabled(enable);
 	}
 }
-

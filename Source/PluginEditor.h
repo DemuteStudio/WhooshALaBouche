@@ -67,6 +67,7 @@ private:
 
 	my_audio_source* audio_source;
 
+	TenFtLookAndFeel tenFtLookAndFeel;
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(WhooshGeneratorAudioProcessorEditor)
 };

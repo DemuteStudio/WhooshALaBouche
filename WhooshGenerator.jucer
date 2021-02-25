@@ -49,6 +49,9 @@
               resource="0" file="Source/Components/AudioWaveformSelectedRegionComponent.cpp"/>
         <FILE id="DjZeXv" name="AudioWaveformSelectedRegionComponent.h" compile="0"
               resource="0" file="Source/Components/AudioWaveformSelectedRegionComponent.h"/>
+        <FILE id="TdXB1N" name="myAudioSource.cpp" compile="1" resource="0"
+              file="Source/Components/myAudioSource.cpp"/>
+        <FILE id="NpZLQz" name="myAudioSource.h" compile="0" resource="0" file="Source/Components/myAudioSource.h"/>
         <FILE id="eN60mY" name="OpenGLComponent.h" compile="0" resource="0"
               file="Source/Components/OpenGLComponent.h"/>
         <FILE id="L4cLYz" name="ParametersBox.cpp" compile="1" resource="0"
@@ -56,10 +59,6 @@
         <FILE id="e1mr4v" name="ParametersBox.h" compile="0" resource="0" file="Source/Components/ParametersBox.h"/>
         <FILE id="XzJNMV" name="Recorder.cpp" compile="1" resource="0" file="Source/Components/Recorder.cpp"/>
         <FILE id="FhKfD8" name="Recorder.h" compile="0" resource="0" file="Source/Components/Recorder.h"/>
-        <FILE id="Ytcwcv" name="TenFtAudioSource.cpp" compile="1" resource="0"
-              file="Source/Components/TenFtAudioSource.cpp"/>
-        <FILE id="sazW4c" name="TenFtAudioSource.h" compile="0" resource="0"
-              file="Source/Components/TenFtAudioSource.h"/>
         <FILE id="Yws4ix" name="TenFtLookAndFeel.cpp" compile="1" resource="0"
               file="Source/Components/TenFtLookAndFeel.cpp"/>
         <FILE id="RoKsYj" name="TenFtLookAndFeel.h" compile="0" resource="0"
