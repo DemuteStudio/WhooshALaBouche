@@ -1,7 +1,6 @@
 #include "Recorder.h"
 
-Recorder::Recorder(my_audio_source& audioSourceToUse, envelope& _envelope): audioSource(audioSourceToUse),
-                                                                           envelope_array_(&_envelope)
+Recorder::Recorder()
 {
 	setLookAndFeel(&tenFtLookAndFeel);
 
@@ -11,25 +10,13 @@ Recorder::Recorder(my_audio_source& audioSourceToUse, envelope& _envelope): audi
 	recordButton.setToggleState(false,
 	                            NotificationType::dontSendNotification
 	);
-	recordButton.onClick = [this]
-	{
-		recordButtonClicked();
-	};
 
 	addAndMakeVisible(&playButton);
 	playButton.setButtonText("Play");
-	playButton.onClick = [this]
-	{
-		audioSource.playAudio();
-	};
 	playButton.setEnabled(false);
 
 	addAndMakeVisible(&stopButton);
 	stopButton.setButtonText("Stop");
-	stopButton.onClick = [this]
-	{
-		audioSource.stopAudio();
-	};
 	stopButton.setEnabled(false);
 
 	addAndMakeVisible(&loopButton);
@@ -38,89 +25,26 @@ Recorder::Recorder(my_audio_source& audioSourceToUse, envelope& _envelope): audi
 	loopButton.setToggleState(false,
 	                          NotificationType::dontSendNotification
 	);
-	loopButton.onClick = [this]
-	{
-		loopButtonClicked();
-	};
 	loopButton.setEnabled(false);
 
 	addAndMakeVisible(&muteButton);
 	muteButton.setButtonText("Mute");
-	muteButton.onClick = [this]
-	{
-		audioSource.muteAudio();
-		waveform.refresh();
-	};
 	muteButton.setEnabled(false);
 
 	addAndMakeVisible(&fadeInButton);
 	fadeInButton.setButtonText("Fade In");
-	fadeInButton.onClick = [this]
-	{
-		audioSource.fadeInAudio();
-		waveform.refresh();
-	};
 	fadeInButton.setEnabled(false);
 
 	addAndMakeVisible(&fadeOutButton);
 	fadeOutButton.setButtonText("Fade Out");
-	fadeOutButton.onClick = [this]
-	{
-		audioSource.fadeOutAudio();
-		waveform.refresh();
-	};
 	fadeOutButton.setEnabled(false);
 
 	addAndMakeVisible(&normalizeButton);
 	normalizeButton.setButtonText("Normalize");
-	normalizeButton.onClick = [this]
-	{
-		audioSource.normalizeAudio();
-		waveform.refresh();
-	};
 	normalizeButton.setEnabled(false);
 
-	formatManager.registerBasicFormats();
-
-	audioSource.addListener(&clock);
-	audioSource.addListener((my_audio_source::Listener*)&playbackPosition);
-	audioSource.onStateChange = [this](
-		my_audio_source::State state
-	)
-		{
-			onAudioSourceStateChange(state);
-		};
-
-	addAndMakeVisible(&waveform);
-	addAndMakeVisible(&scroller);
 	addAndMakeVisible(&clock);
-	waveform.addAndMakeVisible(&selectedRegion);
-	waveform.addAndMakeVisible(&playbackPosition);
 
-	addAndMakeVisible(envelope_);
-	envelope_.addAndMakeVisible(envelope_selected_region_);
-	envelope_.addAndMakeVisible(envelope_playback_position_);
-	envelope_.addListener(&envelope_selected_region_);
-	envelope_.addListener((EnvelopeComponent::Listener*)&envelope_playback_position_);
-
-	waveform.addListener(&audioSource);
-	waveform.addListener(&scroller);
-	waveform.addListener(&selectedRegion);
-	waveform.addListener((AudioWaveformComponent::Listener*)&playbackPosition);
-	waveform.onPositionChange = [this](double newPosition)
-	{
-		audioSource.setPosition(newPosition);
-	};
-
-	scroller.addListener(&waveform);
-	scroller.addListener(&envelope_);
-	scroller.onMouseWheelMove = [this](
-		const MouseEvent& event,
-		const MouseWheelDetails& wheelDetails
-	)
-		{
-			waveform.mouseWheelMove(event, wheelDetails);
-		};
 }
 
 Recorder::~Recorder()
@@ -169,20 +93,6 @@ void Recorder::resized()
 	normalizeButton.setBounds(
 		row3.removeFromLeft(width / 4.0f).reduced(delta)
 	);
-	auto main_rectangle = row4;
-	waveform.setBounds(
-		main_rectangle.removeFromTop(main_rectangle.getHeight() / 2).reduced(delta)
-	);
-	envelope_.setBounds(main_rectangle.reduced(delta));
-	selectedRegion.setBounds(
-		row4.reduced(delta)
-	);
-	playbackPosition.setBounds(
-		row4.reduced(delta)
-	);
-	scroller.setBounds(
-		row5.reduced(delta).toNearestInt()
-	);
 }
 
 void Recorder::paint(Graphics& g)
@@ -194,77 +104,6 @@ void Recorder::paint(Graphics& g)
 
 // ==============================================================================
 
-void Recorder::recordButtonClicked()
-{
-	!recordButton.getToggleState() ? enableRecording() : disableRecording();
-}
-
-void Recorder::enableRecording()
-{
-	waveform.clearWaveform();
-	audioSource.unloadAudio();
-	scroller.disable();
-
-	AudioSampleBuffer* tempAudioBuffer = audioSource.loadRecordingBuffer();
-	waveform.loadWaveform(
-		tempAudioBuffer, audioSource.getSampleRate(), audioSource.getBufferUpdateLock()
-	);
-	envelope_.load_envelope(
-		envelope_array_, audioSource.getSampleRate(), audioSource.getBufferUpdateLock()
-	);
-
-	audioBuffer.reset(tempAudioBuffer);
-
-	startTimer(100);
-
-	enableButtons({
-		              &playButton, &stopButton, &loopButton,
-		              &muteButton, &fadeInButton, &fadeOutButton, &normalizeButton
-	              }, false);
-	recordButton.setButtonText("Stop Recording");
-	recordButton.setToggleState(true, NotificationType::dontSendNotification);
-}
-
-void Recorder::disableRecording()
-{
-	stopTimer();
-
-	audioSource.stopRecording();
-
-	enableButtons({
-		              &playButton, &stopButton, &loopButton,
-		              &muteButton, &fadeInButton, &fadeOutButton, &normalizeButton
-	              }, true);
-	recordButton.setButtonText("Record");
-	recordButton.setToggleState(false, NotificationType::dontSendNotification);
-}
-
-void Recorder::loopButtonClicked()
-{
-	audioSource.setLooping(loopButton.getToggleState());
-}
-
-void Recorder::onAudioSourceStateChange(
-	my_audio_source::State state
-)
-{
-	if (state == my_audio_source::Stopped)
-	{
-		setupButton(playButton, "Play", true);
-		setupButton(stopButton, "Stop", false);
-		waveform.clearSelectedRegion();
-	}
-	else if (state == my_audio_source::Playing)
-	{
-		setupButton(playButton, "Pause", true);
-		setupButton(stopButton, "Stop", true);
-	}
-	else if (state == my_audio_source::Paused)
-	{
-		setupButton(playButton, "Play", true);
-		setupButton(stopButton, "Return To Zero", true);
-	}
-}
 
 void Recorder::setupButton(
 	TextButton& button, std::string buttonText, bool enabled
@@ -284,9 +123,3 @@ void Recorder::enableButtons(
 	}
 }
 
-void Recorder::timerCallback()
-{
-	double newEndTime = (double)audioBuffer->getNumSamples() / audioSource.getSampleRate();
-	waveform.updateVisibleRegion(0.0, newEndTime);
-	envelope_.updateVisibleRegion(0.0, newEndTime);
-}

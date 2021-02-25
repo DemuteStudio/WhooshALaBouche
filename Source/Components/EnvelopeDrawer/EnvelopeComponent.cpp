@@ -20,7 +20,7 @@ EnvelopeComponent::EnvelopeComponent()
 EnvelopeComponent::~EnvelopeComponent()
 {
 	openGLContext.detach();
-	audioBuffer = nullptr;
+	envelope_ = nullptr;
 }
 
 void EnvelopeComponent::newOpenGLContextCreated()
@@ -237,15 +237,15 @@ void EnvelopeComponent::removeListener(Listener* listener)
 
 void EnvelopeComponent::load_envelope(
 	envelope* new_envelope,
-	double newSampleRate,
+	double new_rms_sample_rate,
 	const CriticalSection* bufferUpdateLock
 )
 {
 	envelope_ = new_envelope;
-	sampleRate = newSampleRate;
+	rms_sample_rate_ = new_rms_sample_rate;
 
 	openGLContext.detach();
-	envelope_graphic_.load(, bufferUpdateLock);
+	envelope_graphic_.load(envelope_, bufferUpdateLock);
 	openGLContext.attachTo(*this);
 
 	updateVisibleRegion(0.0f, getTotalLength());
@@ -253,8 +253,8 @@ void EnvelopeComponent::load_envelope(
 
 void EnvelopeComponent::clearWaveform()
 {
-	audioBuffer = nullptr;
-	sampleRate = 0.0;
+	envelope_= nullptr;
+	rms_sample_rate_ = 0.0;
 	clearSelectedRegion();
 	updateVisibleRegion(0.0f, 0.0f);
 	listeners.call([this](Listener& l) { l.thumbnailCleared(this); });
@@ -262,7 +262,7 @@ void EnvelopeComponent::clearWaveform()
 
 double EnvelopeComponent::getTotalLength()
 {
-	return audioBuffer != nullptr ? audioBuffer->getNumSamples() / sampleRate : 0.0;
+	return envelope_ != nullptr ? envelope_->get_size() / rms_sample_rate_ : 0.0;
 }
 
 void EnvelopeComponent::updateVisibleRegion(
@@ -286,8 +286,8 @@ void EnvelopeComponent::updateVisibleRegion(
 	visibleRegionStartTime = start_time_flattened;
 	visibleRegionEndTime = end_time_flattened;
 
-	int64 startSample = (int64)(visibleRegionStartTime * sampleRate),
-	      endSample = (int64)(visibleRegionEndTime * sampleRate),
+	int64 startSample = (int64)(visibleRegionStartTime * rms_sample_rate_),
+	      endSample = (int64)(visibleRegionEndTime * rms_sample_rate_),
 	      numSamples = endSample - startSample;
 	envelope_graphic_.display(startSample, numSamples);
 
@@ -415,7 +415,7 @@ bool EnvelopeComponent::isVisibleRegionCorrect(
 
 unsigned int EnvelopeComponent::getSamplesDiff(double startTime, double endTime)
 {
-	int64 startSample = (int64)(startTime * sampleRate),
-	      endSample = (int64)(endTime * sampleRate);
+	int64 startSample = (int64)(startTime * rms_sample_rate_),
+	      endSample = (int64)(endTime * rms_sample_rate_);
 	return (unsigned int)(endSample - startSample);
 }

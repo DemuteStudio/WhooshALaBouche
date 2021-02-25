@@ -4,7 +4,7 @@
 class envelope
 {
 public:
-	class envelope_node
+	struct envelope_node
 	{
 		envelope_node(int _sample, int _value): sample(_sample), value(_value)
 		{

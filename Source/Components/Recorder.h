@@ -10,37 +10,20 @@
 #include "EnvelopeDrawer/Envelope.h"
 #include "EnvelopeDrawer/EnvelopeComponent.h"
 #include "EnvelopeDrawer/EnvelopeSelectedRegionComponent.h"
+#include "EnvelopeDrawer/Envelope.h"
 
-class envelope;
 using namespace juce;
 
-class Recorder : public Component,
-                 private Timer
+class Recorder : public Component
 {
 public:
-	Recorder(my_audio_source& audioSource, envelope& _envelope);
+	Recorder();
 
 	~Recorder();
 
 	void resized() override;
 
 	void paint(Graphics& g) override;
-	void Recorder::onAudioSourceStateChange(my_audio_source::State state);
-
-private:
-	void openButtonClicked();
-
-	void loadFile(AudioFormatReader* audioReader);
-
-	void unloadFile();
-
-	void recordButtonClicked();
-
-	void enableRecording();
-
-	void disableRecording();
-
-	void loopButtonClicked();
 
 	void setupButton(
 		TextButton& button,
@@ -48,12 +31,7 @@ private:
 		bool enabled
 	);
 
-	void enableButtons(std::initializer_list<Button*> buttons, bool enable);
 
-	void timerCallback() override;
-
-
-private:
 	TextButton recordButton;
 	TextButton playButton;
 	TextButton stopButton;
@@ -62,25 +40,11 @@ private:
 	TextButton fadeInButton;
 	TextButton fadeOutButton;
 	TextButton normalizeButton;
-
-	AudioFormatManager formatManager;
-	std::unique_ptr<AudioSampleBuffer> audioBuffer;
-
-	AudioWaveformComponent waveform;
-	AudioWaveformSelectedRegionComponent selectedRegion;
-	AudioPlaybackPositionComponent playbackPosition;
-
-
-	EnvelopeComponent envelope_;
-	EnvelopeSelectedRegionComponent envelope_selected_region_;
-	AudioPlaybackPositionComponent envelope_playback_position_;
-	envelope* envelope_array_;
-	
-
 	AudioClockComponent clock;
-	AudioScrollerComponent scroller;
 
-	my_audio_source& audioSource;
+
+	void enableButtons(std::initializer_list<Button*> buttons, bool enable);
+private:
 
 
 	TenFtLookAndFeel tenFtLookAndFeel;

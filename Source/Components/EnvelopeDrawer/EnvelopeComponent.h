@@ -69,7 +69,7 @@ public:
 
     void load_envelope (
         envelope* new_envelope,
-        double newSampleRate,
+        double new_rms_sample_rate,
         const CriticalSection* bufferUpdateLock = nullptr
     );
 
@@ -116,7 +116,7 @@ private:
 private:
     OpenGLContext openGLContext;
     envelope* envelope_ = nullptr;
-    double sampleRate = 0.0;
+    double rms_sample_rate_ = 0.0;
     EnvelopeOpenGLComponent envelope_graphic_;
     double visibleRegionStartTime = 0.0;
     double visibleRegionEndTime = 0.0;
