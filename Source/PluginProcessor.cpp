@@ -179,10 +179,14 @@ void WhooshGeneratorAudioProcessor::processBlock(juce::AudioBuffer<float>& buffe
 		if (block_index >= rms_blocks_length)
 		{
 			last_rms_value = sqrt(samples_squares_sum / bufferToFill.numSamples);
-			rms_envelope.list_.push_back(envelope::envelope_node(audio_buffer.getNumSamples(), last_rms_value));
+			rms_envelope.list_.emplace_back(0, last_rms_value);
 
 			samples_squares_sum = 0.0;
 			block_index = 0;
+		}
+		else
+		{
+			block_index++;
 		}
 
 		audioSource.getNextAudioBlock(bufferToFill);
@@ -217,6 +221,13 @@ void WhooshGeneratorAudioProcessor::setStateInformation(const void* data, int si
 my_audio_source& WhooshGeneratorAudioProcessor::getAudioSource()
 {
 	return audioSource;
+}
+
+envelope* WhooshGeneratorAudioProcessor::load_new_envelope()
+{
+	rms_envelope = envelope();
+	return &rms_envelope;
+
 }
 
 

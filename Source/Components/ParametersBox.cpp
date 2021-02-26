@@ -2,7 +2,7 @@
 #include "ParametersBox.h"
 
 //==============================================================================
-ParametersBox::ParametersBox(double sampleRate)
+ParametersBox::ParametersBox(double samples_per_block)
 {
 	threshold_slider = std::make_unique<Slider>();
 	threshold_slider->setSliderStyle(Slider::LinearHorizontal);
@@ -18,7 +18,7 @@ ParametersBox::ParametersBox(double sampleRate)
 	rms_length_slider->setSliderStyle(Slider::LinearHorizontal);
 	addAndMakeVisible(rms_length_slider.get());
 	rms_length_slider->setName("rms_length");
-	rms_length_slider->setRange(20.0, sampleRate*10);
+	rms_length_slider->setRange(20.0, samples_per_block*10);
 
 	addAndMakeVisible(rms_length_label);
 	rms_length_label.setText("RMS Length", NotificationType::dontSendNotification);

@@ -3,7 +3,7 @@
 
 //==============================================================================
 WhooshGeneratorAudioProcessorEditor::WhooshGeneratorAudioProcessorEditor(WhooshGeneratorAudioProcessor& p)
-	: AudioProcessorEditor(&p), audioProcessor(p), recorder_(), parameters_box_(p.sample_rate),
+	: AudioProcessorEditor(&p), audioProcessor(p), recorder_(), parameters_box_(p.getBlockSize()),
 	  envelope_array_(&p.rms_envelope)
 {
 	setLookAndFeel(&tenFtLookAndFeel);
@@ -13,7 +13,6 @@ WhooshGeneratorAudioProcessorEditor::WhooshGeneratorAudioProcessorEditor(WhooshG
 	addAndMakeVisible(parameters_box_);
 
 	parameters_box_.add_listener(this);
-
 
 	//Previous Recorder
 	recorder_.recordButton.onClick = [this]
@@ -188,6 +187,7 @@ void WhooshGeneratorAudioProcessorEditor::recordButtonClicked()
 void WhooshGeneratorAudioProcessorEditor::enableRecording()
 {
 	waveform.clearWaveform();
+	envelope_.clearWaveform();
 	audio_source->unloadAudio();
 	scroller.disable();
 
@@ -195,8 +195,10 @@ void WhooshGeneratorAudioProcessorEditor::enableRecording()
 	waveform.loadWaveform(
 		tempAudioBuffer, audio_source->getSampleRate(), audio_source->getBufferUpdateLock()
 	);
+	const float rms_sample_rate = 1000. / parameters_box_.rms_length_slider->getValue();
+	envelope* temp_envelope_buffer = audioProcessor.load_new_envelope();
 	envelope_.load_envelope(
-		envelope_array_, audio_source->getSampleRate(), audio_source->getBufferUpdateLock()
+		temp_envelope_buffer, rms_sample_rate, audio_source->getBufferUpdateLock()
 	);
 
 	audioBuffer.reset(tempAudioBuffer);

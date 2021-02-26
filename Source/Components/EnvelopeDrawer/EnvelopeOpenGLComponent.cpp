@@ -152,7 +152,7 @@ void EnvelopeOpenGLComponent::load(envelope* new_envelope,
 	visibleRegionStartSample = 0;
 	// visibleRegionNumSamples = buffer->getNumSamples ();
 	bufferUpdateLock_ = bufferUpdateLock;
-
+	bufferNumChannels = 1;
 	vertices.clear();
 	vertices.reserve(bufferNumChannels);
 	for (int i = 0; i < bufferNumChannels; i++)
@@ -203,7 +203,7 @@ void EnvelopeOpenGLComponent::calculateVertices(unsigned int channel)
 	     sample < endSample;
 	     sample += skipSamples, vertice++)
 	{
-		GLfloat sampleValue = envelope_->list_[sample].sample;
+		GLfloat sampleValue = envelope_->list_[sample].value;
 
 		Vertex vertex;
 		// should be in the [-1,+1] range

@@ -276,7 +276,7 @@ void EnvelopeComponent::updateVisibleRegion(
 	const double end_time_flattened = util::flattenSeconds(
 		newEndTime, total_length);
 
-	jassert(isVisibleRegionCorrect (start_time_flattened, end_time_flattened));
+	// jassert(isVisibleRegionCorrect (start_time_flattened, end_time_flattened));
 
 	if (getSamplesDiff(start_time_flattened, end_time_flattened) < 20)
 	{

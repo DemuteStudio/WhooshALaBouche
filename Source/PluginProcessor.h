@@ -62,6 +62,7 @@ public:
 	bool hasEditor() const override;
 	//==============================================================================
 	my_audio_source& getAudioSource();
+	envelope* load_new_envelope();
 
 	double sample_rate;
 	float last_rms_value = 1.0;
