@@ -203,7 +203,8 @@ void EnvelopeOpenGLComponent::calculateVertices(unsigned int channel)
 	     sample < endSample;
 	     sample += skipSamples, vertice++)
 	{
-		GLfloat sampleValue = envelope_->list_[sample].value;
+        GLfloat sampleValue = getPeakSampleValue (envelope_->list_, sample,
+            jmin ((int64)skipSamples, endSample - sample));
 
 		Vertex vertex;
 		// should be in the [-1,+1] range
@@ -233,7 +234,7 @@ GLfloat EnvelopeOpenGLComponent::getAverageSampleValue(
 }
 
 GLfloat EnvelopeOpenGLComponent::getPeakSampleValue(
-	const float* samples,
+	std::vector<envelope::envelope_node> samples,
 	int64 currentStartSample,
 	int64 currentNumSamples)
 {
@@ -242,7 +243,7 @@ GLfloat EnvelopeOpenGLComponent::getPeakSampleValue(
 
 	for (int64 sample = currentStartSample; sample < endSample; sample++)
 	{
-		float sampleValue = samples[sample];
+		float sampleValue = samples[sample].value;
 		if (std::abs(peakValue) < std::abs(sampleValue))
 		{
 			peakValue = sampleValue;

@@ -41,7 +41,8 @@ private:
 	);
 
 	GLfloat getPeakSampleValue(
-		const float* samples, int64 startSample, int64 numSamples
+		std::vector<envelope::envelope_node> samples,
+		int64 startSample, int64 numSamples
 	);
 
 private:
@@ -54,7 +55,7 @@ private:
 	std::unique_ptr<OpenGLShaderProgram::Uniform> uniform;
 	std::unique_ptr<VertexBuffer> vertexBuffer;
 
-	envelope* envelope_= nullptr;
+	envelope* envelope_ = nullptr;
 	int bufferNumChannels = 0;
 	int64 visibleRegionStartSample = 0;
 	int64 visibleRegionNumSamples = 0;

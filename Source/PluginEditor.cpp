@@ -176,6 +176,12 @@ void WhooshGeneratorAudioProcessorEditor::timerCallback()
 	double newEndTime = (double)audioBuffer->getNumSamples() / audio_source->getSampleRate();
 	waveform.updateVisibleRegion(0.0, newEndTime);
 	envelope_.updateVisibleRegion(0.0, newEndTime);
+
+	// int rms_sample_rate = audioProcessor.getBlockSize()
+	// double newEndTime = (double)audioBuffer->getNumSamples() / audio_source->getSampleRate();
+	// double nexStartTime = newEndTime - 
+	// waveform.updateVisibleRegion(0.0, newEndTime);
+	// envelope_.updateVisibleRegion(0.0, newEndTime);
 }
 
 
