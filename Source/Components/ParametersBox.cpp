@@ -9,19 +9,26 @@ ParametersBox::ParametersBox(double samples_per_block)
 	addAndMakeVisible(threshold_slider.get());
 	threshold_slider->setName("threshold");
 	threshold_slider->setRange(0.0, 0.5);
+	threshold_slider->setTextBoxStyle(Slider::NoTextBox, true, 0, 0);
 
 	addAndMakeVisible(threshold_label);
 	threshold_label.setText("Threshold", NotificationType::dontSendNotification);
+
+	addAndMakeVisible(threshold_value_label);
+	threshold_value_label.setText("-Inf dB", NotificationType::dontSendNotification);
 
 
 	rms_length_slider = std::make_unique<Slider>();
 	rms_length_slider->setSliderStyle(Slider::LinearHorizontal);
 	addAndMakeVisible(rms_length_slider.get());
 	rms_length_slider->setName("rms_length");
-	rms_length_slider->setRange(20.0, samples_per_block*10);
+	rms_length_slider->setRange(samples_per_block*2000, samples_per_block*10000);
+	rms_length_slider->setTextBoxStyle(Slider::NoTextBox, true, 0, 0);
 
 	addAndMakeVisible(rms_length_label);
 	rms_length_label.setText("RMS Length", NotificationType::dontSendNotification);
+	addAndMakeVisible(rms_length_value_label);
+	rms_length_value_label.setText((String)rms_length_slider->getValue()+ " ms", NotificationType::dontSendNotification);
 }
 
 ParametersBox::~ParametersBox()
@@ -54,14 +61,14 @@ void ParametersBox::resized()
 
 	auto threshold_rectangle = rectangle.removeFromTop(slider_height);
 	threshold_label.setBounds(threshold_rectangle.removeFromLeft(150));
+	threshold_value_label.setBounds(threshold_rectangle.removeFromRight(150));
 	threshold_slider->setBounds(threshold_rectangle);
-	threshold_slider->setTextBoxStyle(Slider::TextBoxRight, true, 150, slider_height);
 
 	
 	auto rms_rectangle = rectangle.removeFromTop(slider_height);
 	rms_length_label.setBounds(rms_rectangle.removeFromLeft(150));
+	rms_length_value_label.setBounds(rms_rectangle.removeFromRight(150));
 	rms_length_slider->setBounds(rms_rectangle);
-	rms_length_slider->setTextBoxStyle(Slider::TextBoxRight, true, 150, slider_height);
 
 }
 

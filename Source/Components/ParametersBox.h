@@ -21,9 +21,11 @@ public:
 
 	std::unique_ptr<Slider> threshold_slider;
 	Label threshold_label;
+	Label threshold_value_label;
 
 	std::unique_ptr<Slider> rms_length_slider;
 	Label rms_length_label;
+	Label rms_length_value_label;
 
 private:
 
