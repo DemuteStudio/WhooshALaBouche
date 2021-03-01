@@ -235,6 +235,19 @@ envelope* WhooshGeneratorAudioProcessor::load_new_envelope()
 	return &rms_envelope;
 }
 
+MemoryBlock WhooshGeneratorAudioProcessor::get_envelope_memory_block()
+{
+	//TODO convert envelope to memory block
+
+	MemoryBlock my_memory_block;
+	for (envelope::envelope_node node : rms_envelope.list_)
+	{
+		my_memory_block.append(&node.value, sizeof(float));
+	}
+
+	return my_memory_block;
+}
+
 
 //==============================================================================
 // This creates new instances of the plugin..

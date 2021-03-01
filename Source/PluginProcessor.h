@@ -63,6 +63,7 @@ public:
 	//==============================================================================
 	my_audio_source& getAudioSource();
 	envelope* load_new_envelope();
+	MemoryBlock get_envelope_memory_block();
 
 	double sample_rate;
 	float last_rms_value = 1.0;

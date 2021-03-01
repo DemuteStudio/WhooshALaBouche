@@ -204,6 +204,11 @@ void WhooshGeneratorAudioProcessorEditor::timerCallback()
 
 void WhooshGeneratorAudioProcessorEditor::send_osc_message(String message)
 {
+	OSCMessage my_message("/blob");
+	my_message.addBlob(audioProcessor.get_envelope_memory_block());
+
+
+	osc_sender_.send(my_message);
 	osc_sender_.send<float>("/filter", 1.0);
 }
 
