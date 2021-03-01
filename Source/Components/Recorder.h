@@ -31,7 +31,7 @@ public:
 		bool enabled
 	);
 
-
+	TextButton sendEnvelopeButton;
 	TextButton recordButton;
 	TextButton playButton;
 	TextButton stopButton;
