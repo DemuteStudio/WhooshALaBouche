@@ -19,7 +19,7 @@ ParametersBox::ParametersBox(double samples_per_block, double sample_rate)
 	rms_length_slider->setSliderStyle(Slider::LinearHorizontal);
 	addAndMakeVisible(rms_length_slider.get());
 	rms_length_slider->setName("rms_length");
-	rms_length_slider->setRange(20.0, 200.);
+	rms_length_slider->setRange(20.0, 50.);
 
 	addAndMakeVisible(rms_length_label);
 	rms_length_label.setText("RMS Length", NotificationType::dontSendNotification);

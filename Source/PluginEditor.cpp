@@ -3,11 +3,7 @@
 
 //==============================================================================
 WhooshGeneratorAudioProcessorEditor::WhooshGeneratorAudioProcessorEditor(WhooshGeneratorAudioProcessor& p)
-<<<<<<< Updated upstream
-	: AudioProcessorEditor(&p), audioProcessor(p), recorder_(), parameters_box_(p.getBlockSize()/p.sample_rate),
-=======
 	: AudioProcessorEditor(&p), audioProcessor(p), recorder_(), parameters_box_(p.getBlockSize(), p.sample_rate),
->>>>>>> Stashed changes
 	  envelope_array_(&p.rms_envelope)
 {
 	setLookAndFeel(&tenFtLookAndFeel);
@@ -160,17 +156,11 @@ void WhooshGeneratorAudioProcessorEditor::sliderValueChanged(Slider* slider)
 	if (slider->getName() == "threshold")
 	{
 		audioProcessor.threshold_value = slider->getValue();
-		double threshold_in_db = Decibels::gainToDecibels(slider->getValue());
-		String threshold_string = threshold_in_db > -100.0 ? std::to_string(std::trunc(threshold_in_db*10)/10) : "-Inf";
-		parameters_box_.threshold_value_label.setText(threshold_string+" dB", NotificationType::dontSendNotification);
 	}
 	if (slider->getName() == "rms_length")
 	{
 		audioProcessor.rms_blocks_length = get_number_of_blocks_from_milliseconds(
 			processor.getSampleRate(), slider->getValue(), processor.getBlockSize());
-
-		parameters_box_.rms_length_value_label.setText(std::to_string(slider->getValue()) + " ms",
-		                                               NotificationType::dontSendNotification);
 	}
 }
 
