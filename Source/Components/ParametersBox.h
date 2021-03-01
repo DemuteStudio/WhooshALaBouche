@@ -10,7 +10,7 @@ using namespace juce;
 class ParametersBox : public juce::Component
 {
 public:
-	ParametersBox(double samples_per_block);
+	ParametersBox(double samples_per_block, double sample_rate);
 	~ParametersBox() override;
 
 	void paint(juce::Graphics&) override;

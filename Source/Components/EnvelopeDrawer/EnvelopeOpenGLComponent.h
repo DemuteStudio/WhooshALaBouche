@@ -50,9 +50,11 @@ private:
 	class VertexBuffer;
 
 private:
-	std::unique_ptr<OpenGLShaderProgram> shaderProgram;
+	std::unique_ptr<OpenGLShaderProgram> shaderProgramLines;
+	std::unique_ptr<OpenGLShaderProgram> shaderProgramPoints;
 	std::unique_ptr<OpenGLShaderProgram::Attribute> position;
-	std::unique_ptr<OpenGLShaderProgram::Uniform> uniform;
+	std::unique_ptr<OpenGLShaderProgram::Uniform> uniformLines;
+	std::unique_ptr<OpenGLShaderProgram::Uniform> uniformPoints;
 	std::unique_ptr<VertexBuffer> vertexBuffer;
 
 	envelope* envelope_ = nullptr;

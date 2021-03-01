@@ -40,24 +40,65 @@ void EnvelopeOpenGLComponent::initialise(
 			OpenGLHelpers::translateFragmentShaderToV3(fragmentShader)) &&
 		newShaderProgram->link())
 	{
-		shaderProgram.reset(newShaderProgram.release());
+		shaderProgramPoints.reset(newShaderProgram.release());
 
-		shaderProgram->use();
+		shaderProgramPoints->use();
 
 		Colour waveformColour = getLookAndFeel().findColour(
 			ColourIds::waveformColour
 		);
-		uniform.reset(
-			new OpenGLShaderProgram::Uniform(*shaderProgram, "colour")
+		uniformPoints.reset(
+			new OpenGLShaderProgram::Uniform(*shaderProgramPoints, "colour")
 		);
-		uniform->set(waveformColour.getFloatRed(),
+		uniformPoints->set(waveformColour.getFloatRed(),
+		             0.,
+		             0.,
+		             waveformColour.getFloatAlpha()
+		);
+
+		position.reset(
+			new OpenGLShaderProgram::Attribute(*shaderProgramPoints, "position")
+		);
+
+		vertexBuffer.reset(new VertexBuffer(openGLContext));
+
+		statusText = "GLSL: v" +
+			String(OpenGLShaderProgram::getLanguageVersion(), 2);
+	}
+	else
+	{
+		statusText = newShaderProgram->getLastError();
+		Logger::outputDebugString(statusText);
+	}
+
+	newShaderProgram.reset(
+		new OpenGLShaderProgram(openGLContext)
+	);
+	if (
+		newShaderProgram->addVertexShader(
+			OpenGLHelpers::translateVertexShaderToV3(vertexShader)) &&
+		newShaderProgram->addFragmentShader(
+			OpenGLHelpers::translateFragmentShaderToV3(fragmentShader)) &&
+		newShaderProgram->link())
+	{
+		shaderProgramLines.reset(newShaderProgram.release());
+
+		shaderProgramLines->use();
+
+		Colour waveformColour = getLookAndFeel().findColour(
+			ColourIds::waveformColour
+		);
+		uniformLines.reset(
+			new OpenGLShaderProgram::Uniform(*shaderProgramLines, "colour")
+		);
+		uniformLines->set(waveformColour.getFloatRed(),
 		             waveformColour.getFloatGreen(),
 		             waveformColour.getFloatBlue(),
 		             waveformColour.getFloatAlpha()
 		);
 
 		position.reset(
-			new OpenGLShaderProgram::Attribute(*shaderProgram, "position")
+			new OpenGLShaderProgram::Attribute(*shaderProgramLines, "position")
 		);
 
 		vertexBuffer.reset(new VertexBuffer(openGLContext));
@@ -74,10 +115,12 @@ void EnvelopeOpenGLComponent::initialise(
 
 void EnvelopeOpenGLComponent::shutdown(OpenGLContext&)
 {
-	uniform.reset();
+	uniformLines.reset();
+	uniformPoints.reset();
 	position.reset();
 	vertexBuffer.reset();
-	shaderProgram.reset();
+	shaderProgramLines.reset();
+	shaderProgramPoints.reset();
 }
 
 void EnvelopeOpenGLComponent::render(OpenGLContext& openGLContext)
@@ -97,7 +140,7 @@ void EnvelopeOpenGLComponent::render(OpenGLContext& openGLContext)
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_LINE_SMOOTH);
 
-	shaderProgram->use();
+	shaderProgramLines->use();
 
 	double scale = openGLContext.getRenderingScale();
 	Component* parent = getParentComponent();
@@ -134,6 +177,36 @@ void EnvelopeOpenGLComponent::render(OpenGLContext& openGLContext)
 		vertexBuffer->unbind();
 	}
 
+	//*************************************************
+	shaderProgramPoints->use();
+
+	for (int channel = 0; channel < bufferNumChannels; channel++)
+	{
+		GLint y = (GLint)(scale * (
+			parentBounds.getHeight() - globalBounds.getBottom() +
+			channel * (globalBounds.getHeight() / bufferNumChannels)
+		));
+
+		glViewport(x, y, width, height);
+
+		if (calculateVerticesTrigger)
+		{
+			calculateVertices(channel);
+		}
+
+		vertexBuffer->bind(vertices[channel].data(), vertices[channel].size());
+
+		openGLContext.extensions.glVertexAttribPointer(position->attributeID, 2,
+		                                               GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), 0);
+		openGLContext.extensions.glEnableVertexAttribArray(position->attributeID);
+
+
+		glDrawArrays(GL_POINTS, 0, (GLsizei)vertices[channel].size());
+
+		openGLContext.extensions.glDisableVertexAttribArray(position->attributeID);
+
+		vertexBuffer->unbind();
+	}
 	if (calculateVerticesTrigger)
 	{
 		calculateVerticesTrigger = false;
@@ -182,7 +255,7 @@ void EnvelopeOpenGLComponent::calculateVertices(unsigned int channel)
 	// of the current file. The larger the file the less samples 
 	// we use when zoomed out
 	skipSamples = (unsigned int)(
-		visibleRegionNumSamples / (envelope_->get_size() * 0.04)
+		visibleRegionNumSamples / (envelope_->get_size() * 0.08)
 	);
 	skipSamples = (skipSamples > 0) ? skipSamples : 1;
 	// Alternative approach:

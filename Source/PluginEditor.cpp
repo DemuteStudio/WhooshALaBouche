@@ -3,7 +3,11 @@
 
 //==============================================================================
 WhooshGeneratorAudioProcessorEditor::WhooshGeneratorAudioProcessorEditor(WhooshGeneratorAudioProcessor& p)
+<<<<<<< Updated upstream
 	: AudioProcessorEditor(&p), audioProcessor(p), recorder_(), parameters_box_(p.getBlockSize()/p.sample_rate),
+=======
+	: AudioProcessorEditor(&p), audioProcessor(p), recorder_(), parameters_box_(p.getBlockSize(), p.sample_rate),
+>>>>>>> Stashed changes
 	  envelope_array_(&p.rms_envelope)
 {
 	setLookAndFeel(&tenFtLookAndFeel);
