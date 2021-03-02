@@ -100,8 +100,26 @@ WhooshGeneratorAudioProcessorEditor::WhooshGeneratorAudioProcessorEditor(WhooshG
 		{
 			waveform.mouseWheelMove(event, wheelDetails);
 		};
-	// Make sure you set the size of the component after
-	// you add any child components.
+
+	//====================================================================
+	//OSC
+
+	bool connected = osc_sender_.connect("127.0.0.1", 80);
+	if (connected)
+	{
+		DBG("Connected");
+	}
+	else
+	{
+		DBG("Not Connected");
+	}
+
+	recorder_.sendEnvelopeButton.onClick = [this]
+	{
+		send_osc_message("");
+	};
+
+	//====================================================================
 	setSize(1000, 900);
 }
 
@@ -184,6 +202,16 @@ void WhooshGeneratorAudioProcessorEditor::timerCallback()
 	// envelope_.updateVisibleRegion(0.0, newEndTime);
 }
 
+void WhooshGeneratorAudioProcessorEditor::send_osc_message(String message)
+{
+	OSCMessage my_message("/blob");
+	my_message.addBlob(audioProcessor.get_envelope_memory_block());
+
+
+	osc_sender_.send(my_message);
+	osc_sender_.send<float>("/filter", 1.0);
+}
+
 
 void WhooshGeneratorAudioProcessorEditor::recordButtonClicked()
 {
@@ -214,7 +242,7 @@ void WhooshGeneratorAudioProcessorEditor::enableRecording()
 	recorder_.enableButtons({
 		                        &recorder_.playButton, &recorder_.stopButton, &recorder_.loopButton,
 		                        &recorder_.muteButton, &recorder_.fadeInButton, &recorder_.fadeOutButton,
-		                        &recorder_.normalizeButton
+		                        &recorder_.normalizeButton, &recorder_.sendEnvelopeButton
 	                        }, false);
 	recorder_.recordButton.setButtonText("Stop Recording");
 	recorder_.recordButton.setToggleState(true, NotificationType::dontSendNotification);
@@ -229,7 +257,7 @@ void WhooshGeneratorAudioProcessorEditor::disableRecording()
 	recorder_.enableButtons({
 		                        &recorder_.playButton, &recorder_.stopButton, &recorder_.loopButton,
 		                        &recorder_.muteButton, &recorder_.fadeInButton, &recorder_.fadeOutButton,
-		                        &recorder_.normalizeButton
+		                        &recorder_.normalizeButton, &recorder_.sendEnvelopeButton
 	                        }, true);
 	recorder_.recordButton.setButtonText("Record");
 	recorder_.recordButton.setToggleState(false, NotificationType::dontSendNotification);

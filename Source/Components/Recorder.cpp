@@ -4,6 +4,13 @@ Recorder::Recorder()
 {
 	setLookAndFeel(&tenFtLookAndFeel);
 
+	addAndMakeVisible(&sendEnvelopeButton);
+	sendEnvelopeButton.setButtonText("Send Envelope");
+	sendEnvelopeButton.setClickingTogglesState(false);
+	sendEnvelopeButton.setToggleState(false,
+	                            NotificationType::dontSendNotification
+	);
+
 	addAndMakeVisible(&recordButton);
 	recordButton.setButtonText("Record");
 	recordButton.setClickingTogglesState(false);
@@ -65,6 +72,9 @@ void Recorder::resized()
 
 	recordButton.setBounds(
 		row1.removeFromLeft(width * 0.5f).reduced(delta)
+	);
+	sendEnvelopeButton.setBounds(
+		row1.reduced(delta)
 	);
 	playButton.setBounds(
 		row2.removeFromLeft(width * 0.42f).reduced(delta)

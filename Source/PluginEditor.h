@@ -32,7 +32,6 @@ private:
 	Recorder recorder_;
 	ParametersBox parameters_box_;
 
-	//Previoulsy on Recorder
 
 	void openButtonClicked();
 
@@ -49,7 +48,7 @@ private:
 	void loopButtonClicked();
 
 	void timerCallback() override;
-			//========================================================
+
 	AudioFormatManager formatManager;
 	std::unique_ptr<AudioSampleBuffer> audioBuffer;
 
@@ -68,6 +67,11 @@ private:
 	my_audio_source* audio_source;
 
 	TenFtLookAndFeel tenFtLookAndFeel;
+
+	//==================================================
+	OSCSender osc_sender_;
+
+	void send_osc_message(String message);
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(WhooshGeneratorAudioProcessorEditor)
 };
