@@ -140,10 +140,10 @@ private:
 	bool hasSubregion = false;
 	double subregionStartTime = 0.0;
 	double subregionEndTime = 0.0;
-
 	State state = NoAudioLoaded;
-
+	
 	ListenerList<Listener> listeners;
+
 
 private:
 	class BufferPreallocationThread : public Thread
