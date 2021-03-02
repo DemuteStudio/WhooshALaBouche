@@ -27,7 +27,7 @@ public:
 
 	void render(OpenGLContext& openGLContext) override;
 
-	void load(envelope* buffer, const CriticalSection* bufferUpdateLock);
+	void load(envelope* buffer, AudioSampleBuffer* newAudioBuffer, const CriticalSection* bufferUpdateLock);
 
 	void display(int64 startSample, int64 numSamples);
 
@@ -62,6 +62,7 @@ private:
 	int64 visibleRegionStartSample = 0;
 	int64 visibleRegionNumSamples = 0;
 	unsigned int skipSamples = 8;
+	AudioSampleBuffer* audio_buffer;
 
 	bool calculateVerticesTrigger = false;
 

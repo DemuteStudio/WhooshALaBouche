@@ -236,7 +236,8 @@ void EnvelopeComponent::removeListener(Listener* listener)
 }
 
 void EnvelopeComponent::load_envelope(
-	envelope* new_envelope,
+	envelope* new_envelope, 
+	AudioSampleBuffer* newAudioBuffer,
 	double new_rms_sample_rate,
 	const CriticalSection* bufferUpdateLock
 )
@@ -245,7 +246,7 @@ void EnvelopeComponent::load_envelope(
 	rms_sample_rate_ = new_rms_sample_rate;
 
 	openGLContext.detach();
-	envelope_graphic_.load(envelope_, bufferUpdateLock);
+	envelope_graphic_.load(envelope_, newAudioBuffer,  bufferUpdateLock);
 	openGLContext.attachTo(*this);
 
 	updateVisibleRegion(0.0f, getTotalLength());
@@ -253,7 +254,7 @@ void EnvelopeComponent::load_envelope(
 
 void EnvelopeComponent::clearWaveform()
 {
-	envelope_= nullptr;
+	envelope_ = nullptr;
 	rms_sample_rate_ = 0.0;
 	clearSelectedRegion();
 	updateVisibleRegion(0.0f, 0.0f);

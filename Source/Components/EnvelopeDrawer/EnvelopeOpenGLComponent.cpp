@@ -216,10 +216,11 @@ void EnvelopeOpenGLComponent::render(OpenGLContext& openGLContext)
 	glDisable(GL_BLEND);
 }
 
-void EnvelopeOpenGLComponent::load(envelope* new_envelope,
+void EnvelopeOpenGLComponent::load(envelope* new_envelope, AudioSampleBuffer* newAudioBuffer,
                                    const CriticalSection* bufferUpdateLock)
 {
 	envelope_ = new_envelope;
+	audio_buffer = newAudioBuffer;
 
 	// bufferNumChannels = ->getNumChannels ();
 	visibleRegionStartSample = 0;
@@ -254,8 +255,9 @@ void EnvelopeOpenGLComponent::calculateVertices(unsigned int channel)
 	// More accurate because we depend on the count of the samples 
 	// of the current file. The larger the file the less samples 
 	// we use when zoomed out
+	
 	skipSamples = (unsigned int)(
-		visibleRegionNumSamples / (envelope_->get_size() * 0.08)
+		visibleRegionNumSamples / (audio_buffer->getNumSamples() * 0.08)
 	);
 	skipSamples = (skipSamples > 0) ? skipSamples : 1;
 	// Alternative approach:
