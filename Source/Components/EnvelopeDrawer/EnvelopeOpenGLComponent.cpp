@@ -284,7 +284,7 @@ void EnvelopeOpenGLComponent::calculateVertices(unsigned int channel)
 		Vertex vertex;
 		// should be in the [-1,+1] range
 		vertex.x = (((GLfloat)vertice / (GLfloat)numVertices) * 2) - 1;
-		vertex.y = sampleValue;
+		vertex.y = (sampleValue*2)-1;
 
 		vertices[channel][vertice] = vertex;
 	}
