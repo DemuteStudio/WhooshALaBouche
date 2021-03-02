@@ -5,7 +5,7 @@ Recorder::Recorder()
 	setLookAndFeel(&tenFtLookAndFeel);
 
 	addAndMakeVisible(&sendEnvelopeButton);
-	sendEnvelopeButton.setButtonText("Record");
+	sendEnvelopeButton.setButtonText("Send Envelope");
 	sendEnvelopeButton.setClickingTogglesState(false);
 	sendEnvelopeButton.setToggleState(false,
 	                            NotificationType::dontSendNotification

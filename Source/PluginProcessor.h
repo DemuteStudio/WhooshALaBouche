@@ -69,15 +69,18 @@ public:
 	float last_rms_value = 1.0;
 	float samples_squares_sum = 0.0;
 	int block_index = 0;
+	int sample_index = 0;
+	float temp_previous_value = 0.;
+	bool is_rms_different = true;
+
 
 	float threshold_value = 0.0;
-	float rms_blocks_length = 1; 
+	float rms_blocks_length = 1;
 
 	envelope rms_envelope;
 
 private:
 	my_audio_source audioSource;
-
 
 
 	//==============================================================================

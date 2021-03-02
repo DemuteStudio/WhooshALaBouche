@@ -165,27 +165,28 @@ void WhooshGeneratorAudioProcessor::processBlock(juce::AudioBuffer<float>& buffe
 			{
 				samples_squares_sum += inputBuffer[sample] * inputBuffer[sample];
 
-				if (last_rms_value >= threshold_value)
-				{
-					outputBuffer[sample] = inputBuffer[sample];
-				}
-				else
-				{
-					outputBuffer[sample] = 0;
-				}
+				(last_rms_value >= threshold_value)
+					? outputBuffer[sample] = inputBuffer[sample]
+					: outputBuffer[sample] = 0;
 			}
 		}
 
 		if (block_index >= rms_blocks_length)
 		{
+			temp_previous_value = last_rms_value;
+
 			last_rms_value = sqrt(samples_squares_sum / bufferToFill.numSamples);
 
 			if (last_rms_value < threshold_value)
 			{
-				last_rms_value = 0;
+				last_rms_value = 0.;
 			}
-			
-			rms_envelope.list_.emplace_back(0, last_rms_value);
+			is_rms_different = (last_rms_value != temp_previous_value);
+
+			if (last_rms_value != 0. && is_rms_different)
+			{
+				rms_envelope.list_.emplace_back(sample_index, last_rms_value);
+			}
 
 			samples_squares_sum = 0.0;
 			block_index = 0;
@@ -195,6 +196,7 @@ void WhooshGeneratorAudioProcessor::processBlock(juce::AudioBuffer<float>& buffe
 			block_index++;
 		}
 
+		sample_index += bufferToFill.buffer->getNumSamples();
 		audioSource.getNextAudioBlock(bufferToFill);
 	}
 }
@@ -231,6 +233,7 @@ my_audio_source& WhooshGeneratorAudioProcessor::getAudioSource()
 
 envelope* WhooshGeneratorAudioProcessor::load_new_envelope()
 {
+	sample_index = 0;
 	rms_envelope = envelope();
 	return &rms_envelope;
 }
@@ -240,10 +243,15 @@ MemoryBlock WhooshGeneratorAudioProcessor::get_envelope_memory_block()
 	//TODO convert envelope to memory block
 
 	MemoryBlock my_memory_block;
+	my_memory_block.append(&sample_rate, sizeof(double));
 	for (envelope::envelope_node node : rms_envelope.list_)
 	{
+		my_memory_block.append(&node.sample, sizeof(int));
 		my_memory_block.append(&node.value, sizeof(float));
 	}
+
+	DBG(sizeof(float));
+	DBG(my_memory_block.getSize());
 
 	return my_memory_block;
 }
