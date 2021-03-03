@@ -236,7 +236,7 @@ void EnvelopeComponent::removeListener(Listener* listener)
 }
 
 void EnvelopeComponent::load_envelope(
-	envelope* new_envelope, 
+	envelope* new_envelope,
 	AudioSampleBuffer* newAudioBuffer,
 	double new_sample_rate,
 	const CriticalSection* bufferUpdateLock
@@ -247,9 +247,10 @@ void EnvelopeComponent::load_envelope(
 	sample_rate_ = new_sample_rate;
 
 	openGLContext.detach();
-	envelope_graphic_.load(envelope_, audio_buffer,  bufferUpdateLock);
+	envelope_graphic_.load(envelope_, audio_buffer, bufferUpdateLock);
 	openGLContext.attachTo(*this);
 
+	DBG("====  load_envelope");
 	updateVisibleRegion(0.0f, getTotalLength());
 }
 
@@ -264,11 +265,27 @@ void EnvelopeComponent::clearWaveform()
 
 double EnvelopeComponent::getTotalLength()
 {
+	DBG("====getTotalLength");
+	if (audio_buffer != nullptr)
+	{
+		 DBG("audio_buffer NOT null");
+		 DBG(audio_buffer->getNumSamples() / sample_rate_);
+	}
+	else
+	{
+		 DBG("audio_buffer NULL");
+	}
+	if (envelope_ != nullptr)
+	{
+		DBG("--==");
+		DBG(envelope_->get_size() / sample_rate_);
+	}
 	return envelope_ != nullptr ? envelope_->get_size() / sample_rate_ : 0.0;
 }
+
 double EnvelopeComponent::get_audio_length() const
 {
-	return envelope_ != nullptr ? audio_buffer->getNumSamples() / sample_rate_ : 0.0;
+	return audio_buffer != nullptr ? audio_buffer->getNumSamples() / sample_rate_ : 0.0;
 }
 
 void EnvelopeComponent::updateVisibleRegion(
@@ -282,7 +299,13 @@ void EnvelopeComponent::updateVisibleRegion(
 	const double end_time_flattened = util::flattenSeconds(
 		newEndTime, total_length);
 
-	// jassert(isVisibleRegionCorrect (start_time_flattened, end_time_flattened));
+	DBG("===== updateVisibleRegion");
+	DBG(newStartTime);
+	DBG(start_time_flattened);
+	DBG(newEndTime);
+	DBG(end_time_flattened);
+
+	jassert(isVisibleRegionCorrect (start_time_flattened, end_time_flattened));
 
 	if (getSamplesDiff(start_time_flattened, end_time_flattened) < 20)
 	{

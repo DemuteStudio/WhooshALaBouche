@@ -233,7 +233,7 @@ void WhooshGeneratorAudioProcessorEditor::enableRecording()
 
 	envelope* temp_envelope_buffer = audioProcessor.load_new_envelope();
 	envelope_.load_envelope(
-		temp_envelope_buffer, tempAudioBuffer, audioProcessor.getSampleRate(), audio_source->getBufferUpdateLock()
+		temp_envelope_buffer, tempAudioBuffer, audio_source->getSampleRate(), audio_source->getBufferUpdateLock()
 	);
 
 	audioBuffer.reset(tempAudioBuffer);
