@@ -77,12 +77,12 @@ public:
 	float threshold_value = 0.0;
 	float rms_blocks_length = 1;
 
-	envelope rms_envelope;
+	std::unique_ptr<envelope > rms_envelope;
 
 private:
-	my_audio_source audioSource;
-
+	my_audio_source audioSource; 
+	
 
 	//==============================================================================
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(WhooshGeneratorAudioProcessor)
-};
+}; 

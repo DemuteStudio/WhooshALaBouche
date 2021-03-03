@@ -4,7 +4,7 @@
 //==============================================================================
 WhooshGeneratorAudioProcessorEditor::WhooshGeneratorAudioProcessorEditor(WhooshGeneratorAudioProcessor& p)
 	: AudioProcessorEditor(&p), audioProcessor(p), recorder_(), parameters_box_(p.getBlockSize(), p.sample_rate),
-	  envelope_array_(&p.rms_envelope)
+	  envelope_array_(p.rms_envelope.get())
 {
 	setLookAndFeel(&tenFtLookAndFeel);
 
@@ -225,18 +225,18 @@ void WhooshGeneratorAudioProcessorEditor::enableRecording()
 	audio_source->unloadAudio();
 	scroller.disable();
 
-	AudioSampleBuffer* tempAudioBuffer = audio_source->loadRecordingBuffer();
+	std::shared_ptr<AudioSampleBuffer> tempAudioBuffer = audio_source->loadRecordingBuffer();
 	waveform.loadWaveform(
-		tempAudioBuffer, audio_source->getSampleRate(), audio_source->getBufferUpdateLock()
+		tempAudioBuffer.get(), audio_source->getSampleRate(), audio_source->getBufferUpdateLock()
 	);
 	// const float rms_sample_rate = 1000. / parameters_box_.rms_length_slider->getValue();
 
 	envelope* temp_envelope_buffer = audioProcessor.load_new_envelope();
 	envelope_.load_envelope(
-		temp_envelope_buffer, tempAudioBuffer, audioProcessor.getSampleRate(), audio_source->getBufferUpdateLock()
+		temp_envelope_buffer, tempAudioBuffer.get(), audio_source->getSampleRate(), audio_source->getBufferUpdateLock()
 	);
 
-	audioBuffer.reset(tempAudioBuffer);
+	audioBuffer.reset(tempAudioBuffer.get());
 
 	startTimer(100);
 

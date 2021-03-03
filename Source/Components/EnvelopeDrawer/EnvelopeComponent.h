@@ -44,9 +44,8 @@ public:
 	};
 
 	std::function<void (double)> onPositionChange;
-	AudioSampleBuffer* audio_buffer;
+	AudioSampleBuffer* audio_buffer = nullptr;
 
-public:
 	EnvelopeComponent();
 
 	~EnvelopeComponent();

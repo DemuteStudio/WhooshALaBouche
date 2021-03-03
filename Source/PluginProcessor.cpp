@@ -152,52 +152,54 @@ void WhooshGeneratorAudioProcessor::processBlock(juce::AudioBuffer<float>& buffe
 
 		auto bufferToFill = AudioSourceChannelInfo(audio_buffer);
 
-
-		for (auto channel = 0; channel < totalNumOutputChannels; ++channel)
+		if (audioSource.getState() == my_audio_source::Recording)
 		{
-			const auto actual_input_channel = 0;
-			const auto* inputBuffer = bufferToFill.buffer->getReadPointer(
-				actual_input_channel, bufferToFill.startSample);
-			auto* outputBuffer = bufferToFill.buffer->getWritePointer(channel, bufferToFill.startSample);
-
-
-			for (auto sample = 0; sample < bufferToFill.numSamples; ++sample)
+			for (auto channel = 0; channel < totalNumOutputChannels; ++channel)
 			{
-				samples_squares_sum += inputBuffer[sample] * inputBuffer[sample];
+				const auto actual_input_channel = 0;
+				const auto* inputBuffer = bufferToFill.buffer->getReadPointer(
+					actual_input_channel, bufferToFill.startSample);
+				auto* outputBuffer = bufferToFill.buffer->getWritePointer(channel, bufferToFill.startSample);
 
-				(last_rms_value >= threshold_value)
-					? outputBuffer[sample] = inputBuffer[sample]
-					: outputBuffer[sample] = 0;
-			}
-		}
 
-		if (block_index >= rms_blocks_length)
-		{
-			temp_previous_value = last_rms_value;
+				for (auto sample = 0; sample < bufferToFill.numSamples; ++sample)
+				{
+					samples_squares_sum += inputBuffer[sample] * inputBuffer[sample];
 
-			last_rms_value = sqrt(samples_squares_sum / bufferToFill.numSamples);
-
-			if (last_rms_value < threshold_value)
-			{
-				last_rms_value = 0.;
-			}
-			is_rms_different = (last_rms_value != temp_previous_value);
-
-			if (last_rms_value != 0. && is_rms_different)
-			{
-				rms_envelope.list_.emplace_back(sample_index, last_rms_value);
+					(last_rms_value >= threshold_value)
+						? outputBuffer[sample] = inputBuffer[sample]
+						: outputBuffer[sample] = 0;
+				}
 			}
 
-			samples_squares_sum = 0.0;
-			block_index = 0;
-		}
-		else
-		{
-			block_index++;
-		}
+			if (block_index >= rms_blocks_length)
+			{
+				temp_previous_value = last_rms_value;
 
-		sample_index += bufferToFill.buffer->getNumSamples();
-		audioSource.getNextAudioBlock(bufferToFill);
+				last_rms_value = sqrt(samples_squares_sum / bufferToFill.numSamples);
+
+				if (last_rms_value < threshold_value)
+				{
+					last_rms_value = 0.;
+				}
+				is_rms_different = (last_rms_value != temp_previous_value);
+
+				if (last_rms_value != 0. && is_rms_different)
+				{
+					rms_envelope->list_.emplace_back(sample_index, last_rms_value);
+				}
+
+				samples_squares_sum = 0.0;
+				block_index = 0;
+			}
+			else
+			{
+				block_index++;
+			}
+
+			sample_index += bufferToFill.buffer->getNumSamples();
+			audioSource.getNextAudioBlock(bufferToFill);
+		}
 	}
 }
 
@@ -234,8 +236,8 @@ my_audio_source& WhooshGeneratorAudioProcessor::getAudioSource()
 envelope* WhooshGeneratorAudioProcessor::load_new_envelope()
 {
 	sample_index = 0;
-	rms_envelope = envelope();
-	return &rms_envelope;
+	rms_envelope = std::make_unique<envelope>();
+	return rms_envelope.get();
 }
 
 MemoryBlock WhooshGeneratorAudioProcessor::get_envelope_memory_block()
@@ -244,7 +246,7 @@ MemoryBlock WhooshGeneratorAudioProcessor::get_envelope_memory_block()
 
 	MemoryBlock my_memory_block;
 	my_memory_block.append(&sample_rate, sizeof(double));
-	for (envelope::envelope_node node : rms_envelope.list_)
+	for (envelope::envelope_node node : rms_envelope->list_)
 	{
 		my_memory_block.append(&node.sample, sizeof(int));
 		my_memory_block.append(&node.value, sizeof(float));
