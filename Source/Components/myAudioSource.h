@@ -59,14 +59,9 @@ public:
 		const AudioSourceChannelInfo& bufferToFill
 	) override;
 
-	void loadAudio(
-		AudioSampleBuffer* newAudioSampleBuffer,
-		double newSampleRate
-	);
-
 	void unloadAudio();
 
-	AudioSampleBuffer* loadRecordingBuffer();
+	std::shared_ptr<AudioSampleBuffer> loadRecordingBuffer();
 
 	void stopRecording();
 
@@ -127,7 +122,8 @@ private:
 	AudioTransportSource masterSource;
 	std::unique_ptr<AudioBufferSource> bufferSource;
 
-	AudioSampleBuffer* buffer = nullptr;
+	// AudioSampleBuffer* buffer = nullptr;
+	std::shared_ptr<AudioSampleBuffer> buffer;
 	std::unique_ptr<AudioSampleBuffer> subregionBuffer;
 
 	AudioSampleBuffer preallocatedRecordingBuffer;

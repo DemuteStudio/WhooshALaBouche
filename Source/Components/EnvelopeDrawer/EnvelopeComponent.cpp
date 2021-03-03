@@ -245,6 +245,7 @@ void EnvelopeComponent::load_envelope(
 	envelope_ = new_envelope;
 	audio_buffer = newAudioBuffer;
 	sample_rate_ = new_sample_rate;
+	auto test = getTotalLength();
 
 	openGLContext.detach();
 	envelope_graphic_.load(envelope_, audio_buffer, bufferUpdateLock);
@@ -268,16 +269,10 @@ double EnvelopeComponent::getTotalLength()
 	DBG("====getTotalLength");
 	if (audio_buffer != nullptr)
 	{
-		 DBG("audio_buffer NOT null");
 		 DBG(audio_buffer->getNumSamples() / sample_rate_);
-	}
-	else
-	{
-		 DBG("audio_buffer NULL");
 	}
 	if (envelope_ != nullptr)
 	{
-		DBG("--==");
 		DBG(envelope_->get_size() / sample_rate_);
 	}
 	return envelope_ != nullptr ? envelope_->get_size() / sample_rate_ : 0.0;

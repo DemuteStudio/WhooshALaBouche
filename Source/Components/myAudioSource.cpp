@@ -81,25 +81,15 @@ void my_audio_source::getNextAudioBlock (
     }
 }
 
-void my_audio_source::loadAudio (
-    AudioSampleBuffer* newAudioSampleBuffer,
-    double newSampleRate
-)
-{
-    buffer = newAudioSampleBuffer;
-    sampleRate = newSampleRate;
-    loadAudioSubregion (0.0, getLengthInSeconds (), false, false);
-}
-
 void my_audio_source::unloadAudio ()
 {
     changeState (NoAudioLoaded);
 }
 
-AudioSampleBuffer* my_audio_source::loadRecordingBuffer ()
+std::shared_ptr<AudioSampleBuffer> my_audio_source::loadRecordingBuffer ()
 {
     // TODO fix hardcoded number of channels
-    buffer = new AudioSampleBuffer (2, 0); 
+    buffer.reset(new AudioSampleBuffer (2, 0)); 
     sampleRate = inputSampleRate;
     numSamplesRecorded = 0;
 
@@ -119,7 +109,7 @@ AudioSampleBuffer* my_audio_source::loadRecordingBuffer ()
     recordingBufferPreallocationThread->startThread ();
 
     std::unique_ptr<AudioBufferSource> tempBufferSource (
-        new AudioBufferSource (buffer, false)
+        new AudioBufferSource (buffer.get(), false)
     );
 
     masterSource.setSource (
