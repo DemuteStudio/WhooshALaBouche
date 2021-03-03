@@ -44,6 +44,7 @@ public:
 	};
 
 	std::function<void (double)> onPositionChange;
+	AudioSampleBuffer* audio_buffer;
 
 public:
 	EnvelopeComponent();
@@ -81,13 +82,14 @@ public:
 
 	void load_envelope(
 		envelope* new_envelope, AudioSampleBuffer* newAudioBuffer,
-		double new_rms_sample_rate,
+		double new_sample_rate,
 		const CriticalSection* bufferUpdateLock = nullptr
 	);
 
 	void clearWaveform();
 
 	double getTotalLength();
+	double get_audio_length() const;
 
 	double getVisibleRegionStartTime();
 
@@ -128,7 +130,7 @@ private:
 private:
 	OpenGLContext openGLContext;
 	envelope* envelope_ = nullptr;
-	double rms_sample_rate_ = 0.0;
+	double sample_rate_ = 0.0;
 	EnvelopeOpenGLComponent envelope_graphic_;
 	double visibleRegionStartTime = 0.0;
 	double visibleRegionEndTime = 0.0;

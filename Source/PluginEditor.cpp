@@ -229,10 +229,11 @@ void WhooshGeneratorAudioProcessorEditor::enableRecording()
 	waveform.loadWaveform(
 		tempAudioBuffer, audio_source->getSampleRate(), audio_source->getBufferUpdateLock()
 	);
-	const float rms_sample_rate = 1000. / parameters_box_.rms_length_slider->getValue();
+	// const float rms_sample_rate = 1000. / parameters_box_.rms_length_slider->getValue();
+
 	envelope* temp_envelope_buffer = audioProcessor.load_new_envelope();
 	envelope_.load_envelope(
-		temp_envelope_buffer, tempAudioBuffer, rms_sample_rate, audio_source->getBufferUpdateLock()
+		temp_envelope_buffer, tempAudioBuffer, audioProcessor.getSampleRate(), audio_source->getBufferUpdateLock()
 	);
 
 	audioBuffer.reset(tempAudioBuffer);
