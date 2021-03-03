@@ -51,9 +51,9 @@ void EnvelopeOpenGLComponent::initialise(
 			new OpenGLShaderProgram::Uniform(*shaderProgramPoints, "colour")
 		);
 		uniformPoints->set(waveformColour.getFloatRed(),
-		             0.,
-		             0.,
-		             waveformColour.getFloatAlpha()
+		                   0.,
+		                   0.,
+		                   waveformColour.getFloatAlpha()
 		);
 
 		position.reset(
@@ -92,9 +92,9 @@ void EnvelopeOpenGLComponent::initialise(
 			new OpenGLShaderProgram::Uniform(*shaderProgramLines, "colour")
 		);
 		uniformLines->set(waveformColour.getFloatRed(),
-		             waveformColour.getFloatGreen(),
-		             waveformColour.getFloatBlue(),
-		             waveformColour.getFloatAlpha()
+		                  waveformColour.getFloatGreen(),
+		                  waveformColour.getFloatBlue(),
+		                  waveformColour.getFloatAlpha()
 		);
 
 		position.reset(
@@ -189,10 +189,10 @@ void EnvelopeOpenGLComponent::render(OpenGLContext& openGLContext)
 
 		glViewport(x, y, width, height);
 
-		if (calculateVerticesTrigger)
-		{
-			calculateVertices(channel);
-		}
+		// if (calculateVerticesTrigger)
+		// {
+		// 	calculateVertices(channel);
+		// }
 
 		vertexBuffer->bind(vertices[channel].data(), vertices[channel].size());
 
@@ -255,7 +255,7 @@ void EnvelopeOpenGLComponent::calculateVertices(unsigned int channel)
 	// More accurate because we depend on the count of the samples 
 	// of the current file. The larger the file the less samples 
 	// we use when zoomed out
-	
+
 	skipSamples = (unsigned int)(
 		visibleRegionNumSamples / (audio_buffer->getNumSamples() * 0.08)
 	);
@@ -273,18 +273,19 @@ void EnvelopeOpenGLComponent::calculateVertices(unsigned int channel)
 
 	const ScopedNullableLock lock(bufferUpdateLock_);
 
+	// skipSamples = 1;
 
 	for (int64 sample = visibleRegionStartSample, vertice = 0;
 	     sample < endSample;
 	     sample += skipSamples, vertice++)
 	{
-        GLfloat sampleValue = getPeakSampleValue (envelope_->list_, sample,
-            jmin ((int64)skipSamples, endSample - sample));
+		GLfloat sampleValue = getPeakSampleValue(envelope_->list_, sample,
+		                                         jmin((int64)skipSamples, endSample - sample));
 
 		Vertex vertex;
 		// should be in the [-1,+1] range
 		vertex.x = (((GLfloat)vertice / (GLfloat)numVertices) * 2) - 1;
-		vertex.y = (sampleValue*2)-1;
+		vertex.y = (sampleValue * 2) - 1;
 
 		vertices[channel][vertice] = vertex;
 	}
@@ -313,6 +314,7 @@ GLfloat EnvelopeOpenGLComponent::getPeakSampleValue(
 	int64 currentStartSample,
 	int64 currentNumSamples)
 {
+	// DBG("Start " << currentStartSample << "\nNum Samples " << currentNumSamples << "\nSize" << samples.size() << "\n\n\n");
 	GLfloat peakValue = 0.0f;
 	int64 endSample = currentStartSample + currentNumSamples;
 

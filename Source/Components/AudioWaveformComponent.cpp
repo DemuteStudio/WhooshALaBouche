@@ -260,12 +260,11 @@ void AudioWaveformComponent::clearWaveform()
 
 double AudioWaveformComponent::getTotalLength()
 {
-	if (audioBuffer != nullptr)
-	{
-		DBG("++++++++++     AudioWaveformComponent::getTotalLength");
-		DBG(audioBuffer->getNumSamples()/ sampleRate);
-		
-	}
+	// if (audioBuffer != nullptr)
+	// {
+	// 	DBG("++++++++++     AudioWaveformComponent::getTotalLength");
+	// 	DBG(audioBuffer->getNumSamples()/ sampleRate);
+	// }
 	return audioBuffer != nullptr ? audioBuffer->getNumSamples() / sampleRate : 0.0;
 }
 

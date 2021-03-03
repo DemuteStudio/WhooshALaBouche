@@ -245,13 +245,13 @@ void EnvelopeComponent::load_envelope(
 	envelope_ = new_envelope;
 	audio_buffer = newAudioBuffer;
 	sample_rate_ = new_sample_rate;
-	auto test = getTotalLength();
+
 
 	openGLContext.detach();
 	envelope_graphic_.load(envelope_, audio_buffer, bufferUpdateLock);
 	openGLContext.attachTo(*this);
 
-	DBG("====  load_envelope");
+	// DBG("====  load_envelope");
 	updateVisibleRegion(0.0f, getTotalLength());
 }
 
@@ -266,15 +266,15 @@ void EnvelopeComponent::clearWaveform()
 
 double EnvelopeComponent::getTotalLength()
 {
-	DBG("====getTotalLength");
-	if (audio_buffer != nullptr)
-	{
-		 DBG(audio_buffer->getNumSamples() / sample_rate_);
-	}
-	if (envelope_ != nullptr)
-	{
-		DBG(envelope_->get_size() / sample_rate_);
-	}
+	// DBG("====getTotalLength");
+	// if (audio_buffer != nullptr)
+	// {
+	// 	 DBG(audio_buffer->getNumSamples() / sample_rate_);
+	// }
+	// if (envelope_ != nullptr)
+	// {
+	// 	DBG(envelope_->get_size() / sample_rate_);
+	// }
 	return envelope_ != nullptr ? envelope_->get_size() / sample_rate_ : 0.0;
 }
 
@@ -288,17 +288,17 @@ void EnvelopeComponent::updateVisibleRegion(
 	double newEndTime
 )
 {
-	const double total_length = getTotalLength();
+	const double total_length = get_audio_length();
 	const double start_time_flattened = util::flattenSeconds(
 		newStartTime, total_length);
 	const double end_time_flattened = util::flattenSeconds(
 		newEndTime, total_length);
 
-	DBG("===== updateVisibleRegion");
-	DBG(newStartTime);
-	DBG(start_time_flattened);
-	DBG(newEndTime);
-	DBG(end_time_flattened);
+	// DBG("===== updateVisibleRegion");
+	// DBG(newStartTime);
+	// DBG(start_time_flattened);
+	// DBG(newEndTime);
+	// DBG(end_time_flattened);
 
 	jassert(isVisibleRegionCorrect (start_time_flattened, end_time_flattened));
 
@@ -311,7 +311,7 @@ void EnvelopeComponent::updateVisibleRegion(
 	visibleRegionEndTime = end_time_flattened;
 
 	int64 startSample = (int64)(visibleRegionStartTime * sample_rate_),
-	      endSample = (int64)(visibleRegionEndTime * sample_rate_),
+	      endSample = (int64)get_last_sample(envelope_, newEndTime),
 	      numSamples = endSample - startSample;
 	envelope_graphic_.display(startSample, numSamples);
 
@@ -355,6 +355,13 @@ double EnvelopeComponent::getVisibleRegionStartTime()
 double EnvelopeComponent::getVisibleRegionEndTime()
 {
 	return visibleRegionEndTime;
+}
+
+int EnvelopeComponent::get_last_sample(envelope* _envelope, float end_time)
+{
+	auto lambda = [this, end_time](envelope::envelope_node node) { return ((node.sample / sample_rate_) <= end_time); };
+	auto iterator = std::find_if(envelope_->list_.rbegin(), envelope_->list_.rend(), lambda);
+	return (iterator != envelope_->list_.rend())? iterator.base()- envelope_->list_.begin(): 0;
 }
 
 double EnvelopeComponent::getSelectedRegionStartTime()
@@ -434,7 +441,7 @@ bool EnvelopeComponent::isVisibleRegionCorrect(
 		(isAudioLoaded &&
 			startTime < endTime &&
 			startTime >= 0 &&
-			endTime <= getTotalLength());
+			endTime <= get_audio_length());
 }
 
 unsigned int EnvelopeComponent::getSamplesDiff(double startTime, double endTime)

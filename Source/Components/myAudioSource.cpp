@@ -22,7 +22,7 @@ my_audio_source::~my_audio_source ()
 {
     stopTimer ();
     masterSource.setSource (nullptr);
-    buffer = nullptr;
+	// buffer.reset();
 }
 
 void my_audio_source::prepareToPlay (

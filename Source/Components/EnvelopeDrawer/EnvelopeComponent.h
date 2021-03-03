@@ -94,6 +94,7 @@ public:
 
 	double getVisibleRegionEndTime();
 
+	int get_last_sample(envelope* envelope_, float end_time);
 	void updateVisibleRegion(double newStartTime, double newEndTime);
 
 	bool getHasSelectedRegion();
