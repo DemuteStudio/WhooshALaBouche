@@ -4,9 +4,9 @@
 class envelope
 {
 public:
-	struct envelope_node
+	struct node
 	{
-		envelope_node(int _sample, float _value): sample(_sample), value(_value)
+		node(int _sample, float _value): sample(_sample), value(_value)
 		{
 		}
 
@@ -18,6 +18,10 @@ public:
 	envelope(envelope* envelope);
 	~envelope();
 
-	std::vector<envelope_node> list_;
+	std::vector<node> list_;
 	int get_size();
+
+	node operator[](const int index);
+
+	void add(node new_node);
 };

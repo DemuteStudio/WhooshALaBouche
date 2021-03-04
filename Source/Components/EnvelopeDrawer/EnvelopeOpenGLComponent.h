@@ -41,7 +41,7 @@ private:
 	);
 
 	GLfloat getPeakSampleValue(
-		std::vector<envelope::envelope_node> samples,
+		std::vector<envelope::node> samples,
 		int64 startSample, int64 numSamples
 	);
 

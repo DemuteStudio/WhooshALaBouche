@@ -78,6 +78,7 @@ public:
 	float rms_blocks_length = 1;
 
 	std::unique_ptr<envelope > rms_envelope;
+	std::unique_ptr<envelope > rms_envelope_clean;
 
 private:
 	my_audio_source audioSource; 

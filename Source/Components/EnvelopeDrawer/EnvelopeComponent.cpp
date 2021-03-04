@@ -362,7 +362,7 @@ double EnvelopeComponent::getVisibleRegionEndTime()
 
 int EnvelopeComponent::get_last_sample(envelope* _envelope, float end_time)
 {
-	auto lambda = [this, end_time](envelope::envelope_node node) { return ((node.sample / sample_rate_) <= end_time); };
+	auto lambda = [this, end_time](envelope::node node) { return ((node.sample / sample_rate_) <= end_time); };
 	auto iterator = std::find_if(envelope_->list_.rbegin(), envelope_->list_.rend(), lambda);
 	return (iterator != envelope_->list_.rend())? iterator.base()- envelope_->list_.begin(): 0;
 }

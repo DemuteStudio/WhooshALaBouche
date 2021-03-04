@@ -8,7 +8,7 @@ buttons_panel::buttons_panel()
 	sendEnvelopeButton.setButtonText("Send Envelope");
 	sendEnvelopeButton.setClickingTogglesState(false);
 	sendEnvelopeButton.setToggleState(false,
-	                            NotificationType::dontSendNotification
+	                                  NotificationType::dontSendNotification
 	);
 
 	addAndMakeVisible(&recordButton);

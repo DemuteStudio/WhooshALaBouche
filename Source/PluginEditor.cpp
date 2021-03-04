@@ -37,8 +37,7 @@ WhooshGeneratorAudioProcessorEditor::WhooshGeneratorAudioProcessorEditor(WhooshG
 
 	buttons_panel_.clean_envelope_button.onClick = [this]
 	{
-		audio_source->muteAudio();
-		waveform.refresh();
+		clean_envelope();
 	};
 
 	buttons_panel_.fadeInButton.onClick = [this]
@@ -247,10 +246,11 @@ void WhooshGeneratorAudioProcessorEditor::enableRecording()
 	startTimer(100);
 
 	buttons_panel_.enableButtons({
-		                        &buttons_panel_.playButton, &buttons_panel_.stopButton, &buttons_panel_.loopButton,
-		                        &buttons_panel_.clean_envelope_button, &buttons_panel_.fadeInButton, &buttons_panel_.fadeOutButton,
-		                        &buttons_panel_.normalizeButton, &buttons_panel_.sendEnvelopeButton
-	                        }, false);
+		                             &buttons_panel_.playButton, &buttons_panel_.stopButton, &buttons_panel_.loopButton,
+		                             &buttons_panel_.clean_envelope_button, &buttons_panel_.fadeInButton,
+		                             &buttons_panel_.fadeOutButton,
+		                             &buttons_panel_.normalizeButton, &buttons_panel_.sendEnvelopeButton
+	                             }, false);
 	buttons_panel_.recordButton.setButtonText("Stop Recording");
 	buttons_panel_.recordButton.setToggleState(true, NotificationType::dontSendNotification);
 }
@@ -262,10 +262,11 @@ void WhooshGeneratorAudioProcessorEditor::disableRecording()
 	audio_source->stopRecording();
 
 	buttons_panel_.enableButtons({
-		                        &buttons_panel_.playButton, &buttons_panel_.stopButton, &buttons_panel_.loopButton,
-		                        &buttons_panel_.clean_envelope_button, &buttons_panel_.fadeInButton, &buttons_panel_.fadeOutButton,
-		                        &buttons_panel_.normalizeButton, &buttons_panel_.sendEnvelopeButton
-	                        }, true);
+		                             &buttons_panel_.playButton, &buttons_panel_.stopButton, &buttons_panel_.loopButton,
+		                             &buttons_panel_.clean_envelope_button, &buttons_panel_.fadeInButton,
+		                             &buttons_panel_.fadeOutButton,
+		                             &buttons_panel_.normalizeButton, &buttons_panel_.sendEnvelopeButton
+	                             }, true);
 	buttons_panel_.recordButton.setButtonText("Record");
 	buttons_panel_.recordButton.setToggleState(false, NotificationType::dontSendNotification);
 }
@@ -273,6 +274,73 @@ void WhooshGeneratorAudioProcessorEditor::disableRecording()
 void WhooshGeneratorAudioProcessorEditor::loopButtonClicked()
 {
 	audio_source->setLooping(buttons_panel_.loopButton.getToggleState());
+}
+
+bool node_comparator(envelope::node a, envelope::node b)
+{
+	return (a.value < b.value);
+}
+
+void WhooshGeneratorAudioProcessorEditor::clean_envelope()
+{
+	float threshold = 0.3;
+	std::vector<envelope> all_individual_envelopes;
+
+	auto it = std::find_if(audioProcessor.rms_envelope->list_.begin(), audioProcessor.rms_envelope->list_.end(),
+	                       [threshold](envelope::node node) { return (node.value >= threshold); });
+
+
+	decltype(it) first_node;
+	decltype(it) max_node;
+	decltype(it) last_node;
+
+	while (true)
+	{
+		if (it != audioProcessor.rms_envelope->list_.end())
+		{
+			first_node = it;
+		}
+		else
+		{
+			break;
+		}
+
+		it = std::find_if_not(first_node, audioProcessor.rms_envelope->list_.end(),
+		                      [threshold](envelope::node node) { return (node.value >= threshold); });
+
+		if (it != audioProcessor.rms_envelope->list_.end())
+		{
+			last_node = it;
+		}
+		else
+		{
+			break;
+		}
+
+		it = std::max_element(first_node, last_node, node_comparator);
+
+		max_node = it;
+
+		envelope temp_envelope = envelope();
+		temp_envelope.add(envelope::node(first_node->sample, first_node->value));
+		temp_envelope.add(envelope::node(max_node->sample, max_node->value));
+		temp_envelope.add(envelope::node(last_node->sample, last_node->value));
+
+		all_individual_envelopes.emplace_back(temp_envelope);
+
+
+		it = std::find_if(last_node + 1, audioProcessor.rms_envelope->list_.end(),
+		                  [threshold](envelope::node node) { return (node.value >= threshold); });
+	}
+	audioProcessor.rms_envelope_clean.reset(new envelope());
+	for (auto envelope_ : all_individual_envelopes)
+	{
+		for (int index = 0; index < 3; ++index)
+		{
+		audioProcessor.rms_envelope_clean->add(envelope_[index]);
+		}
+	}
+	audioProcessor.rms_envelope_clean.reset();
 }
 
 void WhooshGeneratorAudioProcessorEditor::onAudioSourceStateChange(

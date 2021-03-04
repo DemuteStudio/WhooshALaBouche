@@ -4,6 +4,13 @@
 #include "PluginProcessor.h"
 #include "Components/ButtonsPanel.h"
 #include "Components/ParametersBox.h"
+#include "Components/EnvelopeDrawer/Envelope.h"
+#include "Components/EnvelopeDrawer/EnvelopeComponent.h"
+#include "Components/EnvelopeDrawer/EnvelopeSelectedRegionComponent.h"
+#include "Components/AudioWaveformComponent.h"
+#include "Components/AudioWaveformSelectedRegionComponent.h"
+#include "Components/AudioPlaybackPositionComponent.h"
+#include "Components/AudioScrollerComponent.h"
 
 using namespace juce;
 
@@ -46,6 +53,7 @@ private:
 	void disableRecording();
 
 	void loopButtonClicked();
+	void clean_envelope();
 
 	void timerCallback() override;
 

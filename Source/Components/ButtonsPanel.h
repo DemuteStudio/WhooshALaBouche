@@ -1,16 +1,8 @@
 #pragma once
 
 #include "AudioClockComponent.h"
-#include "AudioPlaybackPositionComponent.h"
-#include "AudioScrollerComponent.h"
 #include "../JuceLibraryCode/JuceHeader.h"
-#include "AudioWaveformComponent.h"
-#include "AudioWaveformSelectedRegionComponent.h"
 #include "TenFtLookAndFeel.h"
-#include "EnvelopeDrawer/Envelope.h"
-#include "EnvelopeDrawer/EnvelopeComponent.h"
-#include "EnvelopeDrawer/EnvelopeSelectedRegionComponent.h"
-#include "EnvelopeDrawer/Envelope.h"
 
 using namespace juce;
 

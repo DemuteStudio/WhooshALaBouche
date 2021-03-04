@@ -246,7 +246,7 @@ MemoryBlock WhooshGeneratorAudioProcessor::get_envelope_memory_block()
 
 	MemoryBlock my_memory_block;
 	my_memory_block.append(&sample_rate, sizeof(double));
-	for (envelope::envelope_node node : rms_envelope->list_)
+	for (envelope::node node : rms_envelope->list_)
 	{
 		my_memory_block.append(&node.sample, sizeof(int));
 		my_memory_block.append(&node.value, sizeof(float));

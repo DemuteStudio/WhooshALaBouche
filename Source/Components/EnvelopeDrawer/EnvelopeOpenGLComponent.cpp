@@ -326,7 +326,7 @@ GLfloat EnvelopeOpenGLComponent::getAverageSampleValue(
 }
 
 GLfloat EnvelopeOpenGLComponent::getPeakSampleValue(
-	std::vector<envelope::envelope_node> samples,
+	std::vector<envelope::node> samples,
 	int64 currentStartSample,
 	int64 currentNumSamples)
 {
