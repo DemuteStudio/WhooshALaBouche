@@ -50,7 +50,7 @@ private:
 	void timerCallback() override;
 
 	AudioFormatManager formatManager;
-	std::unique_ptr<AudioSampleBuffer> audioBuffer;
+	AudioSampleBuffer* audioBuffer;
 
 	AudioWaveformComponent waveform;
 	AudioWaveformSelectedRegionComponent selectedRegion;
