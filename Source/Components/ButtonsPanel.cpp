@@ -1,6 +1,6 @@
-#include "Recorder.h"
+#include "ButtonsPanel.h"
 
-Recorder::Recorder()
+buttons_panel::buttons_panel()
 {
 	setLookAndFeel(&tenFtLookAndFeel);
 
@@ -34,9 +34,9 @@ Recorder::Recorder()
 	);
 	loopButton.setEnabled(false);
 
-	addAndMakeVisible(&muteButton);
-	muteButton.setButtonText("Mute");
-	muteButton.setEnabled(false);
+	addAndMakeVisible(&clean_envelope_button);
+	clean_envelope_button.setButtonText("Clean Envelope");
+	clean_envelope_button.setEnabled(false);
 
 	addAndMakeVisible(&fadeInButton);
 	fadeInButton.setButtonText("Fade In");
@@ -53,12 +53,12 @@ Recorder::Recorder()
 	addAndMakeVisible(&clock);
 }
 
-Recorder::~Recorder()
+buttons_panel::~buttons_panel()
 {
 	setLookAndFeel(nullptr);
 }
 
-void Recorder::resized()
+void buttons_panel::resized()
 {
 	juce::Rectangle<int> bounds =
 		getLocalBounds().reduced(10);
@@ -88,7 +88,7 @@ void Recorder::resized()
 	clock.setBounds(
 		row2.reduced(delta)
 	);
-	muteButton.setBounds(
+	clean_envelope_button.setBounds(
 		row3.removeFromLeft(width / 4.0f).reduced(delta)
 	);
 	fadeInButton.setBounds(
@@ -102,7 +102,7 @@ void Recorder::resized()
 	);
 }
 
-void Recorder::paint(Graphics& g)
+void buttons_panel::paint(Graphics& g)
 {
 	g.fillAll(findColour(
 		AudioWaveformOpenGLComponent::ColourIds::waveformBackgroundColour
@@ -112,7 +112,7 @@ void Recorder::paint(Graphics& g)
 // ==============================================================================
 
 
-void Recorder::setupButton(
+void buttons_panel::setupButton(
 	TextButton& button, std::string buttonText, bool enabled
 )
 {
@@ -120,7 +120,7 @@ void Recorder::setupButton(
 	button.setEnabled(enabled);
 }
 
-void Recorder::enableButtons(
+void buttons_panel::enableButtons(
 	std::initializer_list<Button*> buttons, bool enable
 )
 {

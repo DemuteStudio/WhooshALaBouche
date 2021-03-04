@@ -14,12 +14,12 @@
 
 using namespace juce;
 
-class Recorder : public Component
+class buttons_panel : public Component
 {
 public:
-	Recorder();
+	buttons_panel();
 
-	~Recorder();
+	~buttons_panel();
 
 	void resized() override;
 
@@ -36,7 +36,7 @@ public:
 	TextButton playButton;
 	TextButton stopButton;
 	ToggleButton loopButton;
-	TextButton muteButton;
+	TextButton clean_envelope_button;
 	TextButton fadeInButton;
 	TextButton fadeOutButton;
 	TextButton normalizeButton;
@@ -49,5 +49,5 @@ private:
 
 	TenFtLookAndFeel tenFtLookAndFeel;
 
-	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Recorder)
+	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(buttons_panel)
 };

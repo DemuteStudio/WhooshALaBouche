@@ -3,57 +3,57 @@
 
 //==============================================================================
 WhooshGeneratorAudioProcessorEditor::WhooshGeneratorAudioProcessorEditor(WhooshGeneratorAudioProcessor& p)
-	: AudioProcessorEditor(&p), audioProcessor(p), recorder_(), parameters_box_(p.getBlockSize(), p.sample_rate),
+	: AudioProcessorEditor(&p), audioProcessor(p), buttons_panel_(), parameters_box_(p.getBlockSize(), p.sample_rate),
 	  envelope_array_(p.rms_envelope.get())
 {
 	setLookAndFeel(&tenFtLookAndFeel);
 
 	audio_source = &audioProcessor.getAudioSource();
-	addAndMakeVisible(recorder_);
+	addAndMakeVisible(buttons_panel_);
 	addAndMakeVisible(parameters_box_);
 
 	parameters_box_.add_listener(this);
 
 	//Previous Recorder
-	recorder_.recordButton.onClick = [this]
+	buttons_panel_.recordButton.onClick = [this]
 	{
 		recordButtonClicked();
 	};
 
-	recorder_.playButton.onClick = [this]
+	buttons_panel_.playButton.onClick = [this]
 	{
 		audio_source->playAudio();
 	};
 
-	recorder_.stopButton.onClick = [this]
+	buttons_panel_.stopButton.onClick = [this]
 	{
 		audio_source->stopAudio();
 	};
 
-	recorder_.loopButton.onClick = [this]
+	buttons_panel_.loopButton.onClick = [this]
 	{
 		loopButtonClicked();
 	};
 
-	recorder_.muteButton.onClick = [this]
+	buttons_panel_.clean_envelope_button.onClick = [this]
 	{
 		audio_source->muteAudio();
 		waveform.refresh();
 	};
 
-	recorder_.fadeInButton.onClick = [this]
+	buttons_panel_.fadeInButton.onClick = [this]
 	{
 		audio_source->fadeInAudio();
 		waveform.refresh();
 	};
 
-	recorder_.fadeOutButton.onClick = [this]
+	buttons_panel_.fadeOutButton.onClick = [this]
 	{
 		audio_source->fadeOutAudio();
 		waveform.refresh();
 	};
 
-	recorder_.normalizeButton.onClick = [this]
+	buttons_panel_.normalizeButton.onClick = [this]
 	{
 		audio_source->normalizeAudio();
 		waveform.refresh();
@@ -61,7 +61,7 @@ WhooshGeneratorAudioProcessorEditor::WhooshGeneratorAudioProcessorEditor(WhooshG
 
 	formatManager.registerBasicFormats();
 
-	audio_source->addListener(&recorder_.clock);
+	audio_source->addListener(&buttons_panel_.clock);
 	audio_source->addListener((my_audio_source::Listener*)&playbackPosition);
 	audio_source->onStateChange = [this](
 		my_audio_source::State state
@@ -114,7 +114,7 @@ WhooshGeneratorAudioProcessorEditor::WhooshGeneratorAudioProcessorEditor(WhooshG
 		DBG("Not Connected");
 	}
 
-	recorder_.sendEnvelopeButton.onClick = [this]
+	buttons_panel_.sendEnvelopeButton.onClick = [this]
 	{
 		send_osc_message("");
 	};
@@ -147,7 +147,7 @@ void WhooshGeneratorAudioProcessorEditor::resized()
 	const int row_height = height / 15;
 	int delta = 5;
 
-	recorder_.setBounds(rectangle.removeFromTop(row_height * 3));
+	buttons_panel_.setBounds(rectangle.removeFromTop(row_height * 3));
 
 	parameters_box_.setBounds(rectangle.removeFromBottom(row_height * 2));
 	scroller.setBounds(rectangle.removeFromBottom(row_height).reduced(delta));
@@ -221,7 +221,7 @@ void WhooshGeneratorAudioProcessorEditor::send_osc_message(String message)
 
 void WhooshGeneratorAudioProcessorEditor::recordButtonClicked()
 {
-	!recorder_.recordButton.getToggleState() ? enableRecording() : disableRecording();
+	!buttons_panel_.recordButton.getToggleState() ? enableRecording() : disableRecording();
 }
 
 void WhooshGeneratorAudioProcessorEditor::enableRecording()
@@ -246,13 +246,13 @@ void WhooshGeneratorAudioProcessorEditor::enableRecording()
 
 	startTimer(100);
 
-	recorder_.enableButtons({
-		                        &recorder_.playButton, &recorder_.stopButton, &recorder_.loopButton,
-		                        &recorder_.muteButton, &recorder_.fadeInButton, &recorder_.fadeOutButton,
-		                        &recorder_.normalizeButton, &recorder_.sendEnvelopeButton
+	buttons_panel_.enableButtons({
+		                        &buttons_panel_.playButton, &buttons_panel_.stopButton, &buttons_panel_.loopButton,
+		                        &buttons_panel_.clean_envelope_button, &buttons_panel_.fadeInButton, &buttons_panel_.fadeOutButton,
+		                        &buttons_panel_.normalizeButton, &buttons_panel_.sendEnvelopeButton
 	                        }, false);
-	recorder_.recordButton.setButtonText("Stop Recording");
-	recorder_.recordButton.setToggleState(true, NotificationType::dontSendNotification);
+	buttons_panel_.recordButton.setButtonText("Stop Recording");
+	buttons_panel_.recordButton.setToggleState(true, NotificationType::dontSendNotification);
 }
 
 void WhooshGeneratorAudioProcessorEditor::disableRecording()
@@ -261,18 +261,18 @@ void WhooshGeneratorAudioProcessorEditor::disableRecording()
 
 	audio_source->stopRecording();
 
-	recorder_.enableButtons({
-		                        &recorder_.playButton, &recorder_.stopButton, &recorder_.loopButton,
-		                        &recorder_.muteButton, &recorder_.fadeInButton, &recorder_.fadeOutButton,
-		                        &recorder_.normalizeButton, &recorder_.sendEnvelopeButton
+	buttons_panel_.enableButtons({
+		                        &buttons_panel_.playButton, &buttons_panel_.stopButton, &buttons_panel_.loopButton,
+		                        &buttons_panel_.clean_envelope_button, &buttons_panel_.fadeInButton, &buttons_panel_.fadeOutButton,
+		                        &buttons_panel_.normalizeButton, &buttons_panel_.sendEnvelopeButton
 	                        }, true);
-	recorder_.recordButton.setButtonText("Record");
-	recorder_.recordButton.setToggleState(false, NotificationType::dontSendNotification);
+	buttons_panel_.recordButton.setButtonText("Record");
+	buttons_panel_.recordButton.setToggleState(false, NotificationType::dontSendNotification);
 }
 
 void WhooshGeneratorAudioProcessorEditor::loopButtonClicked()
 {
-	audio_source->setLooping(recorder_.loopButton.getToggleState());
+	audio_source->setLooping(buttons_panel_.loopButton.getToggleState());
 }
 
 void WhooshGeneratorAudioProcessorEditor::onAudioSourceStateChange(
@@ -281,18 +281,18 @@ void WhooshGeneratorAudioProcessorEditor::onAudioSourceStateChange(
 {
 	if (state == my_audio_source::Stopped)
 	{
-		recorder_.setupButton(recorder_.playButton, "Play", true);
-		recorder_.setupButton(recorder_.stopButton, "Stop", false);
+		buttons_panel_.setupButton(buttons_panel_.playButton, "Play", true);
+		buttons_panel_.setupButton(buttons_panel_.stopButton, "Stop", false);
 		waveform.clearSelectedRegion();
 	}
 	else if (state == my_audio_source::Playing)
 	{
-		recorder_.setupButton(recorder_.playButton, "Pause", true);
-		recorder_.setupButton(recorder_.stopButton, "Stop", true);
+		buttons_panel_.setupButton(buttons_panel_.playButton, "Pause", true);
+		buttons_panel_.setupButton(buttons_panel_.stopButton, "Stop", true);
 	}
 	else if (state == my_audio_source::Paused)
 	{
-		recorder_.setupButton(recorder_.playButton, "Play", true);
-		recorder_.setupButton(recorder_.stopButton, "Return To Zero", true);
+		buttons_panel_.setupButton(buttons_panel_.playButton, "Play", true);
+		buttons_panel_.setupButton(buttons_panel_.stopButton, "Return To Zero", true);
 	}
 }

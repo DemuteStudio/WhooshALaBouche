@@ -2,7 +2,7 @@
 
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
-#include "Components/Recorder.h"
+#include "Components/ButtonsPanel.h"
 #include "Components/ParametersBox.h"
 
 using namespace juce;
@@ -29,7 +29,7 @@ private:
 	// access the processor object that created it.
 	WhooshGeneratorAudioProcessor& audioProcessor;
 
-	Recorder recorder_;
+	buttons_panel buttons_panel_;
 	ParametersBox parameters_box_;
 
 
