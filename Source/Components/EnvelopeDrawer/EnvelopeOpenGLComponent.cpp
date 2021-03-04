@@ -189,10 +189,6 @@ void EnvelopeOpenGLComponent::render(OpenGLContext& openGLContext)
 	
 		glViewport(x, y, width, height);
 	
-		// if (calculateVerticesTrigger)
-		// {
-		// 	calculateVertices(channel);
-		// }
 	
 		vertexBuffer->bind(vertices[channel].data(), vertices[channel].size());
 	
@@ -285,18 +281,11 @@ void EnvelopeOpenGLComponent::calculateVertices(unsigned int channel)
 	// skipSamples = 1;
 
 	for (int64 sample = visibleRegionStartSample, vertice = 0;
-	     sample < endSample - skipSamples;
+	     sample < endSample;
 	     sample += skipSamples, vertice++)
 	{
 		jassert(vertice < my_envelope_.get_size());
 
-		std::vector<envelope::envelope_node> test;
-		test.emplace_back(envelope::envelope_node(0, 0.));
-		test.emplace_back(envelope::envelope_node(0, 0.));
-		test.emplace_back(envelope::envelope_node(0, 0.));
-		test.emplace_back(envelope::envelope_node(0, 0.));
-		// const GLfloat sampleValue = getPeakSampleValue(test, 0,
-		//                                                jmin((int64)2, endSample - sample));
 		const GLfloat sampleValue = getPeakSampleValue(my_envelope_.list_, sample,
 		                                               jmin((int64)skipSamples, endSample - sample));
 
@@ -344,7 +333,7 @@ GLfloat EnvelopeOpenGLComponent::getPeakSampleValue(
 	// DBG("Start " << currentStartSample << "\nNum Samples " << currentNumSamples << "\nSize " << samples.size() <<
 	// 	"\n\n\n");
 
-	jassert((currentStartSample + currentNumSamples) < samples.size());
+	jassert((currentStartSample + currentNumSamples) <= samples.size());
 
 	GLfloat peakValue = 0.0f;
 	int64 endSample = currentStartSample + currentNumSamples;

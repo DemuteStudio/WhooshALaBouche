@@ -184,7 +184,7 @@ void WhooshGeneratorAudioProcessor::processBlock(juce::AudioBuffer<float>& buffe
 				}
 				is_rms_different = (last_rms_value != temp_previous_value);
 
-				if (last_rms_value != 0. && is_rms_different)
+				if (is_rms_different)
 				{
 					rms_envelope->list_.emplace_back(sample_index, last_rms_value);
 				}
@@ -198,10 +198,6 @@ void WhooshGeneratorAudioProcessor::processBlock(juce::AudioBuffer<float>& buffe
 			}
 
 			sample_index += bufferToFill.buffer->getNumSamples();
-			// if (rms_envelope->get_size() > 0)
-			// {
-			// 	DBG("SAMPLE: " << rms_envelope->list_[0].sample);
-			// }
 			audioSource.getNextAudioBlock(bufferToFill);
 		}
 	}
