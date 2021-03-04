@@ -15,6 +15,7 @@ public:
 	};
 
 	envelope();
+	envelope(envelope* envelope);
 	~envelope();
 
 	std::vector<envelope_node> list_;

@@ -301,6 +301,7 @@ void EnvelopeComponent::updateVisibleRegion(
 	// DBG(end_time_flattened);
 
 	jassert(isVisibleRegionCorrect (start_time_flattened, end_time_flattened));
+	jassert(newStartTime >= 0);
 
 	if (getSamplesDiff(start_time_flattened, end_time_flattened) < 20)
 	{
@@ -313,6 +314,8 @@ void EnvelopeComponent::updateVisibleRegion(
 	int64 startSample = (int64)(visibleRegionStartTime * sample_rate_),
 	      endSample = (int64)get_last_sample(envelope_, newEndTime),
 	      numSamples = endSample - startSample;
+
+	DBG("\nstartSample " << startSample << "  numSamples " << numSamples);
 	envelope_graphic_.display(startSample, numSamples);
 
 	listeners.call([this](Listener& l) { l.visibleRegionChanged(this); });

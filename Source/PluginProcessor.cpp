@@ -198,6 +198,10 @@ void WhooshGeneratorAudioProcessor::processBlock(juce::AudioBuffer<float>& buffe
 			}
 
 			sample_index += bufferToFill.buffer->getNumSamples();
+			// if (rms_envelope->get_size() > 0)
+			// {
+			// 	DBG("SAMPLE: " << rms_envelope->list_[0].sample);
+			// }
 			audioSource.getNextAudioBlock(bufferToFill);
 		}
 	}

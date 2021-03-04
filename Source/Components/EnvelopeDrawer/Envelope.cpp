@@ -4,6 +4,11 @@ envelope::envelope()
 {
 }
 
+envelope::envelope(envelope* envelope)
+{
+	list_ = envelope->list_;
+}
+
 envelope::~envelope()
 {
 }

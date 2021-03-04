@@ -22,7 +22,7 @@ my_audio_source::~my_audio_source ()
 {
     stopTimer ();
     masterSource.setSource (nullptr);
-	// buffer.reset();
+	buffer = nullptr;
 }
 
 void my_audio_source::prepareToPlay (
@@ -129,6 +129,7 @@ std::shared_ptr<AudioSampleBuffer> my_audio_source::loadRecordingBuffer ()
 void my_audio_source::stopRecording ()
 {
     recordingBufferPreallocationThread->stopThread (1000);
+
     changeState (Stopping);
 }
 

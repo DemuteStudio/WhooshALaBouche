@@ -210,6 +210,12 @@ void WhooshGeneratorAudioProcessorEditor::send_osc_message(String message)
 
 	osc_sender_.send(my_message);
 	osc_sender_.send<float>("/filter", 1.0);
+
+	MemoryBlock memoryBlock = audioProcessor.get_envelope_memory_block();
+	for (auto memory_block : memoryBlock)
+	{
+		DBG(memory_block);
+	}
 }
 
 
