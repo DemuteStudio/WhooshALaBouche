@@ -1,5 +1,6 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
+// #include <iostream>
 
 //==============================================================================
 WhooshGeneratorAudioProcessorEditor::WhooshGeneratorAudioProcessorEditor(WhooshGeneratorAudioProcessor& p)
@@ -103,7 +104,7 @@ WhooshGeneratorAudioProcessorEditor::WhooshGeneratorAudioProcessorEditor(WhooshG
 	//====================================================================
 	//OSC
 
-	bool connected = osc_sender_.connect("127.0.0.1", 80);
+	bool connected = osc_sender_.connect("127.0.0.1", 8000);
 	if (connected)
 	{
 		DBG("Connected");
@@ -209,6 +210,9 @@ void WhooshGeneratorAudioProcessorEditor::send_osc_message(String message)
 
 	osc_sender_.send(my_message);
 	osc_sender_.send<float>("/filter", 1.0);
+
+	// std::FileStorage fs("test.yml", FileStorage::WRITE);
+
 
 	MemoryBlock memoryBlock = audioProcessor.get_envelope_memory_block();
 	for (auto memory_block : memoryBlock)
@@ -335,12 +339,18 @@ void WhooshGeneratorAudioProcessorEditor::clean_envelope()
 	audioProcessor.rms_envelope_clean.reset(new envelope());
 	for (auto envelope_ : all_individual_envelopes)
 	{
-		for (int index = 0; index < 3; ++index)
-		{
-		audioProcessor.rms_envelope_clean->add(envelope_[index]);
-		}
+		// for (int index = 0; index < 3; ++index)
+		// {
+		// 	audioProcessor.rms_envelope_clean->add(envelope_[index]);
+		// }
+		envelope::node temp_node(envelope_[0].sample, 0);
+		audioProcessor.rms_envelope_clean->add(temp_node);
+		temp_node = envelope::node(envelope_[1].sample, envelope_[1].value);
+		audioProcessor.rms_envelope_clean->add(temp_node);
+		temp_node = envelope::node(envelope_[2].sample, 0);
+		audioProcessor.rms_envelope_clean->add(temp_node);
 	}
-	audioProcessor.rms_envelope_clean.reset();
+	envelope_.load_envelope(audioProcessor.rms_envelope_clean.get());
 }
 
 void WhooshGeneratorAudioProcessorEditor::onAudioSourceStateChange(

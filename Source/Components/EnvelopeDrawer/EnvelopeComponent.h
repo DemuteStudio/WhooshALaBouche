@@ -84,6 +84,9 @@ public:
 		double new_sample_rate,
 		const CriticalSection* bufferUpdateLock = nullptr
 	);
+	void load_envelope(
+		envelope* new_envelope
+	);
 
 	void clearWaveform();
 

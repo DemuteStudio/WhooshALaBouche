@@ -233,6 +233,20 @@ void EnvelopeOpenGLComponent::load(envelope* new_envelope, AudioSampleBuffer* ne
 	}
 }
 
+void EnvelopeOpenGLComponent::load(envelope* new_envelope)
+{
+	envelope_ = new_envelope;
+
+	visibleRegionStartSample = 0;
+	bufferNumChannels = 1;
+	vertices.clear();
+	vertices.reserve(bufferNumChannels);
+	for (int i = 0; i < bufferNumChannels; i++)
+	{
+		vertices.push_back(std::vector<Vertex>());
+		vertices.back().reserve(envelope_->get_size());
+	}
+}
 void EnvelopeOpenGLComponent::display(int64 startSample, int64 numSamples)
 {
 	visibleRegionStartSample = startSample;
@@ -297,6 +311,7 @@ void EnvelopeOpenGLComponent::calculateVertices(unsigned int channel)
 		// catch (int e) {
 		// 	DBG(e);
 		// }
+
 		Vertex vertex;
 		// should be in the [-1,+1] range
 		vertex.x = (((GLfloat)envelope_->list_[vertice].sample / (GLfloat)audio_buffer->getNumSamples()) * 2) - 1;

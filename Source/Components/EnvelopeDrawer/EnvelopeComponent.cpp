@@ -255,6 +255,15 @@ void EnvelopeComponent::load_envelope(
 	updateVisibleRegion(0.0f, getTotalLength());
 }
 
+void EnvelopeComponent::load_envelope(
+	envelope* new_envelope
+)
+{
+	envelope_ = new_envelope;
+	envelope_graphic_.load(envelope_);
+
+	updateVisibleRegion(0.0f, get_audio_length());
+}
 void EnvelopeComponent::clearWaveform()
 {
 	envelope_ = nullptr;

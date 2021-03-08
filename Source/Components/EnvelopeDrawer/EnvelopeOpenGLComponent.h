@@ -28,6 +28,7 @@ public:
 	void render(OpenGLContext& openGLContext) override;
 
 	void load(envelope* buffer, AudioSampleBuffer* newAudioBuffer, const CriticalSection* bufferUpdateLock);
+	void load(envelope* buffer);
 
 	void display(int64 startSample, int64 numSamples);
 
