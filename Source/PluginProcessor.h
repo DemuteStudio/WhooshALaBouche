@@ -80,11 +80,12 @@ public:
 
 	std::unique_ptr<envelope> rms_envelope;
 	std::unique_ptr<envelope> rms_envelope_clean;
+	//==============================================================================
+	void calculate_fft();
 
 private:
 	my_audio_source audioSource;
 
-	// dsp::FFT my_fft_;
 
 	static const int fft_order = 10;
 	static const int fft_size = 1 << fft_order;
@@ -96,7 +97,6 @@ private:
 	int fifoIndex = 0;
 	bool nextFFTBlockReady = false;
 
-	void calculate_fft();
 
 	//==============================================================================
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(WhooshGeneratorAudioProcessor)

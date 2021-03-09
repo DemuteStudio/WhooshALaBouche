@@ -198,6 +198,7 @@ void WhooshGeneratorAudioProcessor::processBlock(juce::AudioBuffer<float>& buffe
 
 			if (block_index >= rms_blocks_length)
 			{
+				DBG(rms_blocks_length);
 				//Volume Envelope
 				temp_previous_value = last_rms_value;
 

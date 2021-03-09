@@ -309,7 +309,7 @@ void EnvelopeComponent::updateVisibleRegion(
 	// DBG(newEndTime);
 	// DBG(end_time_flattened);
 
-	jassert(isVisibleRegionCorrect (start_time_flattened, end_time_flattened));
+//	jassert(isVisibleRegionCorrect (start_time_flattened, end_time_flattened));
 	jassert(newStartTime >= 0);
 
 	if (getSamplesDiff(start_time_flattened, end_time_flattened) < 20)

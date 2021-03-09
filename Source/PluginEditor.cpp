@@ -1,6 +1,5 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
-// #include <iostream>
 
 //==============================================================================
 WhooshGeneratorAudioProcessorEditor::WhooshGeneratorAudioProcessorEditor(WhooshGeneratorAudioProcessor& p)
@@ -74,11 +73,18 @@ WhooshGeneratorAudioProcessorEditor::WhooshGeneratorAudioProcessorEditor(WhooshG
 	waveform.addAndMakeVisible(&selectedRegion);
 	waveform.addAndMakeVisible(&playbackPosition);
 
-	addAndMakeVisible(envelope_);
-	envelope_.addAndMakeVisible(envelope_selected_region_);
-	envelope_.addAndMakeVisible(envelope_playback_position_);
-	envelope_.addListener(&envelope_selected_region_);
-	envelope_.addListener(&envelope_playback_position_);
+	addAndMakeVisible(volume_envelope_);
+	volume_envelope_.addAndMakeVisible(envelope_selected_region_);
+	volume_envelope_.addAndMakeVisible(envelope_playback_position_);
+	volume_envelope_.addListener(&envelope_selected_region_);
+	volume_envelope_.addListener(&envelope_playback_position_);
+
+
+	addAndMakeVisible(frequency_envelope_);
+	frequency_envelope_.addAndMakeVisible(envelope_selected_region_);
+	frequency_envelope_.addAndMakeVisible(envelope_playback_position_);
+	frequency_envelope_.addListener(&envelope_selected_region_);
+	frequency_envelope_.addListener(&envelope_playback_position_);
 
 	addAndMakeVisible(&scroller);
 
@@ -92,7 +98,7 @@ WhooshGeneratorAudioProcessorEditor::WhooshGeneratorAudioProcessorEditor(WhooshG
 	};
 
 	scroller.addListener(&waveform);
-	scroller.addListener(&envelope_);
+	scroller.addListener(&volume_envelope_);
 	scroller.onMouseWheelMove = [this](
 		const MouseEvent& event,
 		const MouseWheelDetails& wheelDetails
@@ -161,9 +167,12 @@ void WhooshGeneratorAudioProcessorEditor::resized()
 		waveform.getBounds()
 	);
 	envelope_playback_position_.setBounds(
-		envelope_.getBounds()
+		volume_envelope_.getBounds()
 	);
-	envelope_.setBounds(main_rectangle.reduced(delta));
+
+	volume_envelope_.setBounds(main_rectangle.removeFromTop(main_rectangle.getHeight()/2).reduced(delta));
+	frequency_envelope_.setBounds(main_rectangle.reduced(delta));
+
 	selectedRegion.setBounds(
 		rectangle.reduced(delta)
 	);
@@ -191,9 +200,11 @@ int WhooshGeneratorAudioProcessorEditor::get_number_of_blocks_from_milliseconds(
 
 void WhooshGeneratorAudioProcessorEditor::timerCallback()
 {
+	audioProcessor.calculate_fft();
+
 	double newEndTime = (double)audioBuffer->getNumSamples() / audio_source->getSampleRate();
 	waveform.updateVisibleRegion(0.0, newEndTime);
-	envelope_.updateVisibleRegion(0.0, newEndTime);
+	volume_envelope_.updateVisibleRegion(0.0, newEndTime);
 
 	// int rms_sample_rate = audioProcessor.getBlockSize()
 	// double newEndTime = (double)audioBuffer->getNumSamples() / audio_source->getSampleRate();
@@ -230,7 +241,7 @@ void WhooshGeneratorAudioProcessorEditor::recordButtonClicked()
 void WhooshGeneratorAudioProcessorEditor::enableRecording()
 {
 	waveform.clearWaveform();
-	envelope_.clearWaveform();
+	volume_envelope_.clearWaveform();
 	audio_source->unloadAudio();
 	scroller.disable();
 
@@ -241,7 +252,7 @@ void WhooshGeneratorAudioProcessorEditor::enableRecording()
 	// const float rms_sample_rate = 1000. / parameters_box_.rms_length_slider->getValue();
 
 	envelope* temp_envelope_buffer = audioProcessor.load_new_envelope();
-	envelope_.load_envelope(
+	volume_envelope_.load_envelope(
 		temp_envelope_buffer, tempAudioBuffer.get(), audio_source->getSampleRate(), audio_source->getBufferUpdateLock()
 	);
 
@@ -350,7 +361,7 @@ void WhooshGeneratorAudioProcessorEditor::clean_envelope()
 		temp_node = envelope::node(envelope_[2].sample, 0);
 		audioProcessor.rms_envelope_clean->add(temp_node);
 	}
-	envelope_.load_envelope(audioProcessor.rms_envelope_clean.get());
+	volume_envelope_.load_envelope(audioProcessor.rms_envelope_clean.get());
 }
 
 void WhooshGeneratorAudioProcessorEditor::onAudioSourceStateChange(

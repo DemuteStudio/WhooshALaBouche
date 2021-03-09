@@ -64,7 +64,8 @@ private:
 	AudioWaveformSelectedRegionComponent selectedRegion;
 	AudioPlaybackPositionComponent playbackPosition;
 
-	EnvelopeComponent envelope_;
+	EnvelopeComponent volume_envelope_;
+	EnvelopeComponent frequency_envelope_;
 	EnvelopeSelectedRegionComponent envelope_selected_region_;
 	AudioPlaybackPositionComponent envelope_playback_position_;
 	envelope* envelope_array_;
