@@ -10,16 +10,18 @@
 #include "PluginEditor.h"
 
 //==============================================================================
-WhooshGeneratorAudioProcessor::WhooshGeneratorAudioProcessor()
+WhooshGeneratorAudioProcessor::WhooshGeneratorAudioProcessor(): forward_fft_(fft_order)
 #ifndef JucePlugin_PreferredChannelConfigurations
-	: AudioProcessor(BusesProperties()
+                                                                , AudioProcessor(BusesProperties()
 #if ! JucePlugin_IsMidiEffect
 #if ! JucePlugin_IsSynth
-		.withInput("Input", juce::AudioChannelSet::stereo(), true)
+	                                                                .withInput("Input", juce::AudioChannelSet::stereo(),
+	                                                                           true)
 #endif
-		.withOutput("Output", juce::AudioChannelSet::stereo(), true)
+	                                                                .withOutput(
+		                                                                "Output", juce::AudioChannelSet::stereo(), true)
 #endif
-	)
+                                                                )
 #endif
 {
 }
@@ -126,6 +128,24 @@ bool WhooshGeneratorAudioProcessor::isBusesLayoutSupported(const BusesLayout& la
 	return true;
 #endif
 }
+
+void WhooshGeneratorAudioProcessor::push_next_sample_into_fifo(const float sample)
+{
+	if (fifoIndex == fft_size) 
+	{
+		if (!nextFFTBlockReady) 
+		{
+			std::fill(fft_data_.begin(), fft_data_.end(), 0.0f);
+			std::copy(fifo_.begin(), fifo_.end(), fft_data_.begin());
+			nextFFTBlockReady = true;
+		}
+
+		fifoIndex = 0;
+	}
+
+	fifo_[(size_t)fifoIndex] = sample; 
+	fifoIndex++;
+}
 #endif
 
 
@@ -133,20 +153,20 @@ void WhooshGeneratorAudioProcessor::processBlock(juce::AudioBuffer<float>& buffe
 {
 	ScopedNoDenormals noDenormals;
 
-	int totalNumInputChannels = getTotalNumInputChannels();
-	int totalNumOutputChannels = getTotalNumOutputChannels();
+	const int total_num_input_channels = getTotalNumInputChannels();
+	const int total_num_output_channels = getTotalNumOutputChannels();
 
-	for (int channel = totalNumInputChannels;
-	     channel < totalNumOutputChannels;
+	for (int channel = total_num_input_channels;
+	     channel < total_num_output_channels;
 	     ++channel)
 	{
 		buffer.clear(channel, 0, buffer.getNumSamples());
 	}
 
-	int intputBusesCount = getBusCount(true);
+	const int input_buses_count = getBusCount(true);
 
 
-	for (int busIndex = 0; busIndex < intputBusesCount; ++busIndex)
+	for (int busIndex = 0; busIndex < input_buses_count; ++busIndex)
 	{
 		AudioBuffer<float> audio_buffer = getBusBuffer(buffer, true, busIndex);
 
@@ -154,7 +174,7 @@ void WhooshGeneratorAudioProcessor::processBlock(juce::AudioBuffer<float>& buffe
 
 		if (audioSource.getState() == my_audio_source::Recording)
 		{
-			for (auto channel = 0; channel < totalNumOutputChannels; ++channel)
+			for (auto channel = 0; channel < total_num_output_channels; ++channel)
 			{
 				const auto actual_input_channel = 0;
 				const auto* inputBuffer = bufferToFill.buffer->getReadPointer(
@@ -164,24 +184,27 @@ void WhooshGeneratorAudioProcessor::processBlock(juce::AudioBuffer<float>& buffe
 
 				for (auto sample = 0; sample < bufferToFill.numSamples; ++sample)
 				{
+					//Volume
 					samples_squares_sum += inputBuffer[sample] * inputBuffer[sample];
 
 					(last_rms_value >= threshold_value)
 						? outputBuffer[sample] = inputBuffer[sample]
 						: outputBuffer[sample] = 0;
+
+					//Frequencies
+					push_next_sample_into_fifo(inputBuffer[sample]);
 				}
 			}
 
 			if (block_index >= rms_blocks_length)
 			{
+				//Volume Envelope
 				temp_previous_value = last_rms_value;
 
 				last_rms_value = sqrt(samples_squares_sum / bufferToFill.numSamples);
 
-				if (last_rms_value < threshold_value)
-				{
-					last_rms_value = 0.;
-				}
+				last_rms_value = (last_rms_value < threshold_value) ? 0. : last_rms_value;
+
 				is_rms_different = (last_rms_value != temp_previous_value);
 
 				if (is_rms_different)
@@ -191,6 +214,9 @@ void WhooshGeneratorAudioProcessor::processBlock(juce::AudioBuffer<float>& buffe
 
 				samples_squares_sum = 0.0;
 				block_index = 0;
+
+
+				// my_fft_.performFrequencyOnlyForwardTransform();
 			}
 			else
 			{
@@ -256,6 +282,11 @@ MemoryBlock WhooshGeneratorAudioProcessor::get_envelope_memory_block()
 	DBG(my_memory_block.getSize());
 
 	return my_memory_block;
+}
+
+void WhooshGeneratorAudioProcessor::calculate_fft()
+{
+	forward_fft_.performFrequencyOnlyForwardTransform(fft_data_.data());
 }
 
 
