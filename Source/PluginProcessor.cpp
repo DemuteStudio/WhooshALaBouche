@@ -172,8 +172,6 @@ void WhooshGeneratorAudioProcessor::processBlock(juce::AudioBuffer<float>& buffe
 
 		auto bufferToFill = AudioSourceChannelInfo(audio_buffer);
 
-		if (audioSource.getState() == my_audio_source::Recording)
-		{
 			for (auto channel = 0; channel < total_num_output_channels; ++channel)
 			{
 				const auto actual_input_channel = 0;
@@ -226,7 +224,6 @@ void WhooshGeneratorAudioProcessor::processBlock(juce::AudioBuffer<float>& buffe
 
 			sample_index += bufferToFill.buffer->getNumSamples();
 			audioSource.getNextAudioBlock(bufferToFill);
-		}
 	}
 }
 

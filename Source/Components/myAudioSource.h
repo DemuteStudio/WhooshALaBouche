@@ -12,19 +12,6 @@ class my_audio_source : public AudioSource,
                          private Timer
 {
 public:
-	enum State
-	{
-		NoAudioLoaded,
-		StartRecording,
-		Recording,
-		Starting,
-		Playing,
-		Stopping,
-		Stopped,
-		Pausing,
-		Paused
-	};
-
 	class Listener
 	{
 	public:
@@ -41,7 +28,6 @@ public:
 		}
 	};
 
-	std::function<void (State)> onStateChange;
 
 public:
 	my_audio_source();
@@ -79,8 +65,6 @@ public:
 
 	void normalizeAudio();
 
-	State getState() const;
-
 	double getCurrentPosition() const;
 
 	double getLengthInSeconds() const;
@@ -106,8 +90,6 @@ private:
 
 	void changeListenerCallback(ChangeBroadcaster* broadcaster) override;
 
-	void changeState(State newState);
-
 	void loadAudioSubregion(
 		double startTime,
 		double endTime,
@@ -126,8 +108,8 @@ private:
 	std::shared_ptr<AudioSampleBuffer> buffer;
 	std::unique_ptr<AudioSampleBuffer> subregionBuffer;
 
-	AudioSampleBuffer preallocatedRecordingBuffer;
-	std::unique_ptr<BufferPreallocationThread> recordingBufferPreallocationThread;
+	AudioSampleBuffer preallocated_recording_buffer_;
+	std::unique_ptr<BufferPreallocationThread> recording_buffer_preallocation_thread_;
 	int numSamplesRecorded = 0;
 
 	double sampleRate = 0.0;
@@ -136,7 +118,6 @@ private:
 	bool hasSubregion = false;
 	double subregionStartTime = 0.0;
 	double subregionEndTime = 0.0;
-	State state = NoAudioLoaded;
 	
 	ListenerList<Listener> listeners;
 

@@ -170,7 +170,7 @@ void WhooshGeneratorAudioProcessorEditor::resized()
 		volume_envelope_.getBounds()
 	);
 
-	volume_envelope_.setBounds(main_rectangle.removeFromTop(main_rectangle.getHeight()/2).reduced(delta));
+	volume_envelope_.setBounds(main_rectangle.removeFromTop(main_rectangle.getHeight() / 2).reduced(delta));
 	frequency_envelope_.setBounds(main_rectangle.reduced(delta));
 
 	selectedRegion.setBounds(
@@ -183,11 +183,17 @@ void WhooshGeneratorAudioProcessorEditor::sliderValueChanged(Slider* slider)
 	if (slider->getName() == "threshold")
 	{
 		audioProcessor.threshold_value = slider->getValue();
+		const int threshold_value_db=  Decibels::gainToDecibels(slider->getValue()) ;
+		parameters_box_.threshold_value_label.setText(std::to_string(threshold_value_db) + " dB", dontSendNotification);
 	}
 	if (slider->getName() == "rms_length")
 	{
-		audioProcessor.rms_blocks_length = get_number_of_blocks_from_milliseconds(
-			processor.getSampleRate(), slider->getValue(), processor.getBlockSize());
+		audioProcessor.rms_blocks_length = slider->getValue();
+		const int rms_length_value = slider->getValue()* ((audioProcessor.getBlockSize()/audioProcessor.sample_rate)*1000.);
+		parameters_box_.rms_length_value_label.setText(std::to_string(rms_length_value) + " ms", dontSendNotification);
+
+		// audioProcessor.rms_blocks_length = get_number_of_blocks_from_milliseconds(
+		// 	processor.getSampleRate(), slider_value, processor.getBlockSize());
 	}
 }
 
@@ -249,7 +255,6 @@ void WhooshGeneratorAudioProcessorEditor::enableRecording()
 	waveform.loadWaveform(
 		tempAudioBuffer.get(), audio_source->getSampleRate(), audio_source->getBufferUpdateLock()
 	);
-	// const float rms_sample_rate = 1000. / parameters_box_.rms_length_slider->getValue();
 
 	envelope* temp_envelope_buffer = audioProcessor.load_new_envelope();
 	volume_envelope_.load_envelope(
