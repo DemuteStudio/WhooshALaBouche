@@ -192,7 +192,7 @@ void AudioWaveformOpenGLComponent::calculateVertices(unsigned int channel)
 		                    ? visibleRegionNumSamples / skipSamples + 1
 		                    : visibleRegionNumSamples / skipSamples;
 
-	vertices[channel].resize(numVertices+1);
+	vertices[channel].resize(numVertices + 1);
 
 	const ScopedNullableLock lock(bufferUpdateLock_);
 
@@ -209,15 +209,7 @@ void AudioWaveformOpenGLComponent::calculateVertices(unsigned int channel)
 		     sample < endSample;
 		     sample += skipSamples, vertice++)
 		{
-			GLfloat sampleValue = getPeakSampleValue(samples, sample,
-			                                         jmin((int64)skipSamples, endSample - sample));
-
-			Vertex vertex;
-			// should be in the [-1,+1] range
-			vertex.x = (((GLfloat)vertice / (GLfloat)numVertices) * 2) - 1;
-			vertex.y = sampleValue;
-
-			vertices[channel][vertice] = vertex;
+			set_vertice(samples, sample, skipSamples, endSample, vertice, numVertices, channel);
 		}
 
 
@@ -228,16 +220,7 @@ void AudioWaveformOpenGLComponent::calculateVertices(unsigned int channel)
 		     sample < endSample;
 		     sample += skipSamples, vertice++)
 		{
-			int64 next_sample_interval = jmin((int64)skipSamples, endSample - sample);
-			GLfloat sampleValue = getPeakSampleValue(samples, sample, next_sample_interval);
-
-			Vertex vertex;
-			// should be in the [-1,+1] range
-			vertex.x = (((GLfloat)vertice / (GLfloat)numVertices) * 2) - 1;
-			vertex.y = sampleValue;
-
-			jassert(vertice < vertices[channel].size());
-			vertices[channel][vertice] = vertex;
+			set_vertice(samples, sample, skipSamples, endSample, vertice, numVertices, channel);
 		}
 	}
 	else
@@ -250,15 +233,6 @@ void AudioWaveformOpenGLComponent::calculateVertices(unsigned int channel)
 		     sample += skipSamples, vertice++)
 		{
 			set_vertice(samples, sample, skipSamples, endSample, vertice, numVertices, channel);
-			// GLfloat sampleValue = getPeakSampleValue(samples, sample,
-			//                                          jmin((int64)skipSamples, endSample - sample));
-			//
-			// Vertex vertex;
-			// // should be in the [-1,+1] range
-			// vertex.x = (((GLfloat)vertice / (GLfloat)numVertices) * 2) - 1;
-			// vertex.y = sampleValue;
-			//
-			// vertices[channel][vertice] = vertex;
 		}
 	}
 }
