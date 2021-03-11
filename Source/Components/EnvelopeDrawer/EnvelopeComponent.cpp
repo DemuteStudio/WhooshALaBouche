@@ -293,15 +293,11 @@ double EnvelopeComponent::get_audio_length() const
 }
 
 void EnvelopeComponent::updateVisibleRegion(
-	double newStartTime,
-	double newEndTime
+	int new_end_sample,
+	int number_of_samples_to_display
 )
 {
 	const double total_length = get_audio_length();
-	const double start_time_flattened = util::flattenSeconds(
-		newStartTime, total_length);
-	const double end_time_flattened = util::flattenSeconds(
-		newEndTime, total_length);
 
 	// DBG("===== updateVisibleRegion");
 	// DBG(newStartTime);
@@ -310,22 +306,17 @@ void EnvelopeComponent::updateVisibleRegion(
 	// DBG(end_time_flattened);
 
 //	jassert(isVisibleRegionCorrect (start_time_flattened, end_time_flattened));
-	jassert(newStartTime >= 0);
+	// jassert(newStartTime >= 0);
 
-	if (getSamplesDiff(start_time_flattened, end_time_flattened) < 20)
-	{
-		return;
-	}
+	// if (getSamplesDiff(start_time_flattened, end_time_flattened) < 20)
+	// {
+	// 	return;
+	// }
 
-	visibleRegionStartTime = start_time_flattened;
-	visibleRegionEndTime = end_time_flattened;
 
-	int64 startSample = (int64)(visibleRegionStartTime * sample_rate_),
-	      endSample = (int64)get_last_sample(envelope_, newEndTime),
-	      numSamples = endSample - startSample;
 
-	DBG("\nstartSample " << startSample << "  numSamples " << numSamples);
-	envelope_graphic_.display(startSample, numSamples);
+	// DBG("\nstartSample " << startSample << "  numSamples " << numSamples);
+	envelope_graphic_.display(new_end_sample, number_of_samples_to_display);
 
 	listeners.call([this](Listener& l) { l.visibleRegionChanged(this); });
 

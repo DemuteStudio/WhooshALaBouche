@@ -22,30 +22,30 @@ AudioPlaybackPositionComponent::~AudioPlaybackPositionComponent ()
 
 void AudioPlaybackPositionComponent::paint (Graphics& g)
 {
-    if (isAudioLoaded && !isRecording)
-    {
-        if (currentPosition < visibleRegionStartTime ||
-            currentPosition > visibleRegionEndTime)
-        {
-            return;
-        }
-
-        juce::Rectangle<float> localBounds = getLocalBounds ().toFloat ();
-        float drawPosition = (float) (
-                (currentPosition - visibleRegionStartTime) /
-                (visibleRegionEndTime - visibleRegionStartTime)
-            )
-            * localBounds.getWidth () + localBounds.getX ();
-
-        g.setColour (findColour (ColourIds::line_colour));
-        g.drawLine (
-            drawPosition,
-            localBounds.getY (),
-            drawPosition,
-            localBounds.getBottom (),
-            2.0f
-        );
-    } 
+    // if (isAudioLoaded && !isRecording)
+    // {
+    //     if (currentPosition < visibleRegionStartTime ||
+    //         currentPosition > visibleRegionEndTime)
+    //     {
+    //         return;
+    //     }
+    //
+    //     juce::Rectangle<float> localBounds = getLocalBounds ().toFloat ();
+    //     float drawPosition = (float) (
+    //             (currentPosition - visibleRegionStartTime) /
+    //             (visibleRegionEndTime - visibleRegionStartTime)
+    //         )
+    //         * localBounds.getWidth () + localBounds.getX ();
+    //
+    //     g.setColour (findColour (ColourIds::line_colour));
+    //     g.drawLine (
+    //         drawPosition,
+    //         localBounds.getY (),
+    //         drawPosition,
+    //         localBounds.getBottom (),
+    //         2.0f
+    //     );
+    // } 
 }
 
 void AudioPlaybackPositionComponent::resized ()
@@ -59,7 +59,6 @@ void AudioPlaybackPositionComponent::currentPositionChanged (
     my_audio_source* audioSource
 )
 {
-    isRecording = (audioSource->getState () == my_audio_source::State::Recording);
     currentPosition = audioSource->getCurrentPosition ();
     repaint ();
 }

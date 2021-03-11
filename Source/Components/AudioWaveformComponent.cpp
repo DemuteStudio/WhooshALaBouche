@@ -265,34 +265,17 @@ double AudioWaveformComponent::getTotalLength()
 	// 	DBG("++++++++++     AudioWaveformComponent::getTotalLength");
 	// 	DBG(audioBuffer->getNumSamples()/ sampleRate);
 	// }
-	return audioBuffer != nullptr ? audioBuffer->getNumSamples() / sampleRate : 0.0;
+	return audioBuffer != nullptr ? (audioBuffer->getNumSamples() / sampleRate)/2 : 0.0;
 }
 
 void AudioWaveformComponent::updateVisibleRegion(
-	double newStartTime,
-	double newEndTime
+	int new_end_sample,
+	int number_of_samples_to_display
 )
 {
 	const double total_length = getTotalLength();
-	const double start_time_flattened = util::flattenSeconds(
-		newStartTime, total_length);
-	const double end_time_flattened = util::flattenSeconds(
-		newEndTime, total_length);
 
-	jassert(isVisibleRegionCorrect (start_time_flattened, end_time_flattened));
-
-	if (getSamplesDiff(start_time_flattened, end_time_flattened) < 20)
-	{
-		return;
-	}
-
-	visibleRegionStartTime = start_time_flattened;
-	visibleRegionEndTime = end_time_flattened;
-
-	int64 startSample = (int64)(visibleRegionStartTime * sampleRate),
-	      endSample = (int64)(visibleRegionEndTime * sampleRate),
-	      numSamples = endSample - startSample;
-	waveform.display(startSample, numSamples);
+	waveform.display(new_end_sample, number_of_samples_to_display);
 
 	listeners.call([this](Listener& l) { l.visibleRegionChanged(this); });
 

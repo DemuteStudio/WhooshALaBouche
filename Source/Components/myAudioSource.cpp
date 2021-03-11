@@ -3,7 +3,6 @@
 
 my_audio_source::my_audio_source()
 {
-	masterSource.addChangeListener(this);
 	startTimer(100);
 }
 
@@ -35,75 +34,84 @@ void my_audio_source::getNextAudioBlock(
 	const AudioSourceChannelInfo& bufferToFill
 )
 {
-	for (int channel = 0; channel < bufferToFill.buffer->getNumChannels(); channel++)
+	if (preallocated_recording_buffer_.getNumSamples() > 0)
 	{
-		int number_samples_to_copy = (numSamplesRecorded + bufferToFill.numSamples < preallocated_recording_buffer_.
-			                             getNumSamples())
-			                             ? bufferToFill.numSamples
-			                             : preallocated_recording_buffer_.getNumSamples() - numSamplesRecorded;
-		preallocated_recording_buffer_.copyFrom(
-			channel,
-			numSamplesRecorded,
-			*bufferToFill.buffer,
-			channel,
-			bufferToFill.startSample,
-			number_samples_to_copy
-		);
-
-		numSamplesRecorded += number_samples_to_copy;
-
-		if (bufferToFill.numSamples > number_samples_to_copy)
+		for (int channel = 0; channel < 1; channel++)
 		{
-			int start_sample_to_copy = bufferToFill.startSample + number_samples_to_copy;
-			number_samples_to_copy = bufferToFill.numSamples - number_samples_to_copy;
-
+			jassert(preallocated_recording_buffer_.getNumSamples() <= buffer_size);
+			int number_samples_to_copy = (num_samples_recorded_ + bufferToFill.numSamples < buffer_size)
+				                             ? bufferToFill.numSamples
+				                             : buffer_size - num_samples_recorded_;
 			preallocated_recording_buffer_.copyFrom(
 				channel,
-				0,
+				num_samples_recorded_,
 				*bufferToFill.buffer,
 				channel,
-				start_sample_to_copy,
+				bufferToFill.startSample,
 				number_samples_to_copy
 			);
 
-			numSamplesRecorded = number_samples_to_copy;
+			num_samples_recorded_ += number_samples_to_copy;
+
+			if (bufferToFill.numSamples > number_samples_to_copy)
+			{
+				int start_sample_to_copy = bufferToFill.startSample + number_samples_to_copy;
+				number_samples_to_copy = bufferToFill.numSamples - number_samples_to_copy;
+
+				preallocated_recording_buffer_.copyFrom(
+					channel,
+					0,
+					*bufferToFill.buffer,
+					channel,
+					start_sample_to_copy,
+					number_samples_to_copy
+				);
+
+				num_samples_recorded_ = number_samples_to_copy;
+			}
 		}
+
+		// numSamplesRecorded += bufferToFill.numSamples;
+
+		buffer->setDataToReferTo(
+			preallocated_recording_buffer_.getArrayOfWritePointers(),
+			preallocated_recording_buffer_.getNumChannels(),
+			preallocated_recording_buffer_.getNumSamples()
+		);
 	}
-
-	numSamplesRecorded += bufferToFill.numSamples;
-
-	buffer->setDataToReferTo(
-		preallocated_recording_buffer_.getArrayOfWritePointers(),
-		bufferToFill.buffer->getNumChannels(),
-		numSamplesRecorded
-	);
+	else
+	{
+		DBG("BUFFER NOT SET");
+	}
 }
 
 void my_audio_source::unloadAudio()
 {
 }
 
-std::shared_ptr<AudioSampleBuffer> my_audio_source::loadRecordingBuffer()
+std::shared_ptr<AudioSampleBuffer> my_audio_source::loadRecordingBuffer(int number_of_samples_to_display)
 {
 	// TODO fix hardcoded number of channels
-	buffer.reset(new AudioSampleBuffer(2, 0));
+	buffer.reset(new AudioSampleBuffer(1, 0));
 	sampleRate = inputSampleRate;
-	numSamplesRecorded = 0;
+	num_samples_recorded_ = 0;
+	buffer_size = number_of_samples_to_display;
 
 	preallocated_recording_buffer_.setSize(
 		1,
-		(int)(10 * sampleRate)
+		(int)(buffer_size)
 	);
+
 	recording_buffer_preallocation_thread_.reset(
 		new BufferPreallocationThread(
 			preallocated_recording_buffer_,
-			numSamplesRecorded,
-			(int)(10 * sampleRate),
-			(int)(30 * sampleRate),
+			num_samples_recorded_,
+			(int)(number_of_samples_to_display),
+			(int)(number_of_samples_to_display),
 			*buffer
 		)
 	);
-	recording_buffer_preallocation_thread_->startThread();
+	// recording_buffer_preallocation_thread_->startThread();
 
 	std::unique_ptr<AudioBufferSource> tempBufferSource(
 		new AudioBufferSource(buffer.get(), false)
@@ -118,46 +126,47 @@ std::shared_ptr<AudioSampleBuffer> my_audio_source::loadRecordingBuffer()
 
 	bufferSource.swap(tempBufferSource);
 
+	jassert(preallocated_recording_buffer_.getNumSamples() <= buffer_size);
 	return buffer;
 }
 
-void my_audio_source::muteAudio()
-{
-	int startSample = (int)(subregionStartTime * sampleRate),
-	    numSamples = (int)((subregionEndTime - subregionStartTime) * sampleRate);
-
-	buffer->clear(startSample, numSamples);
-}
-
-void my_audio_source::fadeInAudio()
-{
-	int startSample = (int)(subregionStartTime * sampleRate),
-	    numSamples = (int)((subregionEndTime - subregionStartTime) * sampleRate);
-	float magnitude = buffer->getMagnitude(startSample, numSamples),
-	      gain = Decibels::decibelsToGain(magnitude);
-
-	buffer->applyGainRamp(startSample, numSamples, 0.0f, gain);
-}
-
-void my_audio_source::fadeOutAudio()
-{
-	int startSample = (int)(subregionStartTime * sampleRate),
-	    numSamples = (int)((subregionEndTime - subregionStartTime) * sampleRate);
-	float magnitude = buffer->getMagnitude(startSample, numSamples),
-	      gain = Decibels::decibelsToGain(magnitude);
-
-	buffer->applyGainRamp(startSample, numSamples, gain, 0.0f);
-}
-
-void my_audio_source::normalizeAudio()
-{
-	int startSample = (int)(subregionStartTime * sampleRate),
-	    numSamples = (int)((subregionEndTime - subregionStartTime) * sampleRate);
-	float magnitude = buffer->getMagnitude(startSample, numSamples),
-	      gain = Decibels::decibelsToGain(magnitude);
-
-	buffer->applyGain(startSample, numSamples, gain);
-}
+// void my_audio_source::muteAudio()
+// {
+// 	int startSample = (int)(subregionStartTime * sampleRate),
+// 	    numSamples = (int)((subregionEndTime - subregionStartTime) * sampleRate);
+//
+// 	buffer->clear(startSample, numSamples);
+// }
+//
+// void my_audio_source::fadeInAudio()
+// {
+// 	int startSample = (int)(subregionStartTime * sampleRate),
+// 	    numSamples = (int)((subregionEndTime - subregionStartTime) * sampleRate);
+// 	float magnitude = buffer->getMagnitude(startSample, numSamples),
+// 	      gain = Decibels::decibelsToGain(magnitude);
+//
+// 	buffer->applyGainRamp(startSample, numSamples, 0.0f, gain);
+// }
+//
+// void my_audio_source::fadeOutAudio()
+// {
+// 	int startSample = (int)(subregionStartTime * sampleRate),
+// 	    numSamples = (int)((subregionEndTime - subregionStartTime) * sampleRate);
+// 	float magnitude = buffer->getMagnitude(startSample, numSamples),
+// 	      gain = Decibels::decibelsToGain(magnitude);
+//
+// 	buffer->applyGainRamp(startSample, numSamples, gain, 0.0f);
+// }
+//
+// void my_audio_source::normalizeAudio()
+// {
+// 	int startSample = (int)(subregionStartTime * sampleRate),
+// 	    numSamples = (int)((subregionEndTime - subregionStartTime) * sampleRate);
+// 	float magnitude = buffer->getMagnitude(startSample, numSamples),
+// 	      gain = Decibels::decibelsToGain(magnitude);
+//
+// 	buffer->applyGain(startSample, numSamples, gain);
+// }
 
 double my_audio_source::getCurrentPosition() const
 {
@@ -216,6 +225,11 @@ const CriticalSection* my_audio_source::getBufferUpdateLock() const noexcept
 	{
 		return nullptr;
 	}
+}
+
+int my_audio_source::get_sample_index()
+{
+	return num_samples_recorded_;
 }
 
 // ==============================================================================

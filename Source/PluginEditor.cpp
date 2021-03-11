@@ -4,9 +4,11 @@
 //==============================================================================
 WhooshGeneratorAudioProcessorEditor::WhooshGeneratorAudioProcessorEditor(WhooshGeneratorAudioProcessor& p)
 	: AudioProcessorEditor(&p), audioProcessor(p), buttons_panel_(), parameters_box_(p.getBlockSize(), p.sample_rate),
-	  envelope_array_(p.rms_envelope.get())
+	  envelope_array_(p.rms_envelope.get()) 
 {
 	setLookAndFeel(&tenFtLookAndFeel);
+	double time_to_display = 3.;
+	number_of_samples_to_display = time_to_display * p.sample_rate;
 
 	audio_source = &audioProcessor.getAudioSource();
 	addAndMakeVisible(buttons_panel_);
@@ -14,60 +16,15 @@ WhooshGeneratorAudioProcessorEditor::WhooshGeneratorAudioProcessorEditor(WhooshG
 
 	parameters_box_.add_listener(this);
 
-	//Previous Recorder
-	buttons_panel_.recordButton.onClick = [this]
-	{
-		recordButtonClicked();
-	};
-
-	buttons_panel_.playButton.onClick = [this]
-	{
-		audio_source->playAudio();
-	};
-
-	buttons_panel_.stopButton.onClick = [this]
-	{
-		audio_source->stopAudio();
-	};
-
-	buttons_panel_.loopButton.onClick = [this]
-	{
-		loopButtonClicked();
-	};
-
 	buttons_panel_.clean_envelope_button.onClick = [this]
 	{
 		clean_envelope();
 	};
 
-	buttons_panel_.fadeInButton.onClick = [this]
-	{
-		audio_source->fadeInAudio();
-		waveform.refresh();
-	};
-
-	buttons_panel_.fadeOutButton.onClick = [this]
-	{
-		audio_source->fadeOutAudio();
-		waveform.refresh();
-	};
-
-	buttons_panel_.normalizeButton.onClick = [this]
-	{
-		audio_source->normalizeAudio();
-		waveform.refresh();
-	};
 
 	formatManager.registerBasicFormats();
 
-	audio_source->addListener(&buttons_panel_.clock);
 	audio_source->addListener((my_audio_source::Listener*)&playbackPosition);
-	audio_source->onStateChange = [this](
-		my_audio_source::State state
-	)
-		{
-			onAudioSourceStateChange(state);
-		};
 
 	addAndMakeVisible(&waveform);
 	waveform.addAndMakeVisible(&selectedRegion);
@@ -106,6 +63,8 @@ WhooshGeneratorAudioProcessorEditor::WhooshGeneratorAudioProcessorEditor(WhooshG
 		{
 			waveform.mouseWheelMove(event, wheelDetails);
 		};
+
+	enableRecording();
 
 	//====================================================================
 	//OSC
@@ -208,9 +167,10 @@ void WhooshGeneratorAudioProcessorEditor::timerCallback()
 {
 	audioProcessor.calculate_fft();
 
-	double newEndTime = (double)audioBuffer->getNumSamples() / audio_source->getSampleRate();
-	waveform.updateVisibleRegion(0.0, newEndTime);
-	volume_envelope_.updateVisibleRegion(0.0, newEndTime);
+	int end_sample = audio_source->get_sample_index();
+
+	waveform.updateVisibleRegion(end_sample, number_of_samples_to_display);
+	volume_envelope_.updateVisibleRegion(end_sample, number_of_samples_to_display);
 
 	// int rms_sample_rate = audioProcessor.getBlockSize()
 	// double newEndTime = (double)audioBuffer->getNumSamples() / audio_source->getSampleRate();
@@ -239,11 +199,6 @@ void WhooshGeneratorAudioProcessorEditor::send_osc_message(String message)
 }
 
 
-void WhooshGeneratorAudioProcessorEditor::recordButtonClicked()
-{
-	!buttons_panel_.recordButton.getToggleState() ? enableRecording() : disableRecording();
-}
-
 void WhooshGeneratorAudioProcessorEditor::enableRecording()
 {
 	waveform.clearWaveform();
@@ -251,7 +206,7 @@ void WhooshGeneratorAudioProcessorEditor::enableRecording()
 	audio_source->unloadAudio();
 	scroller.disable();
 
-	std::shared_ptr<AudioSampleBuffer> tempAudioBuffer = audio_source->loadRecordingBuffer();
+	std::shared_ptr<AudioSampleBuffer> tempAudioBuffer = audio_source->loadRecordingBuffer(number_of_samples_to_display);
 	waveform.loadWaveform(
 		tempAudioBuffer.get(), audio_source->getSampleRate(), audio_source->getBufferUpdateLock()
 	);
@@ -266,35 +221,11 @@ void WhooshGeneratorAudioProcessorEditor::enableRecording()
 	startTimer(100);
 
 	buttons_panel_.enableButtons({
-		                             &buttons_panel_.playButton, &buttons_panel_.stopButton, &buttons_panel_.loopButton,
-		                             &buttons_panel_.clean_envelope_button, &buttons_panel_.fadeInButton,
-		                             &buttons_panel_.fadeOutButton,
-		                             &buttons_panel_.normalizeButton, &buttons_panel_.sendEnvelopeButton
+		                             &buttons_panel_.clean_envelope_button,  &buttons_panel_.sendEnvelopeButton
 	                             }, false);
-	buttons_panel_.recordButton.setButtonText("Stop Recording");
-	buttons_panel_.recordButton.setToggleState(true, NotificationType::dontSendNotification);
 }
 
-void WhooshGeneratorAudioProcessorEditor::disableRecording()
-{
-	stopTimer();
 
-	audio_source->stopRecording();
-
-	buttons_panel_.enableButtons({
-		                             &buttons_panel_.playButton, &buttons_panel_.stopButton, &buttons_panel_.loopButton,
-		                             &buttons_panel_.clean_envelope_button, &buttons_panel_.fadeInButton,
-		                             &buttons_panel_.fadeOutButton,
-		                             &buttons_panel_.normalizeButton, &buttons_panel_.sendEnvelopeButton
-	                             }, true);
-	buttons_panel_.recordButton.setButtonText("Record");
-	buttons_panel_.recordButton.setToggleState(false, NotificationType::dontSendNotification);
-}
-
-void WhooshGeneratorAudioProcessorEditor::loopButtonClicked()
-{
-	audio_source->setLooping(buttons_panel_.loopButton.getToggleState());
-}
 
 bool node_comparator(envelope::node a, envelope::node b)
 {
@@ -369,24 +300,3 @@ void WhooshGeneratorAudioProcessorEditor::clean_envelope()
 	volume_envelope_.load_envelope(audioProcessor.rms_envelope_clean.get());
 }
 
-void WhooshGeneratorAudioProcessorEditor::onAudioSourceStateChange(
-	my_audio_source::State state
-)
-{
-	if (state == my_audio_source::Stopped)
-	{
-		buttons_panel_.setupButton(buttons_panel_.playButton, "Play", true);
-		buttons_panel_.setupButton(buttons_panel_.stopButton, "Stop", false);
-		waveform.clearSelectedRegion();
-	}
-	else if (state == my_audio_source::Playing)
-	{
-		buttons_panel_.setupButton(buttons_panel_.playButton, "Pause", true);
-		buttons_panel_.setupButton(buttons_panel_.stopButton, "Stop", true);
-	}
-	else if (state == my_audio_source::Paused)
-	{
-		buttons_panel_.setupButton(buttons_panel_.playButton, "Play", true);
-		buttons_panel_.setupButton(buttons_panel_.stopButton, "Return To Zero", true);
-	}
-}
