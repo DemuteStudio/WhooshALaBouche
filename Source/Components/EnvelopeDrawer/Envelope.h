@@ -18,7 +18,7 @@ public:
 	envelope(envelope* envelope);
 	~envelope();
 
-	std::vector<node> list_;
+	std::list<node> list_;
 	int get_size();
 
 	node operator[](const int index);

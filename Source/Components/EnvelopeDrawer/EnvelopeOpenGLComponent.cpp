@@ -161,7 +161,7 @@ void EnvelopeOpenGLComponent::render(OpenGLContext& openGLContext)
 
 		if (calculateVerticesTrigger)
 		{
-			// calculateVertices(channel);
+			calculateVertices(channel);
 		}
 
 		vertexBuffer->bind(vertices[channel].data(), vertices[channel].size());
@@ -337,7 +337,7 @@ void EnvelopeOpenGLComponent::calculateVertices(unsigned int channel)
 	}
 }
 
-void EnvelopeOpenGLComponent::set_vertice(std::vector<envelope::node> envelope_list, int64 sample, int64 skipSample,
+void EnvelopeOpenGLComponent::set_vertice(std::list<envelope::node> envelope_list, int64 sample, int64 skipSample,
                                           int64 endSample,
                                           int vertice, int numVertices,
                                           int channel)
@@ -372,7 +372,7 @@ GLfloat EnvelopeOpenGLComponent::getAverageSampleValue(
 }
 
 GLfloat EnvelopeOpenGLComponent::getPeakSampleValue(
-	std::vector<envelope::node> samples,
+	std::list<envelope::node> samples,
 	int64 currentStartSample,
 	int64 currentNumSamples)
 {
@@ -384,9 +384,9 @@ GLfloat EnvelopeOpenGLComponent::getPeakSampleValue(
 	GLfloat peakValue = 0.0f;
 	int64 endSample = currentStartSample + currentNumSamples;
 
-	for (int64 sample = currentStartSample; sample < endSample; sample++)
+	for (auto sample = samples.begin(); sample != samples.end(); ++sample)
 	{
-		float sampleValue = samples[sample].value;
+		float sampleValue = (*sample).value;
 		if (std::abs(peakValue) < std::abs(sampleValue))
 		{
 			peakValue = sampleValue;

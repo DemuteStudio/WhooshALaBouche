@@ -3,8 +3,8 @@
 
 //==============================================================================
 WhooshGeneratorAudioProcessorEditor::WhooshGeneratorAudioProcessorEditor(WhooshGeneratorAudioProcessor& p)
-	: AudioProcessorEditor(&p), audioProcessor(p), buttons_panel_(), parameters_box_(p.getBlockSize(), p.sample_rate),
-	  envelope_array_(p.rms_envelope.get()) 
+	: AudioProcessorEditor(&p), audioProcessor(p), buttons_panel_(), parameters_box_(p.getBlockSize(), p.sample_rate)
+	  // envelope_array_(p.rms_envelope.get()) 
 {
 	setLookAndFeel(&tenFtLookAndFeel);
 	double time_to_display = 3.;
@@ -24,45 +24,19 @@ WhooshGeneratorAudioProcessorEditor::WhooshGeneratorAudioProcessorEditor(WhooshG
 
 	formatManager.registerBasicFormats();
 
-	audio_source->addListener((my_audio_source::Listener*)&playbackPosition);
 
 	addAndMakeVisible(&waveform);
-	waveform.addAndMakeVisible(&selectedRegion);
-	waveform.addAndMakeVisible(&playbackPosition);
 
-	addAndMakeVisible(volume_envelope_);
-	volume_envelope_.addAndMakeVisible(envelope_selected_region_);
-	volume_envelope_.addAndMakeVisible(envelope_playback_position_);
-	volume_envelope_.addListener(&envelope_selected_region_);
-	volume_envelope_.addListener(&envelope_playback_position_);
+	addAndMakeVisible(&out_parameters_box_);
 
 
-	addAndMakeVisible(frequency_envelope_);
-	frequency_envelope_.addAndMakeVisible(envelope_selected_region_);
-	frequency_envelope_.addAndMakeVisible(envelope_playback_position_);
-	frequency_envelope_.addListener(&envelope_selected_region_);
-	frequency_envelope_.addListener(&envelope_playback_position_);
-
-	addAndMakeVisible(&scroller);
 
 	waveform.addListener(audio_source);
-	waveform.addListener(&scroller);
-	waveform.addListener(&selectedRegion);
-	waveform.addListener(&playbackPosition);
 	waveform.onPositionChange = [this](double newPosition)
 	{
 		audio_source->setPosition(newPosition);
 	};
 
-	scroller.addListener(&waveform);
-	scroller.addListener(&volume_envelope_);
-	scroller.onMouseWheelMove = [this](
-		const MouseEvent& event,
-		const MouseWheelDetails& wheelDetails
-	)
-		{
-			waveform.mouseWheelMove(event, wheelDetails);
-		};
 
 	enableRecording();
 
@@ -85,7 +59,7 @@ WhooshGeneratorAudioProcessorEditor::WhooshGeneratorAudioProcessorEditor(WhooshG
 	};
 
 	//====================================================================
-	setSize(1000, 900);
+	setSize(1000, 700);
 }
 
 WhooshGeneratorAudioProcessorEditor::~WhooshGeneratorAudioProcessorEditor()
@@ -115,26 +89,22 @@ void WhooshGeneratorAudioProcessorEditor::resized()
 	buttons_panel_.setBounds(rectangle.removeFromTop(row_height * 3));
 
 	parameters_box_.setBounds(rectangle.removeFromBottom(row_height * 2));
-	scroller.setBounds(rectangle.removeFromBottom(row_height).reduced(delta));
 
 
 	auto main_rectangle = rectangle;
 	waveform.setBounds(
 		main_rectangle.removeFromTop(main_rectangle.getHeight() / 2).reduced(delta)
 	);
-	playbackPosition.setBounds(
-		waveform.getBounds()
-	);
-	envelope_playback_position_.setBounds(
-		volume_envelope_.getBounds()
-	);
 
-	volume_envelope_.setBounds(main_rectangle.removeFromTop(main_rectangle.getHeight() / 2).reduced(delta));
-	frequency_envelope_.setBounds(main_rectangle.reduced(delta));
+	out_parameters_box_.setBounds(main_rectangle.removeFromTop(main_rectangle.getHeight()).reduced(delta));
 
-	selectedRegion.setBounds(
-		rectangle.reduced(delta)
-	);
+	// envelope_playback_position_.setBounds(
+	// 	volume_envelope_.getBounds()
+	// );
+	//
+	// volume_envelope_.setBounds(main_rectangle.removeFromTop(main_rectangle.getHeight() / 2).reduced(delta));
+	// frequency_envelope_.setBounds(main_rectangle.reduced(delta));
+
 }
 
 void WhooshGeneratorAudioProcessorEditor::sliderValueChanged(Slider* slider)
@@ -170,13 +140,15 @@ void WhooshGeneratorAudioProcessorEditor::timerCallback()
 	int end_sample = audio_source->get_sample_index();
 
 	waveform.updateVisibleRegion(end_sample, number_of_samples_to_display);
-	volume_envelope_.updateVisibleRegion(end_sample, number_of_samples_to_display);
+	// volume_envelope_.updateVisibleRegion(end_sample, number_of_samples_to_display);
 
 	// int rms_sample_rate = audioProcessor.getBlockSize()
 	// double newEndTime = (double)audioBuffer->getNumSamples() / audio_source->getSampleRate();
 	// double nexStartTime = newEndTime - 
 	// waveform.updateVisibleRegion(0.0, newEndTime);
 	// envelope_.updateVisibleRegion(0.0, newEndTime);
+
+	out_parameters_box_.set_slider_value(out_parameters_box::volume, audioProcessor.last_rms_value);
 }
 
 void WhooshGeneratorAudioProcessorEditor::send_osc_message(String message)
@@ -202,9 +174,8 @@ void WhooshGeneratorAudioProcessorEditor::send_osc_message(String message)
 void WhooshGeneratorAudioProcessorEditor::enableRecording()
 {
 	waveform.clearWaveform();
-	volume_envelope_.clearWaveform();
+	// volume_envelope_.clearWaveform();
 	audio_source->unloadAudio();
-	scroller.disable();
 
 	std::shared_ptr<AudioSampleBuffer> tempAudioBuffer = audio_source->loadRecordingBuffer(number_of_samples_to_display);
 	waveform.loadWaveform(
@@ -212,9 +183,9 @@ void WhooshGeneratorAudioProcessorEditor::enableRecording()
 	);
 
 	envelope* temp_envelope_buffer = audioProcessor.load_new_envelope();
-	volume_envelope_.load_envelope(
-		temp_envelope_buffer, tempAudioBuffer.get(), audio_source->getSampleRate(), audio_source->getBufferUpdateLock()
-	);
+	// volume_envelope_.load_envelope(
+	// 	temp_envelope_buffer, tempAudioBuffer.get(), audio_source->getSampleRate(), audio_source->getBufferUpdateLock()
+	// );
 
 	audioBuffer = tempAudioBuffer.get();
 
@@ -234,69 +205,69 @@ bool node_comparator(envelope::node a, envelope::node b)
 
 void WhooshGeneratorAudioProcessorEditor::clean_envelope()
 {
-	float threshold = 0.3;
-	std::vector<envelope> all_individual_envelopes;
-
-	auto it = std::find_if(audioProcessor.rms_envelope->list_.begin(), audioProcessor.rms_envelope->list_.end(),
-	                       [threshold](envelope::node node) { return (node.value >= threshold); });
-
-
-	decltype(it) first_node;
-	decltype(it) max_node;
-	decltype(it) last_node;
-
-	while (true)
-	{
-		if (it != audioProcessor.rms_envelope->list_.end())
-		{
-			first_node = it;
-		}
-		else
-		{
-			break;
-		}
-
-		it = std::find_if_not(first_node, audioProcessor.rms_envelope->list_.end(),
-		                      [threshold](envelope::node node) { return (node.value >= threshold); });
-
-		if (it != audioProcessor.rms_envelope->list_.end())
-		{
-			last_node = it;
-		}
-		else
-		{
-			break;
-		}
-
-		it = std::max_element(first_node, last_node, node_comparator);
-
-		max_node = it;
-
-		envelope temp_envelope = envelope();
-		temp_envelope.add(envelope::node(first_node->sample, first_node->value));
-		temp_envelope.add(envelope::node(max_node->sample, max_node->value));
-		temp_envelope.add(envelope::node(last_node->sample, last_node->value));
-
-		all_individual_envelopes.emplace_back(temp_envelope);
-
-
-		it = std::find_if(last_node + 1, audioProcessor.rms_envelope->list_.end(),
-		                  [threshold](envelope::node node) { return (node.value >= threshold); });
-	}
-	audioProcessor.rms_envelope_clean.reset(new envelope());
-	for (auto envelope_ : all_individual_envelopes)
-	{
-		// for (int index = 0; index < 3; ++index)
-		// {
-		// 	audioProcessor.rms_envelope_clean->add(envelope_[index]);
-		// }
-		envelope::node temp_node(envelope_[0].sample, 0);
-		audioProcessor.rms_envelope_clean->add(temp_node);
-		temp_node = envelope::node(envelope_[1].sample, envelope_[1].value);
-		audioProcessor.rms_envelope_clean->add(temp_node);
-		temp_node = envelope::node(envelope_[2].sample, 0);
-		audioProcessor.rms_envelope_clean->add(temp_node);
-	}
-	volume_envelope_.load_envelope(audioProcessor.rms_envelope_clean.get());
+	// float threshold = 0.3;
+	// std::vector<envelope> all_individual_envelopes;
+	//
+	// auto it = std::find_if(audioProcessor.rms_envelope->list_.begin(), audioProcessor.rms_envelope->list_.end(),
+	//                        [threshold](envelope::node node) { return (node.value >= threshold); });
+	//
+	//
+	// decltype(it) first_node;
+	// decltype(it) max_node;
+	// decltype(it) last_node;
+	//
+	// while (true)
+	// {
+	// 	if (it != audioProcessor.rms_envelope->list_.end())
+	// 	{
+	// 		first_node = it;
+	// 	}
+	// 	else
+	// 	{
+	// 		break;
+	// 	}
+	//
+	// 	it = std::find_if_not(first_node, audioProcessor.rms_envelope->list_.end(),
+	// 	                      [threshold](envelope::node node) { return (node.value >= threshold); });
+	//
+	// 	if (it != audioProcessor.rms_envelope->list_.end())
+	// 	{
+	// 		last_node = it;
+	// 	}
+	// 	else
+	// 	{
+	// 		break;
+	// 	}
+	//
+	// 	it = std::max_element(first_node, last_node, node_comparator);
+	//
+	// 	max_node = it;
+	//
+	// 	envelope temp_envelope = envelope();
+	// 	temp_envelope.add(envelope::node(first_node->sample, first_node->value));
+	// 	temp_envelope.add(envelope::node(max_node->sample, max_node->value));
+	// 	temp_envelope.add(envelope::node(last_node->sample, last_node->value));
+	//
+	// 	all_individual_envelopes.emplace_back(temp_envelope);
+	//
+	//
+	// 	it = std::find_if(last_node + 1, audioProcessor.rms_envelope->list_.end(),
+	// 	                  [threshold](envelope::node node) { return (node.value >= threshold); });
+	// }
+	// audioProcessor.rms_envelope_clean.reset(new envelope());
+	// for (auto envelope_ : all_individual_envelopes)
+	// {
+	// 	// for (int index = 0; index < 3; ++index)
+	// 	// {
+	// 	// 	audioProcessor.rms_envelope_clean->add(envelope_[index]);
+	// 	// }
+	// 	envelope::node temp_node(envelope_[0].sample, 0);
+	// 	audioProcessor.rms_envelope_clean->add(temp_node);
+	// 	temp_node = envelope::node(envelope_[1].sample, envelope_[1].value);
+	// 	audioProcessor.rms_envelope_clean->add(temp_node);
+	// 	temp_node = envelope::node(envelope_[2].sample, 0);
+	// 	audioProcessor.rms_envelope_clean->add(temp_node);
+	// }
+	// volume_envelope_.load_envelope(audioProcessor.rms_envelope_clean.get());
 }
 

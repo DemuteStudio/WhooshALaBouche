@@ -36,7 +36,7 @@ public:
 
 private:
 	void calculateVertices(unsigned int channel);
-	void set_vertice(std::vector<envelope::node> envelope_list, int64 sample, int64 skipSample, int64 endSample,
+	void set_vertice(std::list<envelope::node> envelope_list, int64 sample, int64 skipSample, int64 endSample,
 	                 int vertice, int numVertices, int channel);
 
 	GLfloat getAverageSampleValue(
@@ -44,7 +44,7 @@ private:
 	);
 
 	GLfloat getPeakSampleValue(
-		std::vector<envelope::node> samples,
+		std::list<envelope::node> samples,
 		int64 startSample, int64 numSamples
 	);
 

@@ -11,6 +11,7 @@
 #include "Components/AudioWaveformSelectedRegionComponent.h"
 #include "Components/AudioPlaybackPositionComponent.h"
 #include "Components/AudioScrollerComponent.h"
+#include "Components/out_parameters_box.h"
 
 using namespace juce;
 
@@ -55,17 +56,9 @@ private:
 	AudioSampleBuffer* audioBuffer;
 
 	AudioWaveformComponent waveform;
-	AudioWaveformSelectedRegionComponent selectedRegion;
-	AudioPlaybackPositionComponent playbackPosition;
 
-	EnvelopeComponent volume_envelope_;
-	EnvelopeComponent frequency_envelope_;
-	EnvelopeSelectedRegionComponent envelope_selected_region_;
-	AudioPlaybackPositionComponent envelope_playback_position_;
-	envelope* envelope_array_;
-	
+	out_parameters_box out_parameters_box_;
 
-	AudioScrollerComponent scroller;
 
 	my_audio_source* audio_source;
 

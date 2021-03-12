@@ -5,6 +5,10 @@
   <MAINGROUP id="MGtDsZ" name="WhooshGenerator">
     <GROUP id="{5BEADBA9-EE88-C0EB-E7A8-52E1335C79AC}" name="Source">
       <GROUP id="{5432A927-7F5C-12C5-3DE5-D3A25A65DD70}" name="Components">
+        <FILE id="kPKNJj" name="out_parameters_box.cpp" compile="1" resource="0"
+              file="Source/Components/out_parameters_box.cpp"/>
+        <FILE id="couOTp" name="out_parameters_box.h" compile="0" resource="0"
+              file="Source/Components/out_parameters_box.h"/>
         <FILE id="Hl44vX" name="ButtonsPanel.cpp" compile="1" resource="0"
               file="Source/Components/ButtonsPanel.cpp"/>
         <FILE id="Du2285" name="ButtonsPanel.h" compile="0" resource="0" file="Source/Components/ButtonsPanel.h"/>
