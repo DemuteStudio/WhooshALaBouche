@@ -1,10 +1,10 @@
-#include "TenFtLookAndFeel.h"
+#include "MyLookAndFeel.h"
 #include "AudioWaveformComponent.h"
 #include "AudioPlaybackPositionComponent.h"
 #include "AudioWaveformSelectedRegionComponent.h"
 
 
-TenFtLookAndFeel::TenFtLookAndFeel()
+MyLookAndFeel::MyLookAndFeel()
 {
 	const Colour main_colour = Colour(233, 242, 249),
 	             contrasting_colour = Colour(27, 50, 95),
@@ -46,6 +46,6 @@ TenFtLookAndFeel::TenFtLookAndFeel()
 	);
 }
 
-TenFtLookAndFeel::~TenFtLookAndFeel()
+MyLookAndFeel::~MyLookAndFeel()
 {
 }
