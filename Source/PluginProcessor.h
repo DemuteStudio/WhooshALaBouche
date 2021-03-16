@@ -82,6 +82,7 @@ public:
 	std::unique_ptr<envelope> rms_envelope_clean;
 	//==============================================================================
 	void calculate_fft();
+	int get_fft_peak();
 
 private:
 	my_audio_source audioSource;
@@ -97,6 +98,7 @@ private:
 	int fifoIndex = 0;
 	bool nextFFTBlockReady = false;
 
+	double sample_rate_size_max = (1. / fft_size)* sample_rate;
 
 	//==============================================================================
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(WhooshGeneratorAudioProcessor)

@@ -25,7 +25,11 @@ void my_audio_source::prepareToPlay(
 
 void my_audio_source::releaseResources()
 {
-	recording_buffer_preallocation_thread_->stopThread(1000);
+	auto test = recording_buffer_preallocation_thread_.get();
+	if (recording_buffer_preallocation_thread_.get() != nullptr)
+	{
+		recording_buffer_preallocation_thread_->stopThread(1000);
+	}
 
 	masterSource.releaseResources();
 }

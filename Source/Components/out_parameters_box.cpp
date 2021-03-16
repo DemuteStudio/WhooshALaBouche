@@ -1,13 +1,3 @@
-/*
-  ==============================================================================
-
-    out_parameters_box.cpp
-    Created: 11 Mar 2021 5:15:17pm
-    Author:  arnau
-
-  ==============================================================================
-*/
-
 #include <JuceHeader.h>
 #include "out_parameters_box.h"
 
@@ -26,11 +16,14 @@ out_parameters_box::out_parameters_box()
 
 	addAndMakeVisible(frequency_out_slider_);
 	frequency_out_slider_.setSliderStyle(Slider::LinearVertical);
-	frequency_out_slider_.setTextBoxStyle(Slider::NoTextBox, true, 0, 0);
+	// frequency_out_slider_.setTextBoxStyle(Slider::NoTextBox, true, 0, 0);
+	frequency_out_slider_.setRange(0, 1024, 0);
 
 	addAndMakeVisible(frequency_out_label_);
 	frequency_out_label_.setText("FREQUENCY", dontSendNotification);
 	frequency_out_label_.setJustificationType(Justification::centred);
+
+	// volume_out_attachment_ = std::make_unique<AudioProcessorValueTreeState::SliderAttachment>();
 }
 
 out_parameters_box::~out_parameters_box()
@@ -51,8 +44,8 @@ void out_parameters_box::paint(juce::Graphics& g)
 	g.setColour(juce::Colours::grey);
 	g.drawRect(getLocalBounds(), 1); // draw an outline around the component
 
-	g.setColour(juce::Colours::white);
-	g.setFont(14.0f);
+	// g.setColour(juce::Colours::white);
+	// g.setFont(14.0f);
 }
 
 void out_parameters_box::resized()
@@ -70,10 +63,11 @@ void out_parameters_box::resized()
 
 	volume_out_slider_.setBounds(rectangle.removeFromLeft(slot_width).reduced(delta));
 	volume_out_label_.setBounds(labels_slice.removeFromLeft(slot_width).reduced(delta));
-
-
+	
 	frequency_out_slider_.setBounds(rectangle.removeFromLeft(slot_width).reduced(delta));
 	frequency_out_label_.setBounds(labels_slice.removeFromLeft(slot_width).reduced(delta));
+	frequency_out_slider_.setTextBoxStyle(Slider::TextBoxBelow, true, slot_width, 80);
+
 }
 
 void out_parameters_box::set_slider_value(parameter_type parameter, float value)

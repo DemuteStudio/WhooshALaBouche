@@ -43,15 +43,15 @@ WhooshGeneratorAudioProcessorEditor::WhooshGeneratorAudioProcessorEditor(WhooshG
 	//====================================================================
 	//OSC
 
-	bool connected = osc_sender_.connect("127.0.0.1", 8000);
-	if (connected)
-	{
-		DBG("Connected");
-	}
-	else
-	{
-		DBG("Not Connected");
-	}
+	// bool connected = osc_sender_.connect("127.0.0.1", 8000);
+	// if (connected)
+	// {
+	// 	DBG("Connected");
+	// }
+	// else
+	// {
+	// 	DBG("Not Connected");
+	// }
 
 	buttons_panel_.sendEnvelopeButton.onClick = [this]
 	{
@@ -136,8 +136,9 @@ int WhooshGeneratorAudioProcessorEditor::get_number_of_blocks_from_milliseconds(
 void WhooshGeneratorAudioProcessorEditor::timerCallback()
 {
 	audioProcessor.calculate_fft();
+	int frequency_peak = audioProcessor.get_fft_peak();
 
-	int end_sample = audio_source->get_sample_index();
+	const int end_sample = audio_source->get_sample_index();
 
 	waveform.updateVisibleRegion(end_sample, number_of_samples_to_display);
 	// volume_envelope_.updateVisibleRegion(end_sample, number_of_samples_to_display);
@@ -149,6 +150,7 @@ void WhooshGeneratorAudioProcessorEditor::timerCallback()
 	// envelope_.updateVisibleRegion(0.0, newEndTime);
 
 	out_parameters_box_.set_slider_value(out_parameters_box::volume, audioProcessor.last_rms_value);
+	out_parameters_box_.set_slider_value(out_parameters_box::frequency, frequency_peak);
 }
 
 void WhooshGeneratorAudioProcessorEditor::send_osc_message(String message)

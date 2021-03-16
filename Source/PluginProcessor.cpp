@@ -97,6 +97,7 @@ void WhooshGeneratorAudioProcessor::prepareToPlay(double sampleRate, int samples
 {
 	sample_rate = sampleRate;
 	audioSource.prepareToPlay(samplesPerBlock, sampleRate);
+	sample_rate_size_max = (1. / fft_size)* sample_rate;
 }
 
 void WhooshGeneratorAudioProcessor::releaseResources()
@@ -131,9 +132,9 @@ bool WhooshGeneratorAudioProcessor::isBusesLayoutSupported(const BusesLayout& la
 
 void WhooshGeneratorAudioProcessor::push_next_sample_into_fifo(const float sample)
 {
-	if (fifoIndex == fft_size) 
+	if (fifoIndex == fft_size)
 	{
-		if (!nextFFTBlockReady) 
+		if (!nextFFTBlockReady)
 		{
 			std::fill(fft_data_.begin(), fft_data_.end(), 0.0f);
 			std::copy(fifo_.begin(), fifo_.end(), fft_data_.begin());
@@ -143,7 +144,7 @@ void WhooshGeneratorAudioProcessor::push_next_sample_into_fifo(const float sampl
 		fifoIndex = 0;
 	}
 
-	fifo_[(size_t)fifoIndex] = sample; 
+	fifo_[(size_t)fifoIndex] = sample;
 	fifoIndex++;
 }
 #endif
@@ -154,6 +155,7 @@ void WhooshGeneratorAudioProcessor::processBlock(juce::AudioBuffer<float>& buffe
 	ScopedNoDenormals noDenormals;
 
 	const int total_num_input_channels = getTotalNumInputChannels();
+	double sample_rate_size_max = (1. / fft_size)* sample_rate;
 	const int total_num_output_channels = getTotalNumOutputChannels();
 
 	for (int channel = total_num_input_channels;
@@ -172,58 +174,57 @@ void WhooshGeneratorAudioProcessor::processBlock(juce::AudioBuffer<float>& buffe
 
 		auto bufferToFill = AudioSourceChannelInfo(audio_buffer);
 
-			for (auto channel = 0; channel < total_num_output_channels; ++channel)
+		for (auto channel = 0; channel < total_num_output_channels; ++channel)
+		{
+			const auto actual_input_channel = 0;
+			const auto* inputBuffer = bufferToFill.buffer->getReadPointer(
+				actual_input_channel, bufferToFill.startSample);
+			auto* outputBuffer = bufferToFill.buffer->getWritePointer(channel, bufferToFill.startSample);
+
+
+			for (auto sample = 0; sample < bufferToFill.numSamples; ++sample)
 			{
-				const auto actual_input_channel = 0;
-				const auto* inputBuffer = bufferToFill.buffer->getReadPointer(
-					actual_input_channel, bufferToFill.startSample);
-				auto* outputBuffer = bufferToFill.buffer->getWritePointer(channel, bufferToFill.startSample);
+				//Volume
+				samples_squares_sum += inputBuffer[sample] * inputBuffer[sample];
 
+				(last_rms_value >= threshold_value)
+					? outputBuffer[sample] = inputBuffer[sample]
+					: outputBuffer[sample] = 0;
 
-				for (auto sample = 0; sample < bufferToFill.numSamples; ++sample)
-				{
-					//Volume
-					samples_squares_sum += inputBuffer[sample] * inputBuffer[sample];
-
-					(last_rms_value >= threshold_value)
-						? outputBuffer[sample] = inputBuffer[sample]
-						: outputBuffer[sample] = 0;
-
-					//Frequencies
-					push_next_sample_into_fifo(inputBuffer[sample]);
-				}
+				//Frequencies
+				push_next_sample_into_fifo(inputBuffer[sample]);
 			}
+		}
 
-			if (block_index >= rms_blocks_length)
-			{
-				// DBG(rms_blocks_length);
-				//Volume Envelope
-				temp_previous_value = last_rms_value;
+		if (block_index >= rms_blocks_length)
+		{
+			//Volume Envelope
+			temp_previous_value = last_rms_value;
 
-				last_rms_value = sqrt(samples_squares_sum / bufferToFill.numSamples);
+			last_rms_value = sqrt(samples_squares_sum / bufferToFill.numSamples);
 
-				last_rms_value = (last_rms_value < threshold_value) ? 0. : last_rms_value;
+			last_rms_value = (last_rms_value < threshold_value) ? 0. : last_rms_value;
 
-				is_rms_different = (last_rms_value != temp_previous_value);
+			// is_rms_different = (last_rms_value != temp_previous_value);
+			//
+			// if (is_rms_different)
+			// {
+			// 	rms_envelope->list_.emplace_back(sample_index, last_rms_value);
+			// }
 
-				if (is_rms_different)
-				{
-					rms_envelope->list_.emplace_back(sample_index, last_rms_value);
-				}
-
-				samples_squares_sum = 0.0;
-				block_index = 0;
+			samples_squares_sum = 0.0;
+			block_index = 0;
 
 
-				// my_fft_.performFrequencyOnlyForwardTransform();
-			}
-			else
-			{
-				block_index++;
-			}
+			// my_fft_.performFrequencyOnlyForwardTransform();
+		}
+		else
+		{
+			block_index++;
+		}
 
-			sample_index += bufferToFill.buffer->getNumSamples();
-			audioSource.getNextAudioBlock(bufferToFill);
+		sample_index += bufferToFill.buffer->getNumSamples();
+		audioSource.getNextAudioBlock(bufferToFill);
 	}
 }
 
@@ -284,7 +285,23 @@ MemoryBlock WhooshGeneratorAudioProcessor::get_envelope_memory_block()
 
 void WhooshGeneratorAudioProcessor::calculate_fft()
 {
-	forward_fft_.performFrequencyOnlyForwardTransform(fft_data_.data());
+	if (nextFFTBlockReady)
+	{
+		forward_fft_.performFrequencyOnlyForwardTransform(fft_data_.data());
+		nextFFTBlockReady = false;
+	}
+}
+
+int WhooshGeneratorAudioProcessor::get_fft_peak()
+{
+	const auto max_iterator = std::max_element(fft_data_.begin(), fft_data_.begin() + fft_size);
+	auto index = std::distance(fft_data_.begin(), max_iterator);
+	return index * sample_rate_size_max;
+	// if (max_iterator != fft_data_.end())
+	// {
+	// 	return *max_iterator;
+	// }
+	// return 0.;
 }
 
 
