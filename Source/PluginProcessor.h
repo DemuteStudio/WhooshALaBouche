@@ -34,6 +34,7 @@ public:
 	bool isBusesLayoutSupported(const BusesLayout& layouts) const override;
 #endif
 
+	void push_next_sample_into_fifo(const float x);
 	void processBlock(juce::AudioBuffer<float>&, juce::MidiBuffer&) override;
 
 	//==============================================================================
@@ -77,13 +78,28 @@ public:
 	float threshold_value = 0.0;
 	float rms_blocks_length = 1;
 
-	std::unique_ptr<envelope > rms_envelope;
-	std::unique_ptr<envelope > rms_envelope_clean;
+	std::unique_ptr<envelope> rms_envelope;
+	std::unique_ptr<envelope> rms_envelope_clean;
+	//==============================================================================
+	void calculate_fft();
+	int get_fft_peak();
 
 private:
-	my_audio_source audioSource; 
-	
+	my_audio_source audioSource;
+
+
+	static const int fft_order = 10;
+	static const int fft_size = 1 << fft_order;
+
+	juce::dsp::FFT forward_fft_;
+
+	std::array<float, fft_size> fifo_;
+	std::array<float, fft_size* 2> fft_data_;
+	int fifoIndex = 0;
+	bool nextFFTBlockReady = false;
+
+	double sample_rate_size_max = (1. / fft_size)* sample_rate;
 
 	//==============================================================================
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(WhooshGeneratorAudioProcessor)
-}; 
+};

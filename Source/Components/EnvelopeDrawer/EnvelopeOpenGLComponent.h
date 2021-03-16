@@ -30,19 +30,21 @@ public:
 	void load(envelope* buffer, AudioSampleBuffer* newAudioBuffer, const CriticalSection* bufferUpdateLock);
 	void load(envelope* buffer);
 
-	void display(int64 startSample, int64 numSamples);
+	void display(int64 end_sample, int64 numSamples);
 
 	void refresh();
 
 private:
 	void calculateVertices(unsigned int channel);
+	void set_vertice(std::list<envelope::node> envelope_list, int64 sample, int64 skipSample, int64 endSample,
+	                 int vertice, int numVertices, int channel);
 
 	GLfloat getAverageSampleValue(
 		const float* samples, int64 startSample, int64 numSamples
 	);
 
 	GLfloat getPeakSampleValue(
-		std::vector<envelope::node> samples,
+		std::list<envelope::node> samples,
 		int64 startSample, int64 numSamples
 	);
 
@@ -60,7 +62,7 @@ private:
 
 	envelope* envelope_ = nullptr;
 	int bufferNumChannels = 0;
-	int64 visibleRegionStartSample = 0;
+	int64 visibleRegionEndSample = 0;
 	int64 visibleRegionNumSamples = 0;
 	unsigned int skipSamples = 8;
 	AudioSampleBuffer* audio_buffer;

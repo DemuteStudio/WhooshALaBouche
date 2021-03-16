@@ -8,23 +8,9 @@
 
 class my_audio_source : public AudioSource,
                          public AudioWaveformComponent::Listener,
-                         private ChangeListener,
                          private Timer
 {
 public:
-	enum State
-	{
-		NoAudioLoaded,
-		StartRecording,
-		Recording,
-		Starting,
-		Playing,
-		Stopping,
-		Stopped,
-		Pausing,
-		Paused
-	};
-
 	class Listener
 	{
 	public:
@@ -41,7 +27,6 @@ public:
 		}
 	};
 
-	std::function<void (State)> onStateChange;
 
 public:
 	my_audio_source();
@@ -61,25 +46,23 @@ public:
 
 	void unloadAudio();
 
-	std::shared_ptr<AudioSampleBuffer> loadRecordingBuffer();
+	std::shared_ptr<AudioSampleBuffer> loadRecordingBuffer(int number_of_samples_to_display);
 
-	void stopRecording();
+	// void stopRecording();
+	//
+	// void playAudio();
+	//
+	// void stopAudio();
+	//
+	// void pauseAudio();
 
-	void playAudio();
-
-	void stopAudio();
-
-	void pauseAudio();
-
-	void muteAudio();
-
-	void fadeInAudio();
-
-	void fadeOutAudio();
-
-	void normalizeAudio();
-
-	State getState() const;
+	// void muteAudio();
+	//
+	// void fadeInAudio();
+	//
+	// void fadeOutAudio();
+	//
+	// void normalizeAudio();
 
 	double getCurrentPosition() const;
 
@@ -97,16 +80,15 @@ public:
 
 	const CriticalSection* getBufferUpdateLock() const noexcept;
 
-private:
-	void selectedRegionCreated(AudioWaveformComponent* waveform) override;
+	int get_sample_index();
 
-	void selectedRegionCleared(AudioWaveformComponent* waveform) override;
+private:
+	// void selectedRegionCreated(AudioWaveformComponent* waveform) override;
+	//
+	// void selectedRegionCleared(AudioWaveformComponent* waveform) override;
 
 	void timerCallback() override;
 
-	void changeListenerCallback(ChangeBroadcaster* broadcaster) override;
-
-	void changeState(State newState);
 
 	void loadAudioSubregion(
 		double startTime,
@@ -126,17 +108,17 @@ private:
 	std::shared_ptr<AudioSampleBuffer> buffer;
 	std::unique_ptr<AudioSampleBuffer> subregionBuffer;
 
-	AudioSampleBuffer preallocatedRecordingBuffer;
-	std::unique_ptr<BufferPreallocationThread> recordingBufferPreallocationThread;
-	int numSamplesRecorded = 0;
+	AudioSampleBuffer preallocated_recording_buffer_;
+	std::unique_ptr<BufferPreallocationThread> recording_buffer_preallocation_thread_;
+	int num_samples_recorded_ = 0;
 
 	double sampleRate = 0.0;
 	double inputSampleRate = 0.0;
+	int buffer_size;
 
 	bool hasSubregion = false;
 	double subregionStartTime = 0.0;
 	double subregionEndTime = 0.0;
-	State state = NoAudioLoaded;
 	
 	ListenerList<Listener> listeners;
 

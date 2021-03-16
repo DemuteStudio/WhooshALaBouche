@@ -126,22 +126,22 @@ void EnvelopeOpenGLComponent::shutdown(OpenGLContext&)
 void EnvelopeOpenGLComponent::render(OpenGLContext& openGLContext)
 {
 	jassert(OpenGLHelpers::isContextActive ());
-	
+
 	if (vertices.empty())
 	{
 		return;
 	}
-	
+
 	OpenGLHelpers::clear(
 		getLookAndFeel().findColour(ColourIds::waveformBackgroundColour)
 	);
-	
+
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_LINE_SMOOTH);
-	
+
 	shaderProgramLines->use();
-	
+
 	double scale = openGLContext.getRenderingScale();
 	Component* parent = getParentComponent();
 	Rectangle<int> parentBounds = parent->getBounds(),
@@ -149,68 +149,67 @@ void EnvelopeOpenGLComponent::render(OpenGLContext& openGLContext)
 	GLint x = (GLint)(scale * globalBounds.getX());
 	GLsizei width = (GLsizei)(scale * globalBounds.getWidth());
 	GLsizei height = (GLsizei)(scale * (globalBounds.getHeight() / bufferNumChannels));
-	
+
 	for (int channel = 0; channel < bufferNumChannels; channel++)
 	{
 		GLint y = (GLint)(scale * (
 			parentBounds.getHeight() - globalBounds.getBottom() +
 			channel * (globalBounds.getHeight() / bufferNumChannels)
 		));
-	
+
 		glViewport(x, y, width, height);
-	
+
 		if (calculateVerticesTrigger)
 		{
 			calculateVertices(channel);
 		}
-	
+
 		vertexBuffer->bind(vertices[channel].data(), vertices[channel].size());
-	
+
 		openGLContext.extensions.glVertexAttribPointer(position->attributeID, 2,
 		                                               GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), 0);
 		openGLContext.extensions.glEnableVertexAttribArray(position->attributeID);
-	
+
 		glDrawArrays(GL_LINE_STRIP, 0, (GLsizei)vertices[channel].size());
-	
+
 		openGLContext.extensions.glDisableVertexAttribArray(position->attributeID);
-	
+
 		vertexBuffer->unbind();
 	}
-	
+
 	//*************************************************
 	shaderProgramPoints->use();
-	
+
 	for (int channel = 0; channel < bufferNumChannels; channel++)
 	{
 		GLint y = (GLint)(scale * (
 			parentBounds.getHeight() - globalBounds.getBottom() +
 			channel * (globalBounds.getHeight() / bufferNumChannels)
 		));
-	
+
 		glViewport(x, y, width, height);
-	
-	
+
+
 		vertexBuffer->bind(vertices[channel].data(), vertices[channel].size());
-	
+
 		openGLContext.extensions.glVertexAttribPointer(position->attributeID, 2,
 		                                               GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), 0);
 		openGLContext.extensions.glEnableVertexAttribArray(position->attributeID);
-	
-	
+
+
 		glDrawArrays(GL_POINTS, 0, (GLsizei)vertices[channel].size());
-	
+
 		openGLContext.extensions.glDisableVertexAttribArray(position->attributeID);
-	
+
 		vertexBuffer->unbind();
 	}
 	if (calculateVerticesTrigger)
 	{
 		calculateVerticesTrigger = false;
 	}
-	
+
 	glDisable(GL_LINE_SMOOTH);
 	glDisable(GL_BLEND);
-
 }
 
 void EnvelopeOpenGLComponent::load(envelope* new_envelope, AudioSampleBuffer* newAudioBuffer,
@@ -220,7 +219,7 @@ void EnvelopeOpenGLComponent::load(envelope* new_envelope, AudioSampleBuffer* ne
 	audio_buffer = newAudioBuffer;
 
 	// bufferNumChannels = ->getNumChannels ();
-	visibleRegionStartSample = 0;
+	visibleRegionEndSample = 0;
 	// visibleRegionNumSamples = buffer->getNumSamples ();
 	bufferUpdateLock_ = bufferUpdateLock;
 	bufferNumChannels = 1;
@@ -237,7 +236,7 @@ void EnvelopeOpenGLComponent::load(envelope* new_envelope)
 {
 	envelope_ = new_envelope;
 
-	visibleRegionStartSample = 0;
+	visibleRegionEndSample = 0;
 	bufferNumChannels = 1;
 	vertices.clear();
 	vertices.reserve(bufferNumChannels);
@@ -247,9 +246,10 @@ void EnvelopeOpenGLComponent::load(envelope* new_envelope)
 		vertices.back().reserve(envelope_->get_size());
 	}
 }
-void EnvelopeOpenGLComponent::display(int64 startSample, int64 numSamples)
+
+void EnvelopeOpenGLComponent::display(int64 end_sample, int64 numSamples)
 {
-	visibleRegionStartSample = startSample;
+	visibleRegionEndSample = end_sample;
 	visibleRegionNumSamples = numSamples;
 	calculateVerticesTrigger = true;
 }
@@ -275,7 +275,7 @@ void EnvelopeOpenGLComponent::calculateVertices(unsigned int channel)
 	// skipSamples = numSamples / (sampleRate * 12);
 	// More of a constant UI speed but not very accurate
 
-	int64 endSample = visibleRegionStartSample + visibleRegionNumSamples,
+	int64 endSample = visibleRegionEndSample + visibleRegionNumSamples,
 	      numVertices = visibleRegionNumSamples % skipSamples
 		                    ? visibleRegionNumSamples / skipSamples + 1
 		                    : visibleRegionNumSamples / skipSamples;
@@ -294,32 +294,63 @@ void EnvelopeOpenGLComponent::calculateVertices(unsigned int channel)
 
 	// skipSamples = 1;
 
-	for (int64 sample = visibleRegionStartSample, vertice = 0;
-	     sample < endSample;
-	     sample += skipSamples, vertice++)
+	if (visibleRegionEndSample - visibleRegionNumSamples < 0)
 	{
-		jassert(vertice < my_envelope_.get_size());
+		for (int64 sample = visibleRegionEndSample, vertice = 0;
+		     sample < endSample;
+		     sample += skipSamples, vertice++)
+		{
+			jassert(vertice < my_envelope_.get_size());
 
-		const GLfloat sampleValue = getPeakSampleValue(my_envelope_.list_, sample,
-		                                               jmin((int64)skipSamples, endSample - sample));
-
-
-		// DBG("SAMPLE: " << envelope_->list_[my_envelope_.get_size()-1].sample);
-		// try {
-		// DBG("SAMPLE: " << envelope_->list_[0].sample);
-		// }
-		// catch (int e) {
-		// 	DBG(e);
-		// }
-
-		Vertex vertex;
-		// should be in the [-1,+1] range
-		vertex.x = (((GLfloat)envelope_->list_[vertice].sample / (GLfloat)audio_buffer->getNumSamples()) * 2) - 1;
-		vertex.y = (sampleValue * 2) - 1;
-
-		jassert(vertice < vertices[channel].size() && vertice >=  0);
-		vertices[channel][vertice] = vertex;
+			set_vertice(envelope_->list_, sample, skipSamples, endSample, vertice, numVertices, channel);
+		}
 	}
+	else
+	{
+		for (int64 sample = visibleRegionEndSample, vertice = 0;
+		     sample < endSample;
+		     sample += skipSamples, vertice++)
+		{
+			jassert(vertice < my_envelope_.get_size());
+
+			set_vertice(envelope_->list_, sample, skipSamples, endSample, vertice, numVertices, channel);
+			// const GLfloat sampleValue = getPeakSampleValue(my_envelope_.list_, sample,
+			//                                                jmin((int64)skipSamples, endSample - sample));
+			//
+			//
+			// // DBG("SAMPLE: " << envelope_->list_[my_envelope_.get_size()-1].sample);
+			// // try {
+			// // DBG("SAMPLE: " << envelope_->list_[0].sample);
+			// // }
+			// // catch (int e) {
+			// // 	DBG(e);
+			// // }
+			//
+			// Vertex vertex;
+			// // should be in the [-1,+1] range
+			// vertex.x = (((GLfloat)envelope_->list_[vertice].sample / (GLfloat)audio_buffer->getNumSamples()) * 2) - 1;
+			// vertex.y = (sampleValue * 2) - 1;
+			//
+			// jassert(vertice < vertices[channel].size() && vertice >= 0);
+			// vertices[channel][vertice] = vertex;
+		}
+	}
+}
+
+void EnvelopeOpenGLComponent::set_vertice(std::list<envelope::node> envelope_list, int64 sample, int64 skipSample,
+                                          int64 endSample,
+                                          int vertice, int numVertices,
+                                          int channel)
+{
+	const GLfloat sampleValue = getPeakSampleValue(envelope_list, sample,
+	                                               jmin((int64)skipSamples, endSample - sample));
+
+	Vertex vertex;
+	// should be in the [-1,+1] range
+	vertex.x = (((GLfloat)vertice / (GLfloat)numVertices) * 2) - 1;
+	vertex.y = sampleValue;
+
+	vertices[channel][vertice] = vertex;
 }
 
 GLfloat EnvelopeOpenGLComponent::getAverageSampleValue(
@@ -341,7 +372,7 @@ GLfloat EnvelopeOpenGLComponent::getAverageSampleValue(
 }
 
 GLfloat EnvelopeOpenGLComponent::getPeakSampleValue(
-	std::vector<envelope::node> samples,
+	std::list<envelope::node> samples,
 	int64 currentStartSample,
 	int64 currentNumSamples)
 {
@@ -353,9 +384,9 @@ GLfloat EnvelopeOpenGLComponent::getPeakSampleValue(
 	GLfloat peakValue = 0.0f;
 	int64 endSample = currentStartSample + currentNumSamples;
 
-	for (int64 sample = currentStartSample; sample < endSample; sample++)
+	for (auto sample = samples.begin(); sample != samples.end(); ++sample)
 	{
-		float sampleValue = samples[sample].value;
+		float sampleValue = (*sample).value;
 		if (std::abs(peakValue) < std::abs(sampleValue))
 		{
 			peakValue = sampleValue;

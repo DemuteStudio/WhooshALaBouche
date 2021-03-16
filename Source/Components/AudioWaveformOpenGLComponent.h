@@ -34,6 +34,8 @@ public:
 
 private:
     void calculateVertices (unsigned int channel);
+    void set_vertice(const float* samples, int64 sample, int64 skipSample, int64 endSample, int vertice, int numVertices,
+                    int channel);
 
     GLfloat getAverageSampleValue (
         const float* samples, int64 startSample, int64 numSamples
@@ -55,7 +57,7 @@ private:
 
     AudioSampleBuffer* buffer = nullptr;
     int bufferNumChannels = 0;
-    int64 visibleRegionStartSample = 0;
+    int64 visibleRegionEndSample = 0;
     int64 visibleRegionNumSamples = 0;
     unsigned int skipSamples = 8;
 

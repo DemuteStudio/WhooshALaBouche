@@ -20,7 +20,12 @@ int envelope::get_size()
 
 envelope::node envelope::operator[](const int index)
 {
-	return list_[index];
+	auto iterator = list_.begin();
+	for (int i = 0; i < index; ++i)
+	{
+		++iterator;
+	}
+	return *iterator;
 }
 
 void envelope::add(node new_node)

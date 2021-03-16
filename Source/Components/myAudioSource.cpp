@@ -1,484 +1,387 @@
-/*
-==============================================================================
-
-AudioFileTransportSource.cpp
-Created: 29 May 2018 11:17:55am
-Author:  Nikolay Tsenkov
-
-==============================================================================
-*/
-
-
 #include "myAudioSource.h"
 
 
-my_audio_source::my_audio_source ()
+my_audio_source::my_audio_source()
 {
-    masterSource.addChangeListener (this);
-    startTimer (100);
+	startTimer(100);
 }
 
-my_audio_source::~my_audio_source ()
+my_audio_source::~my_audio_source()
 {
-    stopTimer ();
-    masterSource.setSource (nullptr);
+	stopTimer();
+	masterSource.setSource(nullptr);
 	buffer = nullptr;
 }
 
-void my_audio_source::prepareToPlay (
-    int samplesPerBlockExpected,
-    double masterSourceSampleRate
+void my_audio_source::prepareToPlay(
+	int samplesPerBlockExpected,
+	double masterSourceSampleRate
 )
 {
-    inputSampleRate = masterSourceSampleRate;
-    masterSource.prepareToPlay (
-        samplesPerBlockExpected, masterSourceSampleRate);
+	inputSampleRate = masterSourceSampleRate;
+	masterSource.prepareToPlay(
+		samplesPerBlockExpected, masterSourceSampleRate);
 }
 
-void my_audio_source::releaseResources ()
+void my_audio_source::releaseResources()
 {
-    if (state == Recording)
-    {
-        recordingBufferPreallocationThread->stopThread (1000);
-    }
+	auto test = recording_buffer_preallocation_thread_.get();
+	if (recording_buffer_preallocation_thread_.get() != nullptr)
+	{
+		recording_buffer_preallocation_thread_->stopThread(1000);
+	}
 
-    masterSource.releaseResources ();
+	masterSource.releaseResources();
 }
 
-void my_audio_source::getNextAudioBlock (
-    const AudioSourceChannelInfo& bufferToFill
+void my_audio_source::getNextAudioBlock(
+	const AudioSourceChannelInfo& bufferToFill
 )
 {
-    if (state == NoAudioLoaded)
-    {
-        bufferToFill.clearActiveBufferRegion ();
-    }
-    else if (state == Recording)
-    {
-        for (int channel = 0; channel < bufferToFill.buffer->getNumChannels(); channel++)
-        {
-            preallocatedRecordingBuffer.copyFrom (
-                channel,
-                numSamplesRecorded,
-                *bufferToFill.buffer,
-                channel,
-                bufferToFill.startSample,
-                bufferToFill.numSamples
-            );
-        }
+	if (preallocated_recording_buffer_.getNumSamples() > 0)
+	{
+		for (int channel = 0; channel < 1; channel++)
+		{
+			jassert(preallocated_recording_buffer_.getNumSamples() <= buffer_size);
+			int number_samples_to_copy = (num_samples_recorded_ + bufferToFill.numSamples < buffer_size)
+				                             ? bufferToFill.numSamples
+				                             : buffer_size - num_samples_recorded_;
+			preallocated_recording_buffer_.copyFrom(
+				channel,
+				num_samples_recorded_,
+				*bufferToFill.buffer,
+				channel,
+				bufferToFill.startSample,
+				number_samples_to_copy
+			);
 
-        numSamplesRecorded += bufferToFill.numSamples;
+			num_samples_recorded_ += number_samples_to_copy;
 
-        buffer->setDataToReferTo (
-            preallocatedRecordingBuffer.getArrayOfWritePointers (),
-            bufferToFill.buffer->getNumChannels (),
-            numSamplesRecorded
-        );
-    }
-    else
-    {
-        masterSource.getNextAudioBlock (bufferToFill);
-    }
+			if (bufferToFill.numSamples > number_samples_to_copy)
+			{
+				int start_sample_to_copy = bufferToFill.startSample + number_samples_to_copy;
+				number_samples_to_copy = bufferToFill.numSamples - number_samples_to_copy;
+
+				preallocated_recording_buffer_.copyFrom(
+					channel,
+					0,
+					*bufferToFill.buffer,
+					channel,
+					start_sample_to_copy,
+					number_samples_to_copy
+				);
+
+				num_samples_recorded_ = number_samples_to_copy;
+			}
+		}
+
+		// numSamplesRecorded += bufferToFill.numSamples;
+
+		buffer->setDataToReferTo(
+			preallocated_recording_buffer_.getArrayOfWritePointers(),
+			preallocated_recording_buffer_.getNumChannels(),
+			preallocated_recording_buffer_.getNumSamples()
+		);
+	}
+	else
+	{
+		DBG("BUFFER NOT SET");
+	}
 }
 
-void my_audio_source::unloadAudio ()
+void my_audio_source::unloadAudio()
 {
-    changeState (NoAudioLoaded);
 }
 
-std::shared_ptr<AudioSampleBuffer> my_audio_source::loadRecordingBuffer ()
+std::shared_ptr<AudioSampleBuffer> my_audio_source::loadRecordingBuffer(int number_of_samples_to_display)
 {
-    // TODO fix hardcoded number of channels
-    buffer.reset(new AudioSampleBuffer (2, 0)); 
-    sampleRate = inputSampleRate;
-    numSamplesRecorded = 0;
+	// TODO fix hardcoded number of channels
+	buffer.reset(new AudioSampleBuffer(1, 0));
+	sampleRate = inputSampleRate;
+	num_samples_recorded_ = 0;
+	buffer_size = number_of_samples_to_display;
 
-    preallocatedRecordingBuffer.setSize (
-        buffer->getNumChannels(),
-        (int)(60 * sampleRate)
-    );
-    recordingBufferPreallocationThread.reset (
-        new BufferPreallocationThread (
-            preallocatedRecordingBuffer,
-            numSamplesRecorded,
-            (int)(10 * sampleRate),
-            (int)(30 * sampleRate),
-            *buffer
-        )
-    );
-    recordingBufferPreallocationThread->startThread ();
+	preallocated_recording_buffer_.setSize(
+		1,
+		(int)(buffer_size)
+	);
 
-    std::unique_ptr<AudioBufferSource> tempBufferSource (
-        new AudioBufferSource (buffer.get(), false)
-    );
+	recording_buffer_preallocation_thread_.reset(
+		new BufferPreallocationThread(
+			preallocated_recording_buffer_,
+			num_samples_recorded_,
+			(int)(number_of_samples_to_display),
+			(int)(number_of_samples_to_display),
+			*buffer
+		)
+	);
+	// recording_buffer_preallocation_thread_->startThread();
 
-    masterSource.setSource (
-        tempBufferSource.get (),
-        0,
-        nullptr,
-        sampleRate
-    );
+	std::unique_ptr<AudioBufferSource> tempBufferSource(
+		new AudioBufferSource(buffer.get(), false)
+	);
 
-    bufferSource.swap (tempBufferSource);
+	masterSource.setSource(
+		tempBufferSource.get(),
+		0,
+		nullptr,
+		sampleRate
+	);
 
-    changeState (StartRecording);
+	bufferSource.swap(tempBufferSource);
 
-    return buffer;
+	jassert(preallocated_recording_buffer_.getNumSamples() <= buffer_size);
+	return buffer;
 }
 
-void my_audio_source::stopRecording ()
-{
-    recordingBufferPreallocationThread->stopThread (1000);
+// void my_audio_source::muteAudio()
+// {
+// 	int startSample = (int)(subregionStartTime * sampleRate),
+// 	    numSamples = (int)((subregionEndTime - subregionStartTime) * sampleRate);
+//
+// 	buffer->clear(startSample, numSamples);
+// }
+//
+// void my_audio_source::fadeInAudio()
+// {
+// 	int startSample = (int)(subregionStartTime * sampleRate),
+// 	    numSamples = (int)((subregionEndTime - subregionStartTime) * sampleRate);
+// 	float magnitude = buffer->getMagnitude(startSample, numSamples),
+// 	      gain = Decibels::decibelsToGain(magnitude);
+//
+// 	buffer->applyGainRamp(startSample, numSamples, 0.0f, gain);
+// }
+//
+// void my_audio_source::fadeOutAudio()
+// {
+// 	int startSample = (int)(subregionStartTime * sampleRate),
+// 	    numSamples = (int)((subregionEndTime - subregionStartTime) * sampleRate);
+// 	float magnitude = buffer->getMagnitude(startSample, numSamples),
+// 	      gain = Decibels::decibelsToGain(magnitude);
+//
+// 	buffer->applyGainRamp(startSample, numSamples, gain, 0.0f);
+// }
+//
+// void my_audio_source::normalizeAudio()
+// {
+// 	int startSample = (int)(subregionStartTime * sampleRate),
+// 	    numSamples = (int)((subregionEndTime - subregionStartTime) * sampleRate);
+// 	float magnitude = buffer->getMagnitude(startSample, numSamples),
+// 	      gain = Decibels::decibelsToGain(magnitude);
+//
+// 	buffer->applyGain(startSample, numSamples, gain);
+// }
 
-    changeState (Stopping);
+double my_audio_source::getCurrentPosition() const
+{
+	double currentPosition = masterSource.getCurrentPosition();
+	if (hasSubregion)
+	{
+		currentPosition += subregionStartTime;
+	}
+	return currentPosition;
 }
 
-void my_audio_source::playAudio ()
+double my_audio_source::getLengthInSeconds() const
 {
-    if (state == Playing)
-    {
-        changeState (Pausing);
-    }
-    else
-    {
-        changeState (Starting);
-    }
+	if (buffer != nullptr)
+	{
+		return buffer->getNumSamples() / sampleRate;
+	}
+	else
+	{
+		return 0.0;
+	}
 }
 
-void my_audio_source::stopAudio ()
+double my_audio_source::getSampleRate() const
 {
-    if (hasSubregion && state == Paused)
-    {
-        if (masterSource.getCurrentPosition () == 0.0)
-        {
-            loadAudioSubregion (
-                0.0,
-                getLengthInSeconds (),
-                false,
-                bufferSource->isLooping ()
-            );
-            changeState (Stopped);
-            masterSource.stop ();
-        }
-        else
-        {
-            setPosition (0.0);
-        }
-    }
-    else if (state == Paused || state == NoAudioLoaded)
-    {
-        changeState (Stopped);
-    }
-    else
-    {
-        changeState (Stopping);
-    }
+	return sampleRate;
 }
 
-void my_audio_source::pauseAudio ()
+void my_audio_source::setPosition(double newPosition)
 {
-    changeState (Pausing);
+	masterSource.setPosition(newPosition);
 }
 
-void my_audio_source::muteAudio ()
+void my_audio_source::setLooping(bool shouldLoop)
 {
-    int startSample = (int)(subregionStartTime * sampleRate),
-        numSamples = (int)((subregionEndTime - subregionStartTime) * sampleRate);
-
-    buffer->clear (startSample, numSamples);
+	bufferSource->setLooping(shouldLoop);
 }
 
-void my_audio_source::fadeInAudio ()
+void my_audio_source::addListener(Listener* newListener)
 {
-    int startSample = (int)(subregionStartTime * sampleRate),
-        numSamples = (int)((subregionEndTime - subregionStartTime) * sampleRate);
-    float magnitude = buffer->getMagnitude (startSample, numSamples),
-        gain = Decibels::decibelsToGain (magnitude);
-
-    buffer->applyGainRamp (startSample, numSamples, 0.0f, gain);
+	listeners.add(newListener);
 }
 
-void my_audio_source::fadeOutAudio ()
+void my_audio_source::removeListener(Listener* listener)
 {
-    int startSample = (int)(subregionStartTime * sampleRate),
-        numSamples = (int)((subregionEndTime - subregionStartTime) * sampleRate);
-    float magnitude = buffer->getMagnitude (startSample, numSamples),
-        gain = Decibels::decibelsToGain (magnitude);
-
-    buffer->applyGainRamp (startSample, numSamples, gain, 0.0f);
+	listeners.remove(listener);
 }
 
-void my_audio_source::normalizeAudio ()
+const CriticalSection* my_audio_source::getBufferUpdateLock() const noexcept
 {
-    int startSample = (int)(subregionStartTime * sampleRate),
-        numSamples = (int)((subregionEndTime - subregionStartTime) * sampleRate);
-    float magnitude = buffer->getMagnitude (startSample, numSamples),
-        gain = Decibels::decibelsToGain (magnitude);
-
-    buffer->applyGain (startSample, numSamples, gain);
+	if (recording_buffer_preallocation_thread_)
+	{
+		return &recording_buffer_preallocation_thread_->getLock();
+	}
+	else
+	{
+		return nullptr;
+	}
 }
 
-my_audio_source::State my_audio_source::getState () const
+int my_audio_source::get_sample_index()
 {
-    return state;
-}
-
-double my_audio_source::getCurrentPosition () const
-{
-    double currentPosition = masterSource.getCurrentPosition ();
-    if (hasSubregion)
-    {
-        currentPosition += subregionStartTime;
-    }
-    return currentPosition;
-}
-
-double my_audio_source::getLengthInSeconds () const
-{
-    if (buffer != nullptr)
-    {
-        return buffer->getNumSamples() / sampleRate;
-    }
-    else
-    {
-        return 0.0;
-    }
-}
-
-double my_audio_source::getSampleRate () const
-{
-    return sampleRate;
-}
-
-void my_audio_source::setPosition (double newPosition)
-{
-    masterSource.setPosition (newPosition);
-}
-
-void my_audio_source::setLooping (bool shouldLoop)
-{
-    bufferSource->setLooping (shouldLoop);
-}
-
-void my_audio_source::addListener (Listener * newListener)
-{
-    listeners.add (newListener);
-}
-
-void my_audio_source::removeListener (Listener * listener)
-{
-    listeners.remove (listener);
-}
-
-const CriticalSection* my_audio_source::getBufferUpdateLock () const noexcept
-{
-    if (recordingBufferPreallocationThread)
-    {
-        return &recordingBufferPreallocationThread->getLock();
-    }
-    else
-    {
-        return nullptr;
-    }
+	return num_samples_recorded_;
 }
 
 // ==============================================================================
 
-void my_audio_source::selectedRegionCreated (AudioWaveformComponent* waveform)
-{
-    loadAudioSubregion (
-        waveform->getSelectedRegionStartTime (),
-        waveform->getSelectedRegionEndTime (),
-        true,
-        bufferSource->isLooping ()
-    );
+// void my_audio_source::selectedRegionCreated(AudioWaveformComponent* waveform)
+// {
+// 	loadAudioSubregion(
+// 		waveform->getSelectedRegionStartTime(),
+// 		waveform->getSelectedRegionEndTime(),
+// 		true,
+// 		bufferSource->isLooping()
+// 	);
+//
+// 	if (state == Playing)
+// 	{
+// 		masterSource.start();
+// 	}
+// }
+//
+// void my_audio_source::selectedRegionCleared(AudioWaveformComponent* waveform)
+// {
+// 	if (hasSubregion && !waveform->getHasSelectedRegion())
+// 	{
+// 		loadAudioSubregion(
+// 			0.0,
+// 			getLengthInSeconds(),
+// 			false,
+// 			bufferSource->isLooping()
+// 		);
+//
+// 		masterSource.start();
+// 	}
+// }
 
-    if (state == Playing)
-    {
-        masterSource.start ();
-    }
+void my_audio_source::timerCallback()
+{
+	listeners.call([this](Listener& l) { l.currentPositionChanged(this); });
 }
 
-void my_audio_source::selectedRegionCleared (AudioWaveformComponent* waveform)
-{
-    if (hasSubregion && !waveform->getHasSelectedRegion ())
-    {
-        loadAudioSubregion (
-            0.0,
-            getLengthInSeconds (),
-            false,
-            bufferSource->isLooping ()
-        );
+// void my_audio_source::changeListenerallback(
+// 	ChangeBroadcaster*
+// )
+// {
+// 	if (masterSource.isPlaying() && state == StartRecording)
+// 	{
+// 		changeState(Recording);
+// 	}
+// 	else if (masterSource.isPlaying() && state != StartRecording)
+// 	{
+// 		changeState(Playing);
+// 	}
+// 	else if (state == Pausing)
+// 	{
+// 		changeState(Paused);
+// 	}
+// 	else if (hasSubregion)
+// 	{
+// 		setPosition(0.0);
+// 		changeState(Paused);
+// 	}
+// 	else
+// 	{
+// 		changeState(Stopped);
+// 	}
+// }
 
-        masterSource.start ();
-    }
-}
 
-void my_audio_source::timerCallback ()
-{
-    listeners.call ([this](Listener& l) { l.currentPositionChanged (this); });
-}
-
-void my_audio_source::changeListenerCallback (
-    ChangeBroadcaster*
+void my_audio_source::loadAudioSubregion(
+	double startTime,
+	double endTime,
+	bool subregionSelected,
+	bool shouldLoop
 )
 {
-    if (masterSource.isPlaying () && state == StartRecording)
-    {
-        changeState (Recording);
-    }
-    else if (masterSource.isPlaying () && state != StartRecording)
-    {
-        changeState (Playing);
-    }
-    else if (state == Pausing)
-    {
-        changeState (Paused);
-    }
-    else if (hasSubregion)
-    {
-        setPosition (0.0);
-        changeState (Paused);
-    }
-    else
-    {
-        changeState (Stopped);
-    }
-}
+	subregionStartTime = startTime;
+	subregionEndTime = endTime;
+	hasSubregion = subregionSelected;
 
-void my_audio_source::changeState (
-    my_audio_source::State newState
-)
-{
-    if (state != newState)
-    {
-        state = newState;
+	double lengthInSeconds = subregionEndTime - subregionStartTime;
+	int startSample = (int)(subregionStartTime * sampleRate),
+	    numSamples = (int)(lengthInSeconds * sampleRate);
 
-        switch (state)
-        {
-        case StartRecording:
-            masterSource.start ();
-            break;
+	subregionBuffer.reset(
+		new AudioSampleBuffer(
+			buffer->getArrayOfWritePointers(),
+			buffer->getNumChannels(),
+			startSample,
+			numSamples
+		)
+	);
 
-        case Recording:
-            break;
+	std::unique_ptr<AudioBufferSource> tempBufferSource(
+		new AudioBufferSource(subregionBuffer.get(), shouldLoop)
+	);
 
-        case Starting:
-            masterSource.start ();
-            break;
+	masterSource.setSource(
+		tempBufferSource.get(),
+		0,
+		nullptr,
+		sampleRate
+	);
 
-        case Playing:
-            break;
-
-        case Stopping:
-            masterSource.stop ();
-            break;
-
-        case Stopped:
-            setPosition (0.0);
-            break;
-
-        case Pausing:
-            masterSource.stop ();
-            break;
-
-        case Paused:
-            break;
-
-        case NoAudioLoaded:
-            masterSource.setSource (nullptr);
-            buffer = nullptr;
-            sampleRate = 0.0;
-            break;
-        }
-
-        onStateChange (newState);
-
-        listeners.call ([this](Listener& l) { l.stateChanged (this); });
-    }
-}
-
-void my_audio_source::loadAudioSubregion (
-    double startTime,
-    double endTime,
-    bool subregionSelected,
-    bool shouldLoop
-)
-{
-    subregionStartTime = startTime;
-    subregionEndTime = endTime;
-    hasSubregion = subregionSelected;
-
-    double lengthInSeconds = subregionEndTime - subregionStartTime;
-    int startSample = (int) (subregionStartTime * sampleRate),
-        numSamples = (int) (lengthInSeconds * sampleRate);
-
-    subregionBuffer.reset (
-        new AudioSampleBuffer (
-            buffer->getArrayOfWritePointers(),
-            buffer->getNumChannels(),
-            startSample,
-            numSamples
-        )
-    );
-    
-    std::unique_ptr<AudioBufferSource> tempBufferSource (
-        new AudioBufferSource (subregionBuffer.get (), shouldLoop)
-    );
-
-    masterSource.setSource (
-        tempBufferSource.get (),
-        0,
-        nullptr,
-        sampleRate
-    );
-
-    bufferSource.swap (tempBufferSource);
+	bufferSource.swap(tempBufferSource);
 }
 
 // ==============================================================================
 
-my_audio_source::BufferPreallocationThread::BufferPreallocationThread (
-    AudioSampleBuffer& preallocatedRecordingBuffer,
-    int& numSamplesRecorded,
-    int numSamplesBuffer,
-    int numSamplesToAllocate,
-    AudioSampleBuffer& buffer
+my_audio_source::BufferPreallocationThread::BufferPreallocationThread(
+	AudioSampleBuffer& preallocatedRecordingBuffer,
+	int& numSamplesRecorded,
+	int numSamplesBuffer,
+	int numSamplesToAllocate,
+	AudioSampleBuffer& buffer
 ) :
-    Thread ("BufferPreallocationThread"),
-    preallocatedRecordingBuffer (preallocatedRecordingBuffer),
-    numSamplesRecorded (numSamplesRecorded),
-    numSamplesBuffer (numSamplesBuffer),
-    numSamplesToAllocate (numSamplesToAllocate),
-    buffer(buffer)
+	Thread("BufferPreallocationThread"),
+	preallocatedRecordingBuffer(preallocatedRecordingBuffer),
+	numSamplesRecorded(numSamplesRecorded),
+	numSamplesBuffer(numSamplesBuffer),
+	numSamplesToAllocate(numSamplesToAllocate),
+	buffer(buffer)
 {
 }
 
-void my_audio_source::BufferPreallocationThread::run ()
+void my_audio_source::BufferPreallocationThread::run()
 {
-    while (!threadShouldExit ())
-    {
-        int preallocatedSamples = preallocatedRecordingBuffer.getNumSamples ();
-        if (preallocatedSamples - numSamplesRecorded < numSamplesBuffer)
-        {
-            int newNumSamples =
-                preallocatedRecordingBuffer.getNumSamples () + numSamplesToAllocate;
-            const ScopedLock scopedLock (bufferUpdateLock);
-            preallocatedRecordingBuffer.setSize (
-                preallocatedRecordingBuffer.getNumChannels (),
-                newNumSamples, true
-            );
-            buffer.setDataToReferTo (
-                preallocatedRecordingBuffer.getArrayOfWritePointers (),
-                preallocatedRecordingBuffer.getNumChannels (),
-                numSamplesRecorded
-            );
-        }
-        wait (1000);
-    }
+	while (!threadShouldExit())
+	{
+		int preallocatedSamples = preallocatedRecordingBuffer.getNumSamples();
+		if (preallocatedSamples - numSamplesRecorded < numSamplesBuffer)
+		{
+			int newNumSamples =
+				preallocatedRecordingBuffer.getNumSamples() + numSamplesToAllocate;
+			const ScopedLock scopedLock(bufferUpdateLock);
+			preallocatedRecordingBuffer.setSize(
+				preallocatedRecordingBuffer.getNumChannels(),
+				newNumSamples, true
+			);
+			buffer.setDataToReferTo(
+				preallocatedRecordingBuffer.getArrayOfWritePointers(),
+				preallocatedRecordingBuffer.getNumChannels(),
+				numSamplesRecorded
+			);
+		}
+		wait(1000);
+	}
 }
 
-const CriticalSection& my_audio_source::BufferPreallocationThread::getLock () const noexcept
+const CriticalSection& my_audio_source::BufferPreallocationThread::getLock() const noexcept
 {
-    return bufferUpdateLock;
+	return bufferUpdateLock;
 }

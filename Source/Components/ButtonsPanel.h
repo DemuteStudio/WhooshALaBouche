@@ -24,15 +24,7 @@ public:
 	);
 
 	TextButton sendEnvelopeButton;
-	TextButton recordButton;
-	TextButton playButton;
-	TextButton stopButton;
-	ToggleButton loopButton;
 	TextButton clean_envelope_button;
-	TextButton fadeInButton;
-	TextButton fadeOutButton;
-	TextButton normalizeButton;
-	AudioClockComponent clock;
 
 
 	void enableButtons(std::initializer_list<Button*> buttons, bool enable);

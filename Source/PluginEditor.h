@@ -11,6 +11,7 @@
 #include "Components/AudioWaveformSelectedRegionComponent.h"
 #include "Components/AudioPlaybackPositionComponent.h"
 #include "Components/AudioScrollerComponent.h"
+#include "Components/out_parameters_box.h"
 
 using namespace juce;
 
@@ -29,7 +30,8 @@ public:
 
 	void sliderValueChanged(Slider* slider) override;
 	static int get_number_of_blocks_from_milliseconds(double sample_rate, float length_in_milliseconds, int samples_per_block);
-	void onAudioSourceStateChange(my_audio_source::State state);
+
+	int number_of_samples_to_display = 0;
 
 private:
 	// This reference is provided as a quick way for your editor to
@@ -40,19 +42,12 @@ private:
 	ParametersBox parameters_box_;
 
 
-	void openButtonClicked();
-
-	void loadFile(AudioFormatReader* audioReader);
-
-	void unloadFile();
-
 	void recordButtonClicked();
 
 	void enableRecording();
 
 	void disableRecording();
 
-	void loopButtonClicked();
 	void clean_envelope();
 
 	void timerCallback() override;
@@ -61,16 +56,9 @@ private:
 	AudioSampleBuffer* audioBuffer;
 
 	AudioWaveformComponent waveform;
-	AudioWaveformSelectedRegionComponent selectedRegion;
-	AudioPlaybackPositionComponent playbackPosition;
 
-	EnvelopeComponent envelope_;
-	EnvelopeSelectedRegionComponent envelope_selected_region_;
-	AudioPlaybackPositionComponent envelope_playback_position_;
-	envelope* envelope_array_;
-	
+	out_parameters_box out_parameters_box_;
 
-	AudioScrollerComponent scroller;
 
 	my_audio_source* audio_source;
 

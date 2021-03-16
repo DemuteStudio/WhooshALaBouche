@@ -293,15 +293,11 @@ double EnvelopeComponent::get_audio_length() const
 }
 
 void EnvelopeComponent::updateVisibleRegion(
-	double newStartTime,
-	double newEndTime
+	int new_end_sample,
+	int number_of_samples_to_display
 )
 {
 	const double total_length = get_audio_length();
-	const double start_time_flattened = util::flattenSeconds(
-		newStartTime, total_length);
-	const double end_time_flattened = util::flattenSeconds(
-		newEndTime, total_length);
 
 	// DBG("===== updateVisibleRegion");
 	// DBG(newStartTime);
@@ -309,23 +305,18 @@ void EnvelopeComponent::updateVisibleRegion(
 	// DBG(newEndTime);
 	// DBG(end_time_flattened);
 
-	jassert(isVisibleRegionCorrect (start_time_flattened, end_time_flattened));
-	jassert(newStartTime >= 0);
+//	jassert(isVisibleRegionCorrect (start_time_flattened, end_time_flattened));
+	// jassert(newStartTime >= 0);
 
-	if (getSamplesDiff(start_time_flattened, end_time_flattened) < 20)
-	{
-		return;
-	}
+	// if (getSamplesDiff(start_time_flattened, end_time_flattened) < 20)
+	// {
+	// 	return;
+	// }
 
-	visibleRegionStartTime = start_time_flattened;
-	visibleRegionEndTime = end_time_flattened;
 
-	int64 startSample = (int64)(visibleRegionStartTime * sample_rate_),
-	      endSample = (int64)get_last_sample(envelope_, newEndTime),
-	      numSamples = endSample - startSample;
 
-	DBG("\nstartSample " << startSample << "  numSamples " << numSamples);
-	envelope_graphic_.display(startSample, numSamples);
+	// DBG("\nstartSample " << startSample << "  numSamples " << numSamples);
+	envelope_graphic_.display(new_end_sample, number_of_samples_to_display);
 
 	listeners.call([this](Listener& l) { l.visibleRegionChanged(this); });
 
@@ -371,9 +362,10 @@ double EnvelopeComponent::getVisibleRegionEndTime()
 
 int EnvelopeComponent::get_last_sample(envelope* _envelope, float end_time)
 {
-	auto lambda = [this, end_time](envelope::node node) { return ((node.sample / sample_rate_) <= end_time); };
-	auto iterator = std::find_if(envelope_->list_.rbegin(), envelope_->list_.rend(), lambda);
-	return (iterator != envelope_->list_.rend())? iterator.base()- envelope_->list_.begin(): 0;
+	// auto lambda = [this, end_time](envelope::node node) { return ((node.sample / sample_rate_) <= end_time); };
+	// auto iterator = std::find_if(envelope_->list_.rbegin(), envelope_->list_.rend(), lambda);
+	// return (iterator != envelope_->list_.rend())? iterator.base()- envelope_->list_.begin(): 0;
+	return 0;
 }
 
 double EnvelopeComponent::getSelectedRegionStartTime()
