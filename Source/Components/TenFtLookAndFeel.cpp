@@ -6,20 +6,21 @@
 
 TenFtLookAndFeel::TenFtLookAndFeel()
 {
-	Colour mainColour =
-		       Colour(233, 242, 249),
-	       contrastingColour = Colour(27, 50, 95);
-	setColour(TextButton::ColourIds::buttonColourId, mainColour.brighter());
-	setColour(TextButton::ColourIds::buttonOnColourId, mainColour.brighter());
-	setColour(TextButton::ColourIds::textColourOffId, contrastingColour);
-	setColour(TextButton::ColourIds::textColourOnId, contrastingColour);
+	const Colour main_colour = Colour(233, 242, 249),
+	             contrasting_colour = Colour(27, 50, 95),
+	             text_colour = Colour(233, 242, 249);
+
+	setColour(TextButton::ColourIds::buttonColourId, main_colour.brighter());
+	setColour(TextButton::ColourIds::buttonOnColourId, main_colour.brighter());
+	setColour(TextButton::ColourIds::textColourOffId, text_colour);
+	setColour(TextButton::ColourIds::textColourOnId, text_colour);
 	setColour(Slider::ColourIds::backgroundColourId,
-	          mainColour.contrasting(0.3f));
-	setColour(Slider::ColourIds::thumbColourId, mainColour.contrasting(0.8f));
-	setColour(Slider::ColourIds::trackColourId, mainColour);
-	setColour(Label::ColourIds::textColourId, contrastingColour);
-	setColour(ToggleButton::ColourIds::textColourId, contrastingColour);
-	setColour(ToggleButton::ColourIds::tickColourId, contrastingColour);
+	          main_colour.contrasting(0.3f));
+	setColour(Slider::ColourIds::thumbColourId, main_colour.contrasting(0.8f));
+	setColour(Slider::ColourIds::trackColourId, main_colour);
+	setColour(Label::ColourIds::textColourId, text_colour);
+	setColour(ToggleButton::ColourIds::textColourId, text_colour);
+	setColour(ToggleButton::ColourIds::tickColourId, text_colour);
 
 	int waveformColourId =
 		    AudioWaveformOpenGLComponent::ColourIds::waveformColour,
@@ -30,10 +31,10 @@ TenFtLookAndFeel::TenFtLookAndFeel()
 	    lineColourId =
 		    AudioPlaybackPositionComponent::ColourIds::line_colour;
 
-	setColour(waveformColourId, contrastingColour);
-	setColour(waveformBackgroundColourId, mainColour.contrasting(0.2f));
+	setColour(waveformColourId, contrasting_colour);
+	setColour(waveformBackgroundColourId, main_colour.contrasting(0.2f));
 	setColour(waveformSelectedRegionBackgroundColourId,
-	          mainColour.contrasting(1.0f));
+	          main_colour.contrasting(1.0f));
 	setColour(lineColourId,
 	          Colour::contrasting(
 		          Colour::contrasting(

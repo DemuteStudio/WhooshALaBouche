@@ -60,7 +60,7 @@ void ParametersBox::resized()
 	const int height = rectangle.getHeight();
 	int width = rectangle.getWidth();
 
-	const int slider_height = 50;
+	const int slider_height = height/2;
 
 	auto threshold_rectangle = rectangle.removeFromTop(slider_height);
 	threshold_label.setBounds(threshold_rectangle.removeFromLeft(150));

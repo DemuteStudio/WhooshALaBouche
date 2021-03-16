@@ -38,17 +38,11 @@ private:
 	// access the processor object that created it.
 	WhooshGeneratorAudioProcessor& audioProcessor;
 
-	buttons_panel buttons_panel_;
 	ParametersBox parameters_box_;
 
 
-	void recordButtonClicked();
 
 	void enableRecording();
-
-	void disableRecording();
-
-	void clean_envelope();
 
 	void timerCallback() override;
 

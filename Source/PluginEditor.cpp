@@ -3,7 +3,7 @@
 
 //==============================================================================
 WhooshGeneratorAudioProcessorEditor::WhooshGeneratorAudioProcessorEditor(WhooshGeneratorAudioProcessor& p)
-	: AudioProcessorEditor(&p), audioProcessor(p), buttons_panel_(), parameters_box_(p.getBlockSize(), p.sample_rate), out_parameters_box_(p.get_state())
+	: AudioProcessorEditor(&p), audioProcessor(p),  parameters_box_(p.getBlockSize(), p.sample_rate), out_parameters_box_(p.get_state())
 	  // envelope_array_(p.rms_envelope.get()) 
 {
 	setLookAndFeel(&tenFtLookAndFeel);
@@ -11,16 +11,9 @@ WhooshGeneratorAudioProcessorEditor::WhooshGeneratorAudioProcessorEditor(WhooshG
 	number_of_samples_to_display = time_to_display * p.sample_rate;
 
 	audio_source = &audioProcessor.getAudioSource();
-	addAndMakeVisible(buttons_panel_);
 	addAndMakeVisible(parameters_box_);
 
 	parameters_box_.add_listener(this);
-
-	buttons_panel_.clean_envelope_button.onClick = [this]
-	{
-		clean_envelope();
-	};
-
 
 	formatManager.registerBasicFormats();
 
@@ -53,13 +46,9 @@ WhooshGeneratorAudioProcessorEditor::WhooshGeneratorAudioProcessorEditor(WhooshG
 		DBG("Not Connected");
 	}
 
-	buttons_panel_.sendEnvelopeButton.onClick = [this]
-	{
-		send_osc_message("");
-	};
 
 	//====================================================================
-	setSize(1000, 700);
+	setSize(500, 500);
 }
 
 WhooshGeneratorAudioProcessorEditor::~WhooshGeneratorAudioProcessorEditor()
@@ -85,8 +74,6 @@ void WhooshGeneratorAudioProcessorEditor::resized()
 
 	const int row_height = height / 15;
 	int delta = 5;
-
-	buttons_panel_.setBounds(rectangle.removeFromTop(row_height * 3));
 
 	parameters_box_.setBounds(rectangle.removeFromBottom(row_height * 2));
 
@@ -197,9 +184,6 @@ void WhooshGeneratorAudioProcessorEditor::enableRecording()
 
 	startTimer(100);
 
-	buttons_panel_.enableButtons({
-		                             &buttons_panel_.clean_envelope_button,  &buttons_panel_.sendEnvelopeButton
-	                             }, false);
 }
 
 
@@ -209,71 +193,4 @@ bool node_comparator(envelope::node a, envelope::node b)
 	return (a.value < b.value);
 }
 
-void WhooshGeneratorAudioProcessorEditor::clean_envelope()
-{
-	// float threshold = 0.3;
-	// std::vector<envelope> all_individual_envelopes;
-	//
-	// auto it = std::find_if(audioProcessor.rms_envelope->list_.begin(), audioProcessor.rms_envelope->list_.end(),
-	//                        [threshold](envelope::node node) { return (node.value >= threshold); });
-	//
-	//
-	// decltype(it) first_node;
-	// decltype(it) max_node;
-	// decltype(it) last_node;
-	//
-	// while (true)
-	// {
-	// 	if (it != audioProcessor.rms_envelope->list_.end())
-	// 	{
-	// 		first_node = it;
-	// 	}
-	// 	else
-	// 	{
-	// 		break;
-	// 	}
-	//
-	// 	it = std::find_if_not(first_node, audioProcessor.rms_envelope->list_.end(),
-	// 	                      [threshold](envelope::node node) { return (node.value >= threshold); });
-	//
-	// 	if (it != audioProcessor.rms_envelope->list_.end())
-	// 	{
-	// 		last_node = it;
-	// 	}
-	// 	else
-	// 	{
-	// 		break;
-	// 	}
-	//
-	// 	it = std::max_element(first_node, last_node, node_comparator);
-	//
-	// 	max_node = it;
-	//
-	// 	envelope temp_envelope = envelope();
-	// 	temp_envelope.add(envelope::node(first_node->sample, first_node->value));
-	// 	temp_envelope.add(envelope::node(max_node->sample, max_node->value));
-	// 	temp_envelope.add(envelope::node(last_node->sample, last_node->value));
-	//
-	// 	all_individual_envelopes.emplace_back(temp_envelope);
-	//
-	//
-	// 	it = std::find_if(last_node + 1, audioProcessor.rms_envelope->list_.end(),
-	// 	                  [threshold](envelope::node node) { return (node.value >= threshold); });
-	// }
-	// audioProcessor.rms_envelope_clean.reset(new envelope());
-	// for (auto envelope_ : all_individual_envelopes)
-	// {
-	// 	// for (int index = 0; index < 3; ++index)
-	// 	// {
-	// 	// 	audioProcessor.rms_envelope_clean->add(envelope_[index]);
-	// 	// }
-	// 	envelope::node temp_node(envelope_[0].sample, 0);
-	// 	audioProcessor.rms_envelope_clean->add(temp_node);
-	// 	temp_node = envelope::node(envelope_[1].sample, envelope_[1].value);
-	// 	audioProcessor.rms_envelope_clean->add(temp_node);
-	// 	temp_node = envelope::node(envelope_[2].sample, 0);
-	// 	audioProcessor.rms_envelope_clean->add(temp_node);
-	// }
-	// volume_envelope_.load_envelope(audioProcessor.rms_envelope_clean.get());
-}
 

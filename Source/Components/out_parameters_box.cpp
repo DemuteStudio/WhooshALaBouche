@@ -16,7 +16,7 @@ out_parameters_box::out_parameters_box(AudioProcessorValueTreeState* processor_s
 
 	addAndMakeVisible(frequency_out_slider_);
 	frequency_out_slider_.setSliderStyle(Slider::LinearVertical);
-	// frequency_out_slider_.setTextBoxStyle(Slider::NoTextBox, true, 0, 0);
+	frequency_out_slider_.setTextBoxStyle(Slider::NoTextBox, true, 0, 0);
 	frequency_out_slider_.setRange(0, 20000, 0);
 
 	addAndMakeVisible(frequency_out_label_);
@@ -67,7 +67,7 @@ void out_parameters_box::resized()
 	
 	frequency_out_slider_.setBounds(rectangle.removeFromLeft(slot_width).reduced(delta));
 	frequency_out_label_.setBounds(labels_slice.removeFromLeft(slot_width).reduced(delta));
-	frequency_out_slider_.setTextBoxStyle(Slider::TextBoxBelow, true, slot_width, 80);
+	// frequency_out_slider_.setTextBoxStyle(Slider::TextBoxBelow, true, slot_width, 80);
 
 }
 
