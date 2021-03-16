@@ -3,7 +3,7 @@
 
 //==============================================================================
 WhooshGeneratorAudioProcessorEditor::WhooshGeneratorAudioProcessorEditor(WhooshGeneratorAudioProcessor& p)
-	: AudioProcessorEditor(&p), audioProcessor(p), buttons_panel_(), parameters_box_(p.getBlockSize(), p.sample_rate)
+	: AudioProcessorEditor(&p), audioProcessor(p), buttons_panel_(), parameters_box_(p.getBlockSize(), p.sample_rate), out_parameters_box_(p.get_state())
 	  // envelope_array_(p.rms_envelope.get()) 
 {
 	setLookAndFeel(&tenFtLookAndFeel);
@@ -43,15 +43,15 @@ WhooshGeneratorAudioProcessorEditor::WhooshGeneratorAudioProcessorEditor(WhooshG
 	//====================================================================
 	//OSC
 
-	// bool connected = osc_sender_.connect("127.0.0.1", 8000);
-	// if (connected)
-	// {
-	// 	DBG("Connected");
-	// }
-	// else
-	// {
-	// 	DBG("Not Connected");
-	// }
+	bool connected = osc_sender_.connect("127.0.0.1", 8000);
+	if (connected)
+	{
+		DBG("Connected");
+	}
+	else
+	{
+		DBG("Not Connected");
+	}
 
 	buttons_panel_.sendEnvelopeButton.onClick = [this]
 	{
@@ -151,6 +151,10 @@ void WhooshGeneratorAudioProcessorEditor::timerCallback()
 
 	out_parameters_box_.set_slider_value(out_parameters_box::volume, audioProcessor.last_rms_value);
 	out_parameters_box_.set_slider_value(out_parameters_box::frequency, frequency_peak);
+
+	// auto message = juce::MidiMessage::controllerEvent(1, 0, 0.5);
+	// message.setTimeStamp(juce::Time::getMillisecondCounterHiRes() * 0.001 - startTime);
+	// send(message);
 }
 
 void WhooshGeneratorAudioProcessorEditor::send_osc_message(String message)

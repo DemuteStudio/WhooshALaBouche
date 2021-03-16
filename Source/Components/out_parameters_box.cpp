@@ -2,7 +2,7 @@
 #include "out_parameters_box.h"
 
 //==============================================================================
-out_parameters_box::out_parameters_box()
+out_parameters_box::out_parameters_box(AudioProcessorValueTreeState* processor_state)
 {
 	addAndMakeVisible(volume_out_slider_);
 	volume_out_slider_.setSliderStyle(Slider::LinearVertical);
@@ -17,13 +17,14 @@ out_parameters_box::out_parameters_box()
 	addAndMakeVisible(frequency_out_slider_);
 	frequency_out_slider_.setSliderStyle(Slider::LinearVertical);
 	// frequency_out_slider_.setTextBoxStyle(Slider::NoTextBox, true, 0, 0);
-	frequency_out_slider_.setRange(0, 1024, 0);
+	frequency_out_slider_.setRange(0, 20000, 0);
 
 	addAndMakeVisible(frequency_out_label_);
 	frequency_out_label_.setText("FREQUENCY", dontSendNotification);
 	frequency_out_label_.setJustificationType(Justification::centred);
 
-	// volume_out_attachment_ = std::make_unique<AudioProcessorValueTreeState::SliderAttachment>();
+	volume_out_attachment_ = std::make_unique<AudioProcessorValueTreeState::SliderAttachment>(*processor_state, "volume", volume_out_slider_);
+	frequency_out_attachment_ = std::make_unique<AudioProcessorValueTreeState::SliderAttachment>(*processor_state, "frequency", frequency_out_slider_);
 }
 
 out_parameters_box::~out_parameters_box()

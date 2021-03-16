@@ -84,11 +84,15 @@ public:
 	void calculate_fft();
 	int get_fft_peak();
 
+
+	AudioProcessorValueTreeState* get_state();
+	AudioProcessorValueTreeState::ParameterLayout create_parameters();
+
 private:
 	my_audio_source audioSource;
 
 
-	static const int fft_order = 10;
+	static const int fft_order = 14;
 	static const int fft_size = 1 << fft_order;
 
 	juce::dsp::FFT forward_fft_;
@@ -100,6 +104,7 @@ private:
 
 	double sample_rate_size_max = (1. / fft_size)* sample_rate;
 
+	std::unique_ptr<AudioProcessorValueTreeState > state;
 	//==============================================================================
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(WhooshGeneratorAudioProcessor)
 };

@@ -10,7 +10,9 @@
 #include "PluginEditor.h"
 
 //==============================================================================
-WhooshGeneratorAudioProcessor::WhooshGeneratorAudioProcessor(): forward_fft_(fft_order)
+WhooshGeneratorAudioProcessor::WhooshGeneratorAudioProcessor(): forward_fft_(fft_order),
+                                                                state(std::make_unique<AudioProcessorValueTreeState>(
+	                                                                *this, nullptr ,"Parameters", create_parameters()))
 #ifndef JucePlugin_PreferredChannelConfigurations
                                                                 , AudioProcessor(BusesProperties()
 #if ! JucePlugin_IsMidiEffect
@@ -24,6 +26,10 @@ WhooshGeneratorAudioProcessor::WhooshGeneratorAudioProcessor(): forward_fft_(fft
                                                                 )
 #endif
 {
+	const NormalisableRange<float> volume_range(0., 1.);
+	// state->createAndAddParameter("volume", "VOLUME", "VOLUME", volume_range, 0.5f, nullptr, nullptr);
+	// auto x = state->getParameter("volume");
+	DBG("DONE");
 }
 
 WhooshGeneratorAudioProcessor::~WhooshGeneratorAudioProcessor()
@@ -97,7 +103,7 @@ void WhooshGeneratorAudioProcessor::prepareToPlay(double sampleRate, int samples
 {
 	sample_rate = sampleRate;
 	audioSource.prepareToPlay(samplesPerBlock, sampleRate);
-	sample_rate_size_max = (1. / fft_size)* sample_rate;
+	sample_rate_size_max = (1. / fft_size) * sample_rate;
 }
 
 void WhooshGeneratorAudioProcessor::releaseResources()
@@ -155,7 +161,7 @@ void WhooshGeneratorAudioProcessor::processBlock(juce::AudioBuffer<float>& buffe
 	ScopedNoDenormals noDenormals;
 
 	const int total_num_input_channels = getTotalNumInputChannels();
-	double sample_rate_size_max = (1. / fft_size)* sample_rate;
+	double sample_rate_size_max = (1. / fft_size) * sample_rate;
 	const int total_num_output_channels = getTotalNumOutputChannels();
 
 	for (int channel = total_num_input_channels;
@@ -295,7 +301,7 @@ void WhooshGeneratorAudioProcessor::calculate_fft()
 int WhooshGeneratorAudioProcessor::get_fft_peak()
 {
 	const auto max_iterator = std::max_element(fft_data_.begin(), fft_data_.begin() + fft_size);
-	auto index = std::distance(fft_data_.begin(), max_iterator);
+	const auto index = std::distance(fft_data_.begin(), max_iterator);
 	return index * sample_rate_size_max;
 	// if (max_iterator != fft_data_.end())
 	// {
@@ -304,10 +310,26 @@ int WhooshGeneratorAudioProcessor::get_fft_peak()
 	// return 0.;
 }
 
+AudioProcessorValueTreeState* WhooshGeneratorAudioProcessor::get_state()
+{
+	return state.get();
+}
+
 
 //==============================================================================
 // This creates new instances of the plugin..
 juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 {
 	return new WhooshGeneratorAudioProcessor();
+}
+
+AudioProcessorValueTreeState::ParameterLayout WhooshGeneratorAudioProcessor::create_parameters()
+{
+	std::vector<std::unique_ptr<RangedAudioParameter>> parameters;
+
+	parameters.push_back(std::make_unique<AudioParameterFloat>("volume", "VOLUME", 0.0f, 1.0f, 0.0f));
+	parameters.push_back(std::make_unique<AudioParameterFloat>("frequency", "FREQUENCY", 0.0f, 20000.0f, 0.0f));
+
+
+	return {parameters.begin(), parameters.end()};
 }

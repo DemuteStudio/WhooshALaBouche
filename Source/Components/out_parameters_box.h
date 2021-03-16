@@ -27,7 +27,7 @@ public:
 		frequency
 	};
 
-	out_parameters_box();
+	out_parameters_box(AudioProcessorValueTreeState* processor_state);
 	~out_parameters_box() override;
 
 	void paint(juce::Graphics&) override;
