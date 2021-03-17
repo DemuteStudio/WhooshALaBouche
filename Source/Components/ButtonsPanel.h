@@ -2,7 +2,6 @@
 
 #include "AudioClockComponent.h"
 #include "../JuceLibraryCode/JuceHeader.h"
-#include "TenFtLookAndFeel.h"
 
 using namespace juce;
 
@@ -31,7 +30,7 @@ public:
 private:
 
 
-	TenFtLookAndFeel tenFtLookAndFeel;
+	//MyLookAndFeel tenFtLookAndFeel;
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(buttons_panel)
 };

@@ -11,6 +11,7 @@
 #include "Components/AudioWaveformSelectedRegionComponent.h"
 #include "Components/AudioPlaybackPositionComponent.h"
 #include "Components/AudioScrollerComponent.h"
+#include "Components/MyLookAndFeel.h"
 #include "Components/out_parameters_box.h"
 
 using namespace juce;
@@ -56,12 +57,13 @@ private:
 
 	my_audio_source* audio_source;
 
-	TenFtLookAndFeel tenFtLookAndFeel;
+	MyLookAndFeel my_look_and_feel_;
 
 	//==================================================
 	OSCSender osc_sender_;
 
-	void send_osc_message(String message);
+	void send_osc_message(out_parameters_box::parameter_type type,  float value);
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(WhooshGeneratorAudioProcessorEditor)
 };
+

@@ -25,13 +25,13 @@ void my_audio_source::prepareToPlay(
 
 void my_audio_source::releaseResources()
 {
-	auto test = recording_buffer_preallocation_thread_.get();
+	// auto test = recording_buffer_preallocation_thread_.get();
 	if (recording_buffer_preallocation_thread_.get() != nullptr)
 	{
 		recording_buffer_preallocation_thread_->stopThread(1000);
 	}
 
-	masterSource.releaseResources();
+		masterSource.releaseResources();
 }
 
 void my_audio_source::getNextAudioBlock(
@@ -59,7 +59,7 @@ void my_audio_source::getNextAudioBlock(
 
 			if (bufferToFill.numSamples > number_samples_to_copy)
 			{
-				int start_sample_to_copy = bufferToFill.startSample + number_samples_to_copy;
+				const int start_sample_to_copy = bufferToFill.startSample + number_samples_to_copy;
 				number_samples_to_copy = bufferToFill.numSamples - number_samples_to_copy;
 
 				preallocated_recording_buffer_.copyFrom(

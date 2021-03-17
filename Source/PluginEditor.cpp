@@ -3,11 +3,12 @@
 
 //==============================================================================
 WhooshGeneratorAudioProcessorEditor::WhooshGeneratorAudioProcessorEditor(WhooshGeneratorAudioProcessor& p)
-	: AudioProcessorEditor(&p), audioProcessor(p),  parameters_box_(p.getBlockSize(), p.sample_rate), out_parameters_box_(p.get_state())
-	  // envelope_array_(p.rms_envelope.get()) 
+	: AudioProcessorEditor(&p), audioProcessor(p), parameters_box_(p.getBlockSize(), p.sample_rate),
+	  out_parameters_box_(p.get_state())
+// envelope_array_(p.rms_envelope.get()) 
 {
-	setLookAndFeel(&tenFtLookAndFeel);
-	double time_to_display = 3.;
+	setLookAndFeel(&my_look_and_feel_);
+	const double time_to_display = 3.;
 	number_of_samples_to_display = time_to_display * p.sample_rate;
 
 	audio_source = &audioProcessor.getAudioSource();
@@ -23,7 +24,6 @@ WhooshGeneratorAudioProcessorEditor::WhooshGeneratorAudioProcessorEditor(WhooshG
 	addAndMakeVisible(&out_parameters_box_);
 
 
-
 	waveform.addListener(audio_source);
 	waveform.onPositionChange = [this](double newPosition)
 	{
@@ -36,7 +36,7 @@ WhooshGeneratorAudioProcessorEditor::WhooshGeneratorAudioProcessorEditor(WhooshG
 	//====================================================================
 	//OSC
 
-	bool connected = osc_sender_.connect("127.0.0.1", 8000);
+	const bool connected = osc_sender_.connect("10.0.0.34", 8000);
 	if (connected)
 	{
 		DBG("Connected");
@@ -91,7 +91,6 @@ void WhooshGeneratorAudioProcessorEditor::resized()
 	//
 	// volume_envelope_.setBounds(main_rectangle.removeFromTop(main_rectangle.getHeight() / 2).reduced(delta));
 	// frequency_envelope_.setBounds(main_rectangle.reduced(delta));
-
 }
 
 void WhooshGeneratorAudioProcessorEditor::sliderValueChanged(Slider* slider)
@@ -99,13 +98,14 @@ void WhooshGeneratorAudioProcessorEditor::sliderValueChanged(Slider* slider)
 	if (slider->getName() == "threshold")
 	{
 		audioProcessor.threshold_value = slider->getValue();
-		const int threshold_value_db=  Decibels::gainToDecibels(slider->getValue()) ;
+		const int threshold_value_db = Decibels::gainToDecibels(slider->getValue());
 		parameters_box_.threshold_value_label.setText(std::to_string(threshold_value_db) + " dB", dontSendNotification);
 	}
 	if (slider->getName() == "rms_length")
 	{
 		audioProcessor.rms_blocks_length = slider->getValue();
-		const int rms_length_value = slider->getValue()* ((audioProcessor.getBlockSize()/audioProcessor.sample_rate)*1000.);
+		const int rms_length_value = slider->getValue() * ((audioProcessor.getBlockSize() / audioProcessor.sample_rate)
+			* 1000.);
 		parameters_box_.rms_length_value_label.setText(std::to_string(rms_length_value) + " ms", dontSendNotification);
 
 		// audioProcessor.rms_blocks_length = get_number_of_blocks_from_milliseconds(
@@ -128,39 +128,34 @@ void WhooshGeneratorAudioProcessorEditor::timerCallback()
 	const int end_sample = audio_source->get_sample_index();
 
 	waveform.updateVisibleRegion(end_sample, number_of_samples_to_display);
-	// volume_envelope_.updateVisibleRegion(end_sample, number_of_samples_to_display);
-
-	// int rms_sample_rate = audioProcessor.getBlockSize()
-	// double newEndTime = (double)audioBuffer->getNumSamples() / audio_source->getSampleRate();
-	// double nexStartTime = newEndTime - 
-	// waveform.updateVisibleRegion(0.0, newEndTime);
-	// envelope_.updateVisibleRegion(0.0, newEndTime);
 
 	out_parameters_box_.set_slider_value(out_parameters_box::volume, audioProcessor.last_rms_value);
 	out_parameters_box_.set_slider_value(out_parameters_box::frequency, frequency_peak);
 
-	// auto message = juce::MidiMessage::controllerEvent(1, 0, 0.5);
-	// message.setTimeStamp(juce::Time::getMillisecondCounterHiRes() * 0.001 - startTime);
-	// send(message);
+	send_osc_message(out_parameters_box::volume, audioProcessor.last_rms_value);
+	send_osc_message(out_parameters_box::frequency, frequency_peak);
 }
 
-void WhooshGeneratorAudioProcessorEditor::send_osc_message(String message)
+void WhooshGeneratorAudioProcessorEditor::send_osc_message(out_parameters_box::parameter_type type, float value)
 {
-	OSCMessage my_message("/blob");
-	my_message.addBlob(audioProcessor.get_envelope_memory_block());
-
-
-	osc_sender_.send(my_message);
-	osc_sender_.send<float>("/filter", 1.0);
-
-	// std::FileStorage fs("test.yml", FileStorage::WRITE);
-
-
-	MemoryBlock memoryBlock = audioProcessor.get_envelope_memory_block();
-	for (auto memory_block : memoryBlock)
+	// OSCMessage my_message("/blob");
+	// my_message.addBlob(audioProcessor.get_envelope_memory_block());
+	//
+	//
+	// osc_sender_.send(my_message);
+	String type_string = "";
+	switch (type)
 	{
-		DBG(memory_block);
+	case out_parameters_box::volume:
+		type_string = "/volume";
+		break;
+	case out_parameters_box::frequency:
+		type_string = "/frequency";
+		break;
+	default:
+		break;
 	}
+	osc_sender_.send<float>(type_string, std::move(value));
 }
 
 
@@ -170,9 +165,10 @@ void WhooshGeneratorAudioProcessorEditor::enableRecording()
 	// volume_envelope_.clearWaveform();
 	audio_source->unloadAudio();
 
-	std::shared_ptr<AudioSampleBuffer> tempAudioBuffer = audio_source->loadRecordingBuffer(number_of_samples_to_display);
+	const std::shared_ptr<AudioSampleBuffer> temp_audio_buffer = audio_source->
+		loadRecordingBuffer(number_of_samples_to_display);
 	waveform.loadWaveform(
-		tempAudioBuffer.get(), audio_source->getSampleRate(), audio_source->getBufferUpdateLock()
+		temp_audio_buffer.get(), audio_source->getSampleRate(), audio_source->getBufferUpdateLock()
 	);
 
 	envelope* temp_envelope_buffer = audioProcessor.load_new_envelope();
@@ -180,17 +176,13 @@ void WhooshGeneratorAudioProcessorEditor::enableRecording()
 	// 	temp_envelope_buffer, tempAudioBuffer.get(), audio_source->getSampleRate(), audio_source->getBufferUpdateLock()
 	// );
 
-	audioBuffer = tempAudioBuffer.get();
+	audioBuffer = temp_audio_buffer.get();
 
 	startTimer(100);
-
 }
-
 
 
 bool node_comparator(envelope::node a, envelope::node b)
 {
 	return (a.value < b.value);
 }
-
-
