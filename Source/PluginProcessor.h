@@ -63,8 +63,7 @@ public:
 	bool hasEditor() const override;
 	//==============================================================================
 	my_audio_source& getAudioSource();
-	envelope* load_new_envelope();
-	MemoryBlock get_envelope_memory_block();
+	int get_fft_mean_value();
 
 	double sample_rate;
 	float last_rms_value = 1.0;
@@ -78,22 +77,29 @@ public:
 	float threshold_value = 0.0;
 	float rms_blocks_length = 1;
 
-	std::unique_ptr<envelope> rms_envelope;
-	std::unique_ptr<envelope> rms_envelope_clean;
+	// std::unique_ptr<envelope> rms_envelope;
+	// std::unique_ptr<envelope> rms_envelope_clean;
 	//==============================================================================
 	void calculate_fft();
 	int get_fft_peak();
 
+	int get_min_frequency_fft_index() const;
+	void set_min_frequency_fft_index(int min_frequency_fft_index);
+	int get_max_frequency_fft_index() const;
+	void set_max_frequency_fft_index(int max_frequency_fft_index);
 
 	AudioProcessorValueTreeState* get_state();
 	AudioProcessorValueTreeState::ParameterLayout create_parameters();
 
+	static const int fft_order = 10;
+	static const int fft_size = 1 << fft_order;
+
+
+	double get_sample_rate_size_max() const;
 private:
 	my_audio_source audioSource;
 
 
-	static const int fft_order = 14;
-	static const int fft_size = 1 << fft_order;
 
 	juce::dsp::FFT forward_fft_;
 
@@ -102,7 +108,14 @@ private:
 	int fifoIndex = 0;
 	bool nextFFTBlockReady = false;
 
-	double sample_rate_size_max = (1. / fft_size)* sample_rate;
+	double sample_rate_size_max;
+
+	int min_frequency_fft_index = 0;
+	int max_frequency_fft_index = fft_size;
+
+
+	int fft_sum_= 0;
+	int fft_index_ = 0;
 
 	std::unique_ptr<AudioProcessorValueTreeState > state;
 	//==============================================================================

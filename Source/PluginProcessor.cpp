@@ -12,7 +12,7 @@
 //==============================================================================
 WhooshGeneratorAudioProcessor::WhooshGeneratorAudioProcessor(): forward_fft_(fft_order),
                                                                 state(std::make_unique<AudioProcessorValueTreeState>(
-	                                                                *this, nullptr ,"Parameters", create_parameters()))
+	                                                                *this, nullptr, "Parameters", create_parameters()))
 #ifndef JucePlugin_PreferredChannelConfigurations
                                                                 , AudioProcessor(BusesProperties()
 #if ! JucePlugin_IsMidiEffect
@@ -26,10 +26,6 @@ WhooshGeneratorAudioProcessor::WhooshGeneratorAudioProcessor(): forward_fft_(fft
                                                                 )
 #endif
 {
-	const NormalisableRange<float> volume_range(0., 1.);
-	// state->createAndAddParameter("volume", "VOLUME", "VOLUME", volume_range, 0.5f, nullptr, nullptr);
-	// auto x = state->getParameter("volume");
-	DBG("DONE");
 }
 
 WhooshGeneratorAudioProcessor::~WhooshGeneratorAudioProcessor()
@@ -199,6 +195,10 @@ void WhooshGeneratorAudioProcessor::processBlock(juce::AudioBuffer<float>& buffe
 
 				//Frequencies
 				push_next_sample_into_fifo(inputBuffer[sample]);
+
+				calculate_fft();
+				fft_sum_ += get_fft_peak();
+				fft_index_++;
 			}
 		}
 
@@ -211,18 +211,10 @@ void WhooshGeneratorAudioProcessor::processBlock(juce::AudioBuffer<float>& buffe
 
 			last_rms_value = (last_rms_value < threshold_value) ? 0. : last_rms_value;
 
-			// is_rms_different = (last_rms_value != temp_previous_value);
-			//
-			// if (is_rms_different)
-			// {
-			// 	rms_envelope->list_.emplace_back(sample_index, last_rms_value);
-			// }
-
 			samples_squares_sum = 0.0;
 			block_index = 0;
 
-
-			// my_fft_.performFrequencyOnlyForwardTransform();
+			//fft
 		}
 		else
 		{
@@ -264,30 +256,20 @@ my_audio_source& WhooshGeneratorAudioProcessor::getAudioSource()
 	return audioSource;
 }
 
-envelope* WhooshGeneratorAudioProcessor::load_new_envelope()
+int WhooshGeneratorAudioProcessor::get_fft_mean_value()
 {
-	sample_index = 0;
-	rms_envelope = std::make_unique<envelope>();
-	return rms_envelope.get();
-}
-
-MemoryBlock WhooshGeneratorAudioProcessor::get_envelope_memory_block()
-{
-	//TODO convert envelope to memory block
-
-	MemoryBlock my_memory_block;
-	my_memory_block.append(&sample_rate, sizeof(double));
-	for (envelope::node node : rms_envelope->list_)
+	if (fft_index_ = ! 0)
 	{
-		my_memory_block.append(&node.sample, sizeof(int));
-		my_memory_block.append(&node.value, sizeof(float));
+		const int mean_value = fft_sum_ / fft_index_;
+		DBG("FREQUENCY PEAK: " <<mean_value<<"  fft_index = "<<fft_index_<< "  fft_sum = " << fft_sum_);
+		fft_sum_ = 0;
+		fft_index_ = 0;
+
+		return mean_value;
 	}
-
-	// DBG(sizeof(float));
-	// DBG(my_memory_block.getSize());
-
-	return my_memory_block;
+	return 0;
 }
+
 
 void WhooshGeneratorAudioProcessor::calculate_fft()
 {
@@ -300,14 +282,18 @@ void WhooshGeneratorAudioProcessor::calculate_fft()
 
 int WhooshGeneratorAudioProcessor::get_fft_peak()
 {
-	const auto max_iterator = std::max_element(fft_data_.begin(), fft_data_.begin() + fft_size);
-	const auto index = std::distance(fft_data_.begin(), max_iterator);
-	return index * sample_rate_size_max;
-	// if (max_iterator != fft_data_.end())
-	// {
-	// 	return *max_iterator;
-	// }
-	// return 0.;
+	jassert(
+		min_frequency_fft_index >= 0 && max_frequency_fft_index <= fft_size && min_frequency_fft_index <
+		max_frequency_fft_index);
+	const auto max_iterator = std::max_element(fft_data_.begin() + min_frequency_fft_index,
+	                                           fft_data_.begin() + max_frequency_fft_index);
+	if (max_iterator != fft_data_.begin() + max_frequency_fft_index)
+	{
+		const auto index = std::distance(fft_data_.begin(), max_iterator);
+		return index * sample_rate_size_max;
+	}
+	DBG("max");
+	return 0;
 }
 
 AudioProcessorValueTreeState* WhooshGeneratorAudioProcessor::get_state()
@@ -327,9 +313,38 @@ AudioProcessorValueTreeState::ParameterLayout WhooshGeneratorAudioProcessor::cre
 {
 	std::vector<std::unique_ptr<RangedAudioParameter>> parameters;
 
-	parameters.push_back(std::make_unique<AudioParameterFloat>("volume", "VOLUME", 0.0f, 1.0f, 0.0f));
-	parameters.push_back(std::make_unique<AudioParameterFloat>("frequency", "FREQUENCY", 0.0f, 20000.0f, 0.0f));
+	NormalisableRange<float> frequency_range(50., 20000.);
+	frequency_range.setSkewForCentre(1000.);
+
+	parameters.push_back(std::make_unique<AudioParameterFloat>("volume", "VOLUME", 0.0f, 1.0f, 0.01f));
+	parameters.push_back(std::make_unique<AudioParameterFloat>("frequency", "FREQUENCY", frequency_range, 0.,
+	                                                           "FREQUENCY", AudioProcessorParameter::genericParameter));
 
 
 	return {parameters.begin(), parameters.end()};
+}
+
+double WhooshGeneratorAudioProcessor::get_sample_rate_size_max() const
+{
+	return sample_rate_size_max;
+}
+
+int WhooshGeneratorAudioProcessor::get_min_frequency_fft_index() const
+{
+	return min_frequency_fft_index;
+}
+
+void WhooshGeneratorAudioProcessor::set_min_frequency_fft_index(int min_frequency_fft_index)
+{
+	this->min_frequency_fft_index = min_frequency_fft_index;
+}
+
+int WhooshGeneratorAudioProcessor::get_max_frequency_fft_index() const
+{
+	return max_frequency_fft_index;
+}
+
+void WhooshGeneratorAudioProcessor::set_max_frequency_fft_index(int max_frequency_fft_index)
+{
+	this->max_frequency_fft_index = max_frequency_fft_index;
 }

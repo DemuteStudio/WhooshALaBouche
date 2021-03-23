@@ -33,6 +33,7 @@ public:
 	void paint(juce::Graphics&) override;
 	void resized() override;
 	void set_slider_value(::out_parameters_box::parameter_type parameter, float value);
+	void set_slider_range(parameter_type parameter, int new_min, int new_max);
 
 
 private:
