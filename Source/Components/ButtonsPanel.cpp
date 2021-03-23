@@ -2,7 +2,7 @@
 
 buttons_panel::buttons_panel()
 {
-	setLookAndFeel(&tenFtLookAndFeel);
+	// setLookAndFeel(&tenFtLookAndFeel);
 
 	addAndMakeVisible(&sendEnvelopeButton);
 	sendEnvelopeButton.setButtonText("Send Envelope");

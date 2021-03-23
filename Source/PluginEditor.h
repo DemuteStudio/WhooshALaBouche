@@ -13,6 +13,7 @@
 #include "Components/AudioScrollerComponent.h"
 #include "Components/MyLookAndFeel.h"
 #include "Components/out_parameters_box.h"
+#include "Components/FFT/SpectrumAnalyser.h"
 
 using namespace juce;
 
@@ -52,6 +53,7 @@ private:
 	//==================================================
 	AudioWaveformComponent waveform;
 	out_parameters_box out_parameters_box_;
+	AnalyserComponent fft_visualizer_;
 	//==================================================
 
 	my_audio_source* audio_source;

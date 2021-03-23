@@ -9,8 +9,9 @@
 #pragma once
 
 #include <JuceHeader.h>
+
 #include "Components/myAudioSource.h"
-#include "Components/EnvelopeDrawer/Envelope.h"
+#include "Components/FxChainElement.h"
 
 
 using namespace juce;
@@ -94,28 +95,11 @@ public:
 	static const int fft_order = 10;
 	static const int fft_size = 1 << fft_order;
 
+	std::list<fx_chain_element*> fx_chain;
 
-	double get_sample_rate_size_max() const;
 private:
 	my_audio_source audioSource;
 
-
-
-	juce::dsp::FFT forward_fft_;
-
-	std::array<float, fft_size> fifo_;
-	std::array<float, fft_size* 2> fft_data_;
-	int fifoIndex = 0;
-	bool nextFFTBlockReady = false;
-
-	double sample_rate_size_max;
-
-	int min_frequency_fft_index = 0;
-	int max_frequency_fft_index = fft_size;
-
-
-	int fft_sum_= 0;
-	int fft_index_ = 0;
 
 	std::unique_ptr<AudioProcessorValueTreeState > state;
 	//==============================================================================

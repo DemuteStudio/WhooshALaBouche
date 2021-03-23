@@ -3,7 +3,7 @@
 
 //==============================================================================
 WhooshGeneratorAudioProcessorEditor::WhooshGeneratorAudioProcessorEditor(WhooshGeneratorAudioProcessor& p)
-	: AudioProcessorEditor(&p), audioProcessor(p), parameters_box_(&p),path("D:\\WHOOSH.txt"), out_stream(path),
+	: AudioProcessorEditor(&p), audioProcessor(p), parameters_box_(&p),path("D:\\WHOOSH.txt"), out_stream(path), fft_visualizer_(),
 	  out_parameters_box_(p.get_state())
 // envelope_array_(p.rms_envelope.get()) 
 {
@@ -22,6 +22,9 @@ WhooshGeneratorAudioProcessorEditor::WhooshGeneratorAudioProcessorEditor(WhooshG
 	addAndMakeVisible(&waveform);
 
 	addAndMakeVisible(&out_parameters_box_);
+
+	addAndMakeVisible(&fft_visualizer_);
+	audioProcessor.fx_chain.push_back(&fft_visualizer_);
 
 
 	waveform.addListener(audio_source);
@@ -80,20 +83,16 @@ void WhooshGeneratorAudioProcessorEditor::resized()
 
 	parameters_box_.setBounds(rectangle.removeFromBottom(row_height * 4));
 
-
 	auto main_rectangle = rectangle;
 	waveform.setBounds(
-		main_rectangle.removeFromTop(main_rectangle.getHeight() / 4).reduced(delta)
+		main_rectangle.removeFromTop(main_rectangle.getHeight() / 3).reduced(delta)
+	);
+	fft_visualizer_.setBounds(
+		main_rectangle.removeFromTop(main_rectangle.getHeight() / 3).reduced(delta)
 	);
 
 	out_parameters_box_.setBounds(main_rectangle.removeFromTop(main_rectangle.getHeight()).reduced(delta));
 
-	// envelope_playback_position_.setBounds(
-	// 	volume_envelope_.getBounds()
-	// );
-	//
-	// volume_envelope_.setBounds(main_rectangle.removeFromTop(main_rectangle.getHeight() / 2).reduced(delta));
-	// frequency_envelope_.setBounds(main_rectangle.reduced(delta));
 }
 
 void WhooshGeneratorAudioProcessorEditor::sliderValueChanged(Slider* slider)
@@ -112,8 +111,6 @@ void WhooshGeneratorAudioProcessorEditor::sliderValueChanged(Slider* slider)
 			* 1000.);
 		parameters_box_.rms_length_value_label.setText(std::to_string(rms_length_value) + " ms", dontSendNotification);
 
-		// audioProcessor.rms_blocks_length = get_number_of_blocks_from_milliseconds(
-		// 	processor.getSampleRate(), slider_value, processor.getBlockSize());
 	}
 
 	if (slider->getName() == "frequency_band")
@@ -124,25 +121,10 @@ void WhooshGeneratorAudioProcessorEditor::sliderValueChanged(Slider* slider)
 		audioProcessor.set_min_frequency_fft_index(slider->getMinValue());
 		audioProcessor.set_max_frequency_fft_index(slider->getMaxValue());
 
-
 		parameters_box_.frequency_band_value_label.setText(
 			std::to_string((int)min_frequency) + " / " + std::to_string((int)max_frequency) + " Hz",
 			dontSendNotification);
-
-		// out_parameters_box_.set_slider_range(out_parameters_box::frequency, min_frequency, max_frequency);
-		// int = slider->getValue();
-		// const int rms_length_value = slider->getValue() * ((audioProcessor.getBlockSize() / audioProcessor.sample_rate)
-		// 	* 1000.);
-		// parameters_box_.rms_length_value_label.setText(std::to_string(rms_length_value) + " ms", dontSendNotification);
 	}
-	// if (slider->getName() == "fft")
-	// {
-	// 	int fft_order = slider->getValue();
-	// 	// const int rms_length_value = slider->getValue() * ((audioProcessor.getBlockSize() / audioProcessor.sample_rate)
-	// 	// 	* 1000.);
-	// 	// parameters_box_.rms_length_value_label.setText(std::to_string(rms_length_value) + " ms", dontSendNotification);
-	//
-	// }
 }
 
 
@@ -154,21 +136,12 @@ int WhooshGeneratorAudioProcessorEditor::get_number_of_blocks_from_milliseconds(
 
 void WhooshGeneratorAudioProcessorEditor::timerCallback()
 {
-	const int frequency_peak = audioProcessor.get_fft_mean_value();
-
 	const int end_sample = audio_source->get_sample_index();
 
 	waveform.updateVisibleRegion(end_sample, number_of_samples_to_display);
 
 	out_parameters_box_.set_slider_value(out_parameters_box::volume, audioProcessor.last_rms_value);
-	out_parameters_box_.set_slider_value(out_parameters_box::frequency, frequency_peak);
-
-	// String out_string = std::to_string(frequency_peak);
-	// out_stream.write("\n" , sizeof("\n"));
-	// out_stream.write(&out_string, sizeof(out_string));
-	// out_stream.write("\n" , sizeof("\n"));
-	//
-	// out_stream.flush();
+	// out_parameters_box_.set_slider_value(out_parameters_box::frequency, frequency_peak);
 
 
 	// send_osc_message(out_parameters_box::volume, audioProcessor.last_rms_value);
@@ -177,11 +150,6 @@ void WhooshGeneratorAudioProcessorEditor::timerCallback()
 
 void WhooshGeneratorAudioProcessorEditor::send_osc_message(out_parameters_box::parameter_type type, float value)
 {
-	// OSCMessage my_message("/blob");
-	// my_message.addBlob(audioProcessor.get_envelope_memory_block());
-	//
-	//
-	// osc_sender_.send(my_message);
 	String type_string = "";
 	switch (type)
 	{
@@ -201,7 +169,7 @@ void WhooshGeneratorAudioProcessorEditor::send_osc_message(out_parameters_box::p
 void WhooshGeneratorAudioProcessorEditor::enableRecording()
 {
 	waveform.clearWaveform();
-	// volume_envelope_.clearWaveform();
+
 	audio_source->unloadAudio();
 
 	const std::shared_ptr<AudioSampleBuffer> temp_audio_buffer = audio_source->
@@ -210,9 +178,6 @@ void WhooshGeneratorAudioProcessorEditor::enableRecording()
 		temp_audio_buffer.get(), audio_source->getSampleRate(), audio_source->getBufferUpdateLock()
 	);
 
-	// volume_envelope_.load_envelope(
-	// 	temp_envelope_buffer, tempAudioBuffer.get(), audio_source->getSampleRate(), audio_source->getBufferUpdateLock()
-	// );
 
 	audioBuffer = temp_audio_buffer.get();
 
