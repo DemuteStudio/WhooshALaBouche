@@ -4,7 +4,26 @@
               addUsingNamespaceToJuceHeader="0" jucerFormatVersion="1">
   <MAINGROUP id="MGtDsZ" name="WhooshGenerator">
     <GROUP id="{5BEADBA9-EE88-C0EB-E7A8-52E1335C79AC}" name="Source">
+      <GROUP id="{149386BF-BEF9-3551-2582-1670BF088D75}" name="Fx_Chain">
+        <FILE id="Dr5veG" name="FxChainElement.cpp" compile="1" resource="0"
+              file="Source/Components/FxChainElement.cpp"/>
+        <FILE id="onht9Q" name="FxChainElement.h" compile="0" resource="0"
+              file="Source/Components/FxChainElement.h"/>
+      </GROUP>
+      <FILE id="hifCvh" name="MyLookAndFeel.cpp" compile="1" resource="0"
+            file="Source/Components/MyLookAndFeel.cpp"/>
+      <FILE id="fo5hg6" name="MyLookAndFeel.h" compile="0" resource="0" file="Source/Components/MyLookAndFeel.h"/>
       <GROUP id="{5432A927-7F5C-12C5-3DE5-D3A25A65DD70}" name="Components">
+        <GROUP id="{27F38B89-7A20-C67B-F203-9E70DD1F95FE}" name="FFT_visualizer">
+          <FILE id="OI2qvm" name="SpectrumAnalyser.cpp" compile="1" resource="0"
+                file="Source/Components/FFT/SpectrumAnalyser.cpp"/>
+          <FILE id="nIEKaQ" name="SpectrumAnalyser.h" compile="0" resource="0"
+                file="Source/Components/FFT/SpectrumAnalyser.h"/>
+          <FILE id="QYmLR5" name="Fft_visualizer.cpp" compile="1" resource="0"
+                file="Source/Components/FFT/Fft_visualizer.cpp"/>
+          <FILE id="mzDOUM" name="Fft_visualizer.h" compile="0" resource="0"
+                file="Source/Components/FFT/Fft_visualizer.h"/>
+        </GROUP>
         <FILE id="kPKNJj" name="out_parameters_box.cpp" compile="1" resource="0"
               file="Source/Components/out_parameters_box.cpp"/>
         <FILE id="couOTp" name="out_parameters_box.h" compile="0" resource="0"
@@ -64,10 +83,6 @@
         <FILE id="L4cLYz" name="ParametersBox.cpp" compile="1" resource="0"
               file="Source/Components/ParametersBox.cpp"/>
         <FILE id="e1mr4v" name="ParametersBox.h" compile="0" resource="0" file="Source/Components/ParametersBox.h"/>
-        <FILE id="Yws4ix" name="TenFtLookAndFeel.cpp" compile="1" resource="0"
-              file="Source/Components/TenFtLookAndFeel.cpp"/>
-        <FILE id="RoKsYj" name="TenFtLookAndFeel.h" compile="0" resource="0"
-              file="Source/Components/TenFtLookAndFeel.h"/>
         <FILE id="P60Jxj" name="TenFtUtil.cpp" compile="1" resource="0" file="Source/Components/TenFtUtil.cpp"/>
         <FILE id="q7JrDL" name="TenFtUtil.h" compile="0" resource="0" file="Source/Components/TenFtUtil.h"/>
       </GROUP>

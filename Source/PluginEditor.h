@@ -13,6 +13,7 @@
 #include "Components/AudioScrollerComponent.h"
 #include "Components/MyLookAndFeel.h"
 #include "Components/out_parameters_box.h"
+#include "Components/FFT/SpectrumAnalyser.h"
 
 using namespace juce;
 
@@ -30,7 +31,8 @@ public:
 	void resized() override;
 
 	void sliderValueChanged(Slider* slider) override;
-	static int get_number_of_blocks_from_milliseconds(double sample_rate, float length_in_milliseconds, int samples_per_block);
+	static int get_number_of_blocks_from_milliseconds(double sample_rate, float length_in_milliseconds,
+	                                                  int samples_per_block);
 
 	int number_of_samples_to_display = 0;
 
@@ -41,8 +43,6 @@ private:
 
 	ParametersBox parameters_box_;
 
-
-
 	void enableRecording();
 
 	void timerCallback() override;
@@ -50,20 +50,22 @@ private:
 	AudioFormatManager formatManager;
 	AudioSampleBuffer* audioBuffer;
 
+	//==================================================
 	AudioWaveformComponent waveform;
-
 	out_parameters_box out_parameters_box_;
-
+	AnalyserComponent fft_visualizer_;
+	//==================================================
 
 	my_audio_source* audio_source;
-
 	MyLookAndFeel my_look_and_feel_;
 
 	//==================================================
+	File path;
+	FileOutputStream out_stream;
+	//==================================================
 	OSCSender osc_sender_;
 
-	void send_osc_message(out_parameters_box::parameter_type type,  float value);
+	void send_osc_message(out_parameters_box::parameter_type type, float value);
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(WhooshGeneratorAudioProcessorEditor)
 };
-

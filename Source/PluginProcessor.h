@@ -9,8 +9,9 @@
 #pragma once
 
 #include <JuceHeader.h>
+
 #include "Components/myAudioSource.h"
-#include "Components/EnvelopeDrawer/Envelope.h"
+#include "Components/FxChainElement.h"
 
 
 using namespace juce;
@@ -34,7 +35,6 @@ public:
 	bool isBusesLayoutSupported(const BusesLayout& layouts) const override;
 #endif
 
-	void push_next_sample_into_fifo(const float x);
 	void processBlock(juce::AudioBuffer<float>&, juce::MidiBuffer&) override;
 
 	//==============================================================================
@@ -62,9 +62,10 @@ public:
 
 	bool hasEditor() const override;
 	//==============================================================================
+	void add_element_to_fx_chain(fx_chain_element* element);
+
+	//==============================================================================
 	my_audio_source& getAudioSource();
-	envelope* load_new_envelope();
-	MemoryBlock get_envelope_memory_block();
 
 	double sample_rate;
 	float last_rms_value = 1.0;
@@ -78,31 +79,20 @@ public:
 	float threshold_value = 0.0;
 	float rms_blocks_length = 1;
 
-	std::unique_ptr<envelope> rms_envelope;
-	std::unique_ptr<envelope> rms_envelope_clean;
+	// std::unique_ptr<envelope> rms_envelope;
+	// std::unique_ptr<envelope> rms_envelope_clean;
 	//==============================================================================
-	void calculate_fft();
-	int get_fft_peak();
-
-
 	AudioProcessorValueTreeState* get_state();
 	AudioProcessorValueTreeState::ParameterLayout create_parameters();
+
+	static const int fft_order = 10;
+	static const int fft_size = 1 << fft_order;
+
 
 private:
 	my_audio_source audioSource;
 
-
-	static const int fft_order = 14;
-	static const int fft_size = 1 << fft_order;
-
-	juce::dsp::FFT forward_fft_;
-
-	std::array<float, fft_size> fifo_;
-	std::array<float, fft_size* 2> fft_data_;
-	int fifoIndex = 0;
-	bool nextFFTBlockReady = false;
-
-	double sample_rate_size_max = (1. / fft_size)* sample_rate;
+	std::list<fx_chain_element*> fx_chain;
 
 	std::unique_ptr<AudioProcessorValueTreeState > state;
 	//==============================================================================
