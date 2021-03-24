@@ -53,7 +53,7 @@ private:
 	//==================================================
 	AudioWaveformComponent waveform;
 	out_parameters_box out_parameters_box_;
-	AnalyserComponent fft_visualizer_;
+	SpectrumAnalyserComponent fft_visualizer_;
 	//==================================================
 
 	my_audio_source* audio_source;

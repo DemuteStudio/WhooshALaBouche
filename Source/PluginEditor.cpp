@@ -3,7 +3,7 @@
 
 //==============================================================================
 WhooshGeneratorAudioProcessorEditor::WhooshGeneratorAudioProcessorEditor(WhooshGeneratorAudioProcessor& p)
-	: AudioProcessorEditor(&p), audioProcessor(p), parameters_box_(&p),path("D:\\WHOOSH.txt"), out_stream(path), fft_visualizer_(),
+	: AudioProcessorEditor(&p), audioProcessor(p), parameters_box_(&p, fft_visualizer_.fft_size),path("D:\\WHOOSH.txt"), out_stream(path), fft_visualizer_(),
 	  out_parameters_box_(p.get_state())
 // envelope_array_(p.rms_envelope.get()) 
 {
@@ -60,6 +60,8 @@ WhooshGeneratorAudioProcessorEditor::WhooshGeneratorAudioProcessorEditor(WhooshG
 WhooshGeneratorAudioProcessorEditor::~WhooshGeneratorAudioProcessorEditor()
 {
 	setLookAndFeel(nullptr);
+	audioProcessor.remove_element_to_fx_chain(&fft_visualizer_);
+
 }
 
 //==============================================================================
@@ -107,6 +109,8 @@ void WhooshGeneratorAudioProcessorEditor::sliderValueChanged(Slider* slider)
 	if (slider->getName() == "rms_length")
 	{
 		audioProcessor.rms_blocks_length = slider->getValue();
+		fft_visualizer_.rms_blocks_length = slider->getValue();
+
 		const int rms_length_value = slider->getValue() * ((audioProcessor.getBlockSize() / audioProcessor.sample_rate)
 			* 1000.);
 		parameters_box_.rms_length_value_label.setText(std::to_string(rms_length_value) + " ms", dontSendNotification);
@@ -115,8 +119,8 @@ void WhooshGeneratorAudioProcessorEditor::sliderValueChanged(Slider* slider)
 
 	if (slider->getName() == "frequency_band")
 	{
-		float max_frequency = slider->getMaxValue()*fft_visualizer_.get_sample_rate_size_max();
-		float min_frequency = slider->getMinValue()*fft_visualizer_.get_sample_rate_size_max();
+		float max_frequency = slider->getMaxValue()*fft_visualizer_.get_maximum_frequency();
+		float min_frequency = slider->getMinValue()*fft_visualizer_.get_maximum_frequency();
 
 		fft_visualizer_.set_min_frequency_fft_index(slider->getMinValue());
 		fft_visualizer_.set_max_frequency_fft_index(slider->getMaxValue());

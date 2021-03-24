@@ -6,24 +6,17 @@
 #include "../../PluginProcessor.h"
 
 //==============================================================================
-class AnalyserComponent : public juce::Component,
+class SpectrumAnalyserComponent : public juce::Component,
                           private juce::Timer,
                           public fx_chain_element
 {
 public:
 	//! [constructor]
-	AnalyserComponent()
-		: forwardFFT(fft_order),
-		  window(fft_size, juce::dsp::WindowingFunction<float>::hann)
-	{
-		setOpaque(true);
-		startTimerHz(15);
-	}
+	SpectrumAnalyserComponent();
 
-	~AnalyserComponent() override
+	~SpectrumAnalyserComponent() override
 	{
 	}
-
 
 	int fft_sum_ = 0;
 	int fft_index_ = 0;
@@ -35,16 +28,19 @@ public:
 	void paint(juce::Graphics& g) override;
 	//==============================================================================
 	void timerCallback() override;
+	void calculate_spectrum();
+	void add_current_spectrum_to_accumulator_buffer();
+	void calculate_mean_fft_data();
 	//==============================================================================
 	void push_next_sample_into_fifo(float sample) noexcept;
-	void draw_next_frame_of_spectrum();
+	void calculate_next_frame_of_spectrum();
 	void draw_frame(juce::Graphics& g);
 	//==============================================================================
 	int get_fft_mean_value();
 	void calculate_fft();
 	int get_fft_peak();
 	//==============================================================================
-	double get_sample_rate_size_max() const;
+	double get_maximum_frequency() const;
 	int get_min_frequency_fft_index() const;
 	void set_min_frequency_fft_index(int min_frequency_fft_index);
 	int get_max_frequency_fft_index() const;
@@ -57,20 +53,26 @@ public:
 		scope_size = 512
 	};
 
+	float rms_blocks_length = 1;
 private:
 	juce::dsp::FFT forwardFFT;
 	juce::dsp::WindowingFunction<float> window;
 
 	std::array<float, fft_size> fifo;
 	std::array<float, 2 * fft_size> fftData;
+
+	std::array<float, fft_size> accumulator_buffer;
+
 	int fifoIndex = 0;
 	bool nextFFTBlockReady = false;
 	float scopeData[scope_size];
 
-	double sample_rate_size_max;
+	double frequency_interval;
 
 	int min_frequency_fft_index = 0;
 	int max_frequency_fft_index;
 
-	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(AnalyserComponent)
+	int block_index = 0;
+
+	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(SpectrumAnalyserComponent)
 };

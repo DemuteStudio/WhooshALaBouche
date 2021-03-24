@@ -11,7 +11,7 @@ using namespace juce;
 class ParametersBox : public juce::Component
 {
 public:
-	ParametersBox(WhooshGeneratorAudioProcessor* processor);
+	ParametersBox(WhooshGeneratorAudioProcessor* processor, int fft_size);
 	~ParametersBox() override;
 
 	void paint(juce::Graphics&) override;

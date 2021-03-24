@@ -3,7 +3,7 @@
 #include <JuceHeader.h>
 
 //==============================================================================
-ParametersBox::ParametersBox(WhooshGeneratorAudioProcessor* processor)
+ParametersBox::ParametersBox(WhooshGeneratorAudioProcessor* processor, int fft_size)
 {
 	const double samples_per_block = processor->getBlockSize();
 	const double sample_rate = processor->sample_rate;
@@ -52,23 +52,34 @@ ParametersBox::ParametersBox(WhooshGeneratorAudioProcessor* processor)
 
 	addAndMakeVisible(fft_order_value_label);
 	fft_order_value_label.setJustificationType(Justification::centred);
-	fft_order_value_label.setText(std::to_string(processor->fft_size), dontSendNotification);
+	fft_order_value_label.setText(std::to_string(fft_size), dontSendNotification);
 
 	//frequency band ========================================================================================================================================================================================================================================================================================================================
 	frequency_band_slider = std::make_unique<Slider>();
 	frequency_band_slider->setSliderStyle(Slider::TwoValueHorizontal);
 	addAndMakeVisible(frequency_band_slider.get());
 	frequency_band_slider->setName("frequency_band");
-	frequency_band_slider->setRange(0, processor->fft_size);
-	frequency_band_slider->setMinAndMaxValues(50, processor->sample_rate);
-	frequency_band_slider->setSkewFactorFromMidPoint(1000);
+
+	const float frequency_step = processor->sample_rate / fft_size /2;
+	const int minimum_frequency = 50;
+	int maximum_frequency = processor->sample_rate;
+
+	const int minimum_index = minimum_frequency/ frequency_step;
+	const int maximum_index = fft_size;
+
+
+	frequency_band_slider->setRange(minimum_index, maximum_index);
+	frequency_band_slider->setMinAndMaxValues(minimum_index, maximum_index);
+	frequency_band_slider->setSkewFactorFromMidPoint(1000. / frequency_step);
 
 	addAndMakeVisible(frequency_band_label);
 	frequency_band_label.setText("FREQUENCY BAND", NotificationType::dontSendNotification);
 
 	addAndMakeVisible(frequency_band_value_label);
 	frequency_band_value_label.setJustificationType(Justification::centred);
-	frequency_band_value_label.setText(std::to_string(frequency_band_slider->getMinValue()) + " / " + std::to_string( frequency_band_slider->getMaxValue()), dontSendNotification);
+	frequency_band_value_label.setText(
+		std::to_string(frequency_band_slider->getMinValue()) + " / " + std::to_string(
+			frequency_band_slider->getMaxValue()), dontSendNotification);
 }
 
 ParametersBox::~ParametersBox()

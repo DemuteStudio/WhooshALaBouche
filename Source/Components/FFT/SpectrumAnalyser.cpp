@@ -1,45 +1,92 @@
 #include "SpectrumAnalyser.h"
 
-void AnalyserComponent::getNextAudioBlock(const juce::AudioSourceChannelInfo& bufferToFill)
+
+SpectrumAnalyserComponent::SpectrumAnalyserComponent(): forwardFFT(fft_order),
+                                                        window(fft_size, juce::dsp::WindowingFunction<float>::hann)
+{
+	setOpaque(true);
+	startTimerHz(15);
+}
+
+void SpectrumAnalyserComponent::getNextAudioBlock(const juce::AudioSourceChannelInfo& bufferToFill)
 {
 	if (bufferToFill.buffer->getNumChannels() > 0)
 	{
-		auto* channelData = bufferToFill.buffer->getReadPointer(0, bufferToFill.startSample);
+		const auto* channelData = bufferToFill.buffer->getReadPointer(0, bufferToFill.startSample);
 
 		for (auto i = 0; i < bufferToFill.numSamples; ++i)
 			push_next_sample_into_fifo(channelData[i]);
+
+		// if (block_index >= rms_blocks_length)
+		// {
+		// 	calculate_spectrum();
+		// 	add_current_spectrum_to_accumulator_buffer();
+		// 	block_index = 0;
+		// }
+		// else
+		// {
+		// 	block_index++;
+		// }
+
+		// calculate_spectrum();
+		// add_current_spectrum_to_accumulator_buffer();
 	}
 }
 
-void AnalyserComponent::prepareToPlay(double sampleRate, int samplesPerBlock)
+void SpectrumAnalyserComponent::prepareToPlay(double sampleRate, int samplesPerBlock)
 {
-	sample_rate_size_max = (1. / fft_size) * sampleRate;
+	frequency_interval = (1. / fft_size) * sampleRate / 2;
 }
 
-void AnalyserComponent::paint(juce::Graphics& g)
+void SpectrumAnalyserComponent::paint(juce::Graphics& g)
 {
-	g.fillAll(getLookAndFeel().findColour(juce::ResizableWindow::backgroundColourId)); 
+	g.fillAll(getLookAndFeel().findColour(juce::ResizableWindow::backgroundColourId));
 
 	g.setOpacity(1.0f);
 	g.setColour(juce::Colours::white);
 	draw_frame(g);
 }
 
-void AnalyserComponent::timerCallback()
+void SpectrumAnalyserComponent::timerCallback()
+{
+	calculate_spectrum();
+	repaint();
+}
+
+void SpectrumAnalyserComponent::calculate_spectrum()
 {
 	if (nextFFTBlockReady)
 	{
-		draw_next_frame_of_spectrum();
+		calculate_next_frame_of_spectrum();
 		nextFFTBlockReady = false;
-		repaint();
 	}
 }
 
-void AnalyserComponent::push_next_sample_into_fifo(float sample) noexcept
+void SpectrumAnalyserComponent::add_current_spectrum_to_accumulator_buffer()
 {
-	if (fifoIndex == fft_size) 
+	auto fft_data_iterator = fftData.begin();
+	for (float element : accumulator_buffer)
 	{
-		if (! nextFFTBlockReady) 
+		element += *fft_data_iterator;
+		++fft_data_iterator;
+	}
+}
+
+void SpectrumAnalyserComponent::calculate_mean_fft_data()
+{
+	auto fft_data_iterator = fftData.begin();
+	for (float element : accumulator_buffer)
+	{
+		*fft_data_iterator = element / block_index;
+		++fft_data_iterator;
+	}
+}
+
+void SpectrumAnalyserComponent::push_next_sample_into_fifo(float sample) noexcept
+{
+	if (fifoIndex == fft_size)
+	{
+		if (! nextFFTBlockReady)
 		{
 			std::fill(fftData.begin(), fftData.end(), 0.0f);
 			std::copy(fifo.begin(), fifo.end(), fftData.begin());
@@ -49,32 +96,37 @@ void AnalyserComponent::push_next_sample_into_fifo(float sample) noexcept
 		fifoIndex = 0;
 	}
 
-	fifo[fifoIndex++] = sample; 
+	fifo[fifoIndex++] = sample;
 }
 
-void AnalyserComponent::draw_next_frame_of_spectrum()
+void SpectrumAnalyserComponent::calculate_next_frame_of_spectrum()
 {
-	// first apply a windowing function to our data
 	window.multiplyWithWindowingTable(&fftData[0], fft_size);
-	// then render our FFT data..
+
 	forwardFFT.performFrequencyOnlyForwardTransform(&fftData[0]);
 
 	const auto mindB = -100.0f;
 	const auto maxdB = 0.0f;
 
-	for (int i = 0; i < scope_size; ++i) 
+
+	for (int i = 0; i < scope_size; ++i)
 	{
 		const auto skewed_proportion_x = 1.0f - std::exp(std::log(1.0f - (float)i / (float)scope_size) * 0.2f);
-		const auto fft_data_index = juce::jlimit(0, fft_size / 2, (int)(skewed_proportion_x * (float)fft_size * 0.5f));
-		const auto level = juce::jmap(juce::jlimit(mindB, maxdB, juce::Decibels::gainToDecibels(fftData[fft_data_index])
-		                                           - juce::Decibels::gainToDecibels((float)fft_size)),
-		                              mindB, maxdB, 0.0f, 1.0f);
+		const auto fft_data_index = juce::jlimit(0, fft_size / 2, (int)(skewed_proportion_x * (float)fft_size / 2.));
 
-		scopeData[i] = level; 
+		float level = 0;
+		if (fft_data_index >= min_frequency_fft_index && fft_data_index <= max_frequency_fft_index)
+		{
+			level = juce::jmap(juce::jlimit(mindB, maxdB, juce::Decibels::gainToDecibels(fftData[fft_data_index])
+			                                - juce::Decibels::gainToDecibels((float)fft_size)),
+			                   mindB, maxdB, 0.0f, 1.0f);
+		}
+
+		scopeData[i] = level;
 	}
 }
 
-void AnalyserComponent::draw_frame(juce::Graphics& g)
+void SpectrumAnalyserComponent::draw_frame(juce::Graphics& g)
 {
 	for (int i = 1; i < scope_size; ++i)
 	{
@@ -90,7 +142,7 @@ void AnalyserComponent::draw_frame(juce::Graphics& g)
 	}
 }
 
-int AnalyserComponent::get_fft_mean_value()
+int SpectrumAnalyserComponent::get_fft_mean_value()
 {
 	if (fft_index_ = ! 0)
 	{
@@ -105,7 +157,7 @@ int AnalyserComponent::get_fft_mean_value()
 }
 
 
-void AnalyserComponent::calculate_fft()
+void SpectrumAnalyserComponent::calculate_fft()
 {
 	if (nextFFTBlockReady)
 	{
@@ -114,7 +166,7 @@ void AnalyserComponent::calculate_fft()
 	}
 }
 
-int AnalyserComponent::get_fft_peak()
+int SpectrumAnalyserComponent::get_fft_peak()
 {
 	jassert(
 		min_frequency_fft_index >= 0 && max_frequency_fft_index <= fft_size && min_frequency_fft_index <
@@ -124,33 +176,33 @@ int AnalyserComponent::get_fft_peak()
 	if (max_iterator != fftData.begin() + max_frequency_fft_index)
 	{
 		const auto index = std::distance(fftData.begin(), max_iterator);
-		return index * sample_rate_size_max;
+		return index * frequency_interval;
 	}
 	DBG("max");
 	return 0;
 }
 
-double AnalyserComponent::get_sample_rate_size_max() const
+double SpectrumAnalyserComponent::get_maximum_frequency() const
 {
-	return sample_rate_size_max;
+	return frequency_interval;
 }
 
-int AnalyserComponent::get_min_frequency_fft_index() const
+int SpectrumAnalyserComponent::get_min_frequency_fft_index() const
 {
 	return min_frequency_fft_index;
 }
 
-void AnalyserComponent::set_min_frequency_fft_index(int min_frequency_fft_index)
+void SpectrumAnalyserComponent::set_min_frequency_fft_index(int min_frequency_fft_index)
 {
 	this->min_frequency_fft_index = min_frequency_fft_index;
 }
 
-int AnalyserComponent::get_max_frequency_fft_index() const
+int SpectrumAnalyserComponent::get_max_frequency_fft_index() const
 {
 	return max_frequency_fft_index;
 }
 
-void AnalyserComponent::set_max_frequency_fft_index(int _max_frequency_fft_index)
+void SpectrumAnalyserComponent::set_max_frequency_fft_index(int _max_frequency_fft_index)
 {
 	max_frequency_fft_index = _max_frequency_fft_index;
 }

@@ -142,7 +142,6 @@ void WhooshGeneratorAudioProcessor::processBlock(juce::AudioBuffer<float>& buffe
 	ScopedNoDenormals noDenormals;
 
 	const int total_num_input_channels = getTotalNumInputChannels();
-	double sample_rate_size_max = (1. / fft_size) * sample_rate;
 	const int total_num_output_channels = getTotalNumOutputChannels();
 
 	for (int channel = total_num_input_channels;
@@ -182,7 +181,6 @@ void WhooshGeneratorAudioProcessor::processBlock(juce::AudioBuffer<float>& buffe
 
 		if (block_index >= rms_blocks_length)
 		{
-			//Volume Envelope
 			temp_previous_value = last_rms_value;
 
 			last_rms_value = sqrt(samples_squares_sum / bufferToFill.numSamples);
@@ -192,7 +190,6 @@ void WhooshGeneratorAudioProcessor::processBlock(juce::AudioBuffer<float>& buffe
 			samples_squares_sum = 0.0;
 			block_index = 0;
 
-			//fft
 		}
 		else
 		{
@@ -218,6 +215,11 @@ void WhooshGeneratorAudioProcessor::add_element_to_fx_chain(fx_chain_element* el
 {
 	fx_chain.push_back(element);
 	element->prepareToPlay(sample_rate, getBlockSize());
+}
+
+void WhooshGeneratorAudioProcessor::remove_element_to_fx_chain(fx_chain_element* element)
+{
+	fx_chain.erase(std::find(fx_chain.begin(), fx_chain.end(), element));
 }
 
 juce::AudioProcessorEditor* WhooshGeneratorAudioProcessor::createEditor()

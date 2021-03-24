@@ -63,6 +63,7 @@ public:
 	bool hasEditor() const override;
 	//==============================================================================
 	void add_element_to_fx_chain(fx_chain_element* element);
+	void remove_element_to_fx_chain(fx_chain_element* element);
 
 	//==============================================================================
 	my_audio_source& getAudioSource();
@@ -84,10 +85,6 @@ public:
 	//==============================================================================
 	AudioProcessorValueTreeState* get_state();
 	AudioProcessorValueTreeState::ParameterLayout create_parameters();
-
-	static const int fft_order = 10;
-	static const int fft_size = 1 << fft_order;
-
 
 private:
 	my_audio_source audioSource;
