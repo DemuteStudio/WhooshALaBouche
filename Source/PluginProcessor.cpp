@@ -98,7 +98,10 @@ void WhooshGeneratorAudioProcessor::prepareToPlay(double sampleRate, int samples
 {
 	sample_rate = sampleRate;
 	audioSource.prepareToPlay(samplesPerBlock, sampleRate);
-	sample_rate_size_max = (1. / fft_size) * sample_rate;
+	for (std::list<fx_chain_element*>::value_type element : fx_chain)
+	{
+		element->prepareToPlay(sampleRate, samplesPerBlock);
+	}
 }
 
 void WhooshGeneratorAudioProcessor::releaseResources()
@@ -131,23 +134,6 @@ bool WhooshGeneratorAudioProcessor::isBusesLayoutSupported(const BusesLayout& la
 #endif
 }
 
-void WhooshGeneratorAudioProcessor::push_next_sample_into_fifo(const float sample)
-{
-	if (fifoIndex == fft_size)
-	{
-		if (!nextFFTBlockReady)
-		{
-			std::fill(fft_data_.begin(), fft_data_.end(), 0.0f);
-			std::copy(fifo_.begin(), fifo_.end(), fft_data_.begin());
-			nextFFTBlockReady = true;
-		}
-
-		fifoIndex = 0;
-	}
-
-	fifo_[(size_t)fifoIndex] = sample;
-	fifoIndex++;
-}
 #endif
 
 
@@ -191,13 +177,6 @@ void WhooshGeneratorAudioProcessor::processBlock(juce::AudioBuffer<float>& buffe
 				(last_rms_value >= threshold_value)
 					? outputBuffer[sample] = inputBuffer[sample]
 					: outputBuffer[sample] = 0;
-
-				//Frequencies
-				push_next_sample_into_fifo(inputBuffer[sample]);
-
-				// calculate_fft();
-				// fft_sum_ += get_fft_peak();
-				// fft_index_++;
 			}
 		}
 
@@ -233,6 +212,12 @@ void WhooshGeneratorAudioProcessor::processBlock(juce::AudioBuffer<float>& buffe
 bool WhooshGeneratorAudioProcessor::hasEditor() const
 {
 	return true; // (change this to false if you choose to not supply an editor)
+}
+
+void WhooshGeneratorAudioProcessor::add_element_to_fx_chain(fx_chain_element* element)
+{
+	fx_chain.push_back(element);
+	element->prepareToPlay(sample_rate, getBlockSize());
 }
 
 juce::AudioProcessorEditor* WhooshGeneratorAudioProcessor::createEditor()

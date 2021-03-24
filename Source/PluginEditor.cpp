@@ -24,7 +24,7 @@ WhooshGeneratorAudioProcessorEditor::WhooshGeneratorAudioProcessorEditor(WhooshG
 	addAndMakeVisible(&out_parameters_box_);
 
 	addAndMakeVisible(&fft_visualizer_);
-	audioProcessor.fx_chain.push_back(&fft_visualizer_);
+	audioProcessor.add_element_to_fx_chain(&fft_visualizer_);
 
 
 	waveform.addListener(audio_source);
@@ -115,11 +115,11 @@ void WhooshGeneratorAudioProcessorEditor::sliderValueChanged(Slider* slider)
 
 	if (slider->getName() == "frequency_band")
 	{
-		float max_frequency = slider->getMaxValue()*audioProcessor.get_sample_rate_size_max();
-		float min_frequency = slider->getMinValue()*audioProcessor.get_sample_rate_size_max();
+		float max_frequency = slider->getMaxValue()*fft_visualizer_.get_sample_rate_size_max();
+		float min_frequency = slider->getMinValue()*fft_visualizer_.get_sample_rate_size_max();
 
-		audioProcessor.set_min_frequency_fft_index(slider->getMinValue());
-		audioProcessor.set_max_frequency_fft_index(slider->getMaxValue());
+		fft_visualizer_.set_min_frequency_fft_index(slider->getMinValue());
+		fft_visualizer_.set_max_frequency_fft_index(slider->getMaxValue());
 
 		parameters_box_.frequency_band_value_label.setText(
 			std::to_string((int)min_frequency) + " / " + std::to_string((int)max_frequency) + " Hz",

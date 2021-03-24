@@ -35,7 +35,6 @@ public:
 	bool isBusesLayoutSupported(const BusesLayout& layouts) const override;
 #endif
 
-	void push_next_sample_into_fifo(const float x);
 	void processBlock(juce::AudioBuffer<float>&, juce::MidiBuffer&) override;
 
 	//==============================================================================
@@ -63,8 +62,10 @@ public:
 
 	bool hasEditor() const override;
 	//==============================================================================
+	void add_element_to_fx_chain(fx_chain_element* element);
+
+	//==============================================================================
 	my_audio_source& getAudioSource();
-	int get_fft_mean_value();
 
 	double sample_rate;
 	float last_rms_value = 1.0;
@@ -81,25 +82,17 @@ public:
 	// std::unique_ptr<envelope> rms_envelope;
 	// std::unique_ptr<envelope> rms_envelope_clean;
 	//==============================================================================
-	void calculate_fft();
-	int get_fft_peak();
-
-	int get_min_frequency_fft_index() const;
-	void set_min_frequency_fft_index(int min_frequency_fft_index);
-	int get_max_frequency_fft_index() const;
-	void set_max_frequency_fft_index(int max_frequency_fft_index);
-
 	AudioProcessorValueTreeState* get_state();
 	AudioProcessorValueTreeState::ParameterLayout create_parameters();
 
 	static const int fft_order = 10;
 	static const int fft_size = 1 << fft_order;
 
-	std::list<fx_chain_element*> fx_chain;
 
 private:
 	my_audio_source audioSource;
 
+	std::list<fx_chain_element*> fx_chain;
 
 	std::unique_ptr<AudioProcessorValueTreeState > state;
 	//==============================================================================

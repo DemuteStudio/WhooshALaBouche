@@ -54,21 +54,21 @@ ParametersBox::ParametersBox(WhooshGeneratorAudioProcessor* processor)
 	fft_order_value_label.setJustificationType(Justification::centred);
 	fft_order_value_label.setText(std::to_string(processor->fft_size), dontSendNotification);
 
-	//frequency band
+	//frequency band ========================================================================================================================================================================================================================================================================================================================
 	frequency_band_slider = std::make_unique<Slider>();
 	frequency_band_slider->setSliderStyle(Slider::TwoValueHorizontal);
 	addAndMakeVisible(frequency_band_slider.get());
 	frequency_band_slider->setName("frequency_band");
 	frequency_band_slider->setRange(0, processor->fft_size);
-	frequency_band_slider->setMinAndMaxValues(processor->get_min_frequency_fft_index(), processor->get_max_frequency_fft_index());
-	frequency_band_slider->setSkewFactorFromMidPoint(1000/processor->get_sample_rate_size_max());
+	frequency_band_slider->setMinAndMaxValues(50, processor->sample_rate);
+	frequency_band_slider->setSkewFactorFromMidPoint(1000);
 
 	addAndMakeVisible(frequency_band_label);
 	frequency_band_label.setText("FREQUENCY BAND", NotificationType::dontSendNotification);
 
 	addAndMakeVisible(frequency_band_value_label);
 	frequency_band_value_label.setJustificationType(Justification::centred);
-	frequency_band_value_label.setText(std::to_string(processor->get_min_frequency_fft_index()) + " / " + std::to_string( processor->get_max_frequency_fft_index()), dontSendNotification);
+	frequency_band_value_label.setText(std::to_string(frequency_band_slider->getMinValue()) + " / " + std::to_string( frequency_band_slider->getMaxValue()), dontSendNotification);
 }
 
 ParametersBox::~ParametersBox()

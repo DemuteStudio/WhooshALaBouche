@@ -25,20 +25,20 @@ public:
 	}
 
 
-
-	int fft_sum_= 0;
+	int fft_sum_ = 0;
 	int fft_index_ = 0;
 	//==============================================================================
 
 	void getNextAudioBlock(const juce::AudioSourceChannelInfo& bufferToFill) override;
+	void prepareToPlay(double sampleRate, int samplesPerBlock) override;
 	//==============================================================================
 	void paint(juce::Graphics& g) override;
 	//==============================================================================
 	void timerCallback() override;
 	//==============================================================================
 	void push_next_sample_into_fifo(float sample) noexcept;
-	void drawNextFrameOfSpectrum();
-	void drawFrame(juce::Graphics& g);
+	void draw_next_frame_of_spectrum();
+	void draw_frame(juce::Graphics& g);
 	//==============================================================================
 	int get_fft_mean_value();
 	void calculate_fft();
@@ -58,11 +58,11 @@ public:
 	};
 
 private:
-	juce::dsp::FFT forwardFFT; 
+	juce::dsp::FFT forwardFFT;
 	juce::dsp::WindowingFunction<float> window;
 
-	float fifo[fft_size];
-	float fftData[2 * fft_size];
+	std::array<float, fft_size> fifo;
+	std::array<float, 2 * fft_size> fftData;
 	int fifoIndex = 0;
 	bool nextFFTBlockReady = false;
 	float scopeData[scope_size];
@@ -74,4 +74,3 @@ private:
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(AnalyserComponent)
 };
-

@@ -11,20 +11,25 @@ void AnalyserComponent::getNextAudioBlock(const juce::AudioSourceChannelInfo& bu
 	}
 }
 
+void AnalyserComponent::prepareToPlay(double sampleRate, int samplesPerBlock)
+{
+	sample_rate_size_max = (1. / fft_size) * sampleRate;
+}
+
 void AnalyserComponent::paint(juce::Graphics& g)
 {
-	g.fillAll(juce::Colours::black);
+	g.fillAll(getLookAndFeel().findColour(juce::ResizableWindow::backgroundColourId)); 
 
 	g.setOpacity(1.0f);
 	g.setColour(juce::Colours::white);
-	drawFrame(g);
+	draw_frame(g);
 }
 
 void AnalyserComponent::timerCallback()
 {
 	if (nextFFTBlockReady)
 	{
-		drawNextFrameOfSpectrum();
+		draw_next_frame_of_spectrum();
 		nextFFTBlockReady = false;
 		repaint();
 	}
@@ -32,52 +37,49 @@ void AnalyserComponent::timerCallback()
 
 void AnalyserComponent::push_next_sample_into_fifo(float sample) noexcept
 {
-	// if the fifo contains enough data, set a flag to say
-	// that the next frame should now be rendered..
-	if (fifoIndex == fft_size) // [11]
+	if (fifoIndex == fft_size) 
 	{
-		if (! nextFFTBlockReady) // [12]
+		if (! nextFFTBlockReady) 
 		{
-			juce::zeromem(fftData, sizeof (fftData));
-			memcpy(fftData, fifo, sizeof (fifo));
+			std::fill(fftData.begin(), fftData.end(), 0.0f);
+			std::copy(fifo.begin(), fifo.end(), fftData.begin());
 			nextFFTBlockReady = true;
 		}
 
 		fifoIndex = 0;
 	}
 
-	fifo[fifoIndex++] = sample; // [12]
+	fifo[fifoIndex++] = sample; 
 }
 
-void AnalyserComponent::drawNextFrameOfSpectrum()
+void AnalyserComponent::draw_next_frame_of_spectrum()
 {
 	// first apply a windowing function to our data
-	window.multiplyWithWindowingTable(fftData, fft_size); // [1]
-
+	window.multiplyWithWindowingTable(&fftData[0], fft_size);
 	// then render our FFT data..
-	forwardFFT.performFrequencyOnlyForwardTransform(fftData); // [2]
+	forwardFFT.performFrequencyOnlyForwardTransform(&fftData[0]);
 
-	auto mindB = -100.0f;
-	auto maxdB = 0.0f;
+	const auto mindB = -100.0f;
+	const auto maxdB = 0.0f;
 
-	for (int i = 0; i < scope_size; ++i) // [3]
+	for (int i = 0; i < scope_size; ++i) 
 	{
-		auto skewedProportionX = 1.0f - std::exp(std::log(1.0f - (float)i / (float)scope_size) * 0.2f);
-		auto fftDataIndex = juce::jlimit(0, fft_size / 2, (int)(skewedProportionX * (float)fft_size * 0.5f));
-		auto level = juce::jmap(juce::jlimit(mindB, maxdB, juce::Decibels::gainToDecibels(fftData[fftDataIndex])
-		                                     - juce::Decibels::gainToDecibels((float)fft_size)),
-		                        mindB, maxdB, 0.0f, 1.0f);
+		const auto skewed_proportion_x = 1.0f - std::exp(std::log(1.0f - (float)i / (float)scope_size) * 0.2f);
+		const auto fft_data_index = juce::jlimit(0, fft_size / 2, (int)(skewed_proportion_x * (float)fft_size * 0.5f));
+		const auto level = juce::jmap(juce::jlimit(mindB, maxdB, juce::Decibels::gainToDecibels(fftData[fft_data_index])
+		                                           - juce::Decibels::gainToDecibels((float)fft_size)),
+		                              mindB, maxdB, 0.0f, 1.0f);
 
-		scopeData[i] = level; // [4]
+		scopeData[i] = level; 
 	}
 }
 
-void AnalyserComponent::drawFrame(juce::Graphics& g)
+void AnalyserComponent::draw_frame(juce::Graphics& g)
 {
 	for (int i = 1; i < scope_size; ++i)
 	{
-		auto width = getLocalBounds().getWidth();
-		auto height = getLocalBounds().getHeight();
+		const auto width = getLocalBounds().getWidth();
+		const auto height = getLocalBounds().getHeight();
 
 		g.drawLine({
 			(float)juce::jmap(i - 1, 0, scope_size - 1, 0, width),
@@ -87,6 +89,7 @@ void AnalyserComponent::drawFrame(juce::Graphics& g)
 		});
 	}
 }
+
 int AnalyserComponent::get_fft_mean_value()
 {
 	if (fft_index_ = ! 0)
@@ -106,7 +109,7 @@ void AnalyserComponent::calculate_fft()
 {
 	if (nextFFTBlockReady)
 	{
-		forward_fft.performFrequencyOnlyForwardTransform(fft_data.data());
+		forwardFFT.performFrequencyOnlyForwardTransform(fftData.data());
 		nextFFTBlockReady = false;
 	}
 }
@@ -116,11 +119,11 @@ int AnalyserComponent::get_fft_peak()
 	jassert(
 		min_frequency_fft_index >= 0 && max_frequency_fft_index <= fft_size && min_frequency_fft_index <
 		max_frequency_fft_index);
-	const auto max_iterator = std::max_element(fft_data.begin() + min_frequency_fft_index,
-	                                           fft_data.begin() + max_frequency_fft_index);
-		if (max_iterator != fft_data.begin() + max_frequency_fft_index)
+	const auto max_iterator = std::max_element(fftData.begin() + min_frequency_fft_index,
+	                                           fftData.begin() + max_frequency_fft_index);
+	if (max_iterator != fftData.begin() + max_frequency_fft_index)
 	{
-		const auto index = std::distance(fft_data_.begin(), max_iterator);
+		const auto index = std::distance(fftData.begin(), max_iterator);
 		return index * sample_rate_size_max;
 	}
 	DBG("max");
