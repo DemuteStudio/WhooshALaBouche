@@ -18,8 +18,6 @@ public:
 	{
 	}
 
-	int fft_sum_ = 0;
-	int fft_index_ = 0;
 	//==============================================================================
 
 	void getNextAudioBlock(const juce::AudioSourceChannelInfo& bufferToFill) override;
@@ -40,11 +38,12 @@ public:
 	void calculate_fft();
 	int get_fft_peak();
 	//==============================================================================
-	double get_maximum_frequency() const;
+	double get_frequency_interval() const;
 	int get_min_frequency_fft_index() const;
 	void set_min_frequency_fft_index(int min_frequency_fft_index);
 	int get_max_frequency_fft_index() const;
 	void set_max_frequency_fft_index(int _max_frequency_fft_index);
+	float get_fft_index_upper_limit() const;
 
 	enum
 	{
@@ -58,6 +57,8 @@ private:
 	juce::dsp::FFT forwardFFT;
 	juce::dsp::WindowingFunction<float> window;
 
+	double sample_rate;
+
 	std::array<float, fft_size> fifo;
 	std::array<float, 2 * fft_size> fftData;
 
@@ -68,11 +69,17 @@ private:
 	float scopeData[scope_size];
 
 	double frequency_interval;
+	float fft_upper_limit ;
 
 	int min_frequency_fft_index = 0;
 	int max_frequency_fft_index;
 
 	int block_index = 0;
 
+	int fft_sum_ = 0;
+	int fft_index_ = 0;
+
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(SpectrumAnalyserComponent)
 };
+
+

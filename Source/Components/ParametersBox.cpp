@@ -60,12 +60,12 @@ ParametersBox::ParametersBox(WhooshGeneratorAudioProcessor* processor, int fft_s
 	addAndMakeVisible(frequency_band_slider.get());
 	frequency_band_slider->setName("frequency_band");
 
-	const float frequency_step = processor->sample_rate / fft_size /2;
+	const float frequency_step = processor->sample_rate / fft_size;
 	const int minimum_frequency = 50;
-	int maximum_frequency = processor->sample_rate;
+	int maximum_frequency = processor->sample_rate/2;
 
 	const int minimum_index = minimum_frequency/ frequency_step;
-	const int maximum_index = fft_size;
+	const int maximum_index = maximum_frequency/ frequency_step;
 
 
 	frequency_band_slider->setRange(minimum_index, maximum_index);

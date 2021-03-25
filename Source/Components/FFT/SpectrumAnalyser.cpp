@@ -35,7 +35,9 @@ void SpectrumAnalyserComponent::getNextAudioBlock(const juce::AudioSourceChannel
 
 void SpectrumAnalyserComponent::prepareToPlay(double sampleRate, int samplesPerBlock)
 {
-	frequency_interval = (1. / fft_size) * sampleRate / 2;
+	sample_rate = sampleRate;
+	frequency_interval = (1. / fft_size) * sampleRate;
+	fft_upper_limit = fft_size /2;
 }
 
 void SpectrumAnalyserComponent::paint(juce::Graphics& g)
@@ -112,7 +114,7 @@ void SpectrumAnalyserComponent::calculate_next_frame_of_spectrum()
 	for (int i = 0; i < scope_size; ++i)
 	{
 		const auto skewed_proportion_x = 1.0f - std::exp(std::log(1.0f - (float)i / (float)scope_size) * 0.2f);
-		const auto fft_data_index = juce::jlimit(0, fft_size / 2, (int)(skewed_proportion_x * (float)fft_size / 2.));
+		const auto fft_data_index = juce::jlimit<int>(0, fft_upper_limit, (int)(skewed_proportion_x * fft_upper_limit));
 
 		float level = 0;
 		if (fft_data_index >= min_frequency_fft_index && fft_data_index <= max_frequency_fft_index)
@@ -182,7 +184,7 @@ int SpectrumAnalyserComponent::get_fft_peak()
 	return 0;
 }
 
-double SpectrumAnalyserComponent::get_maximum_frequency() const
+double SpectrumAnalyserComponent::get_frequency_interval() const
 {
 	return frequency_interval;
 }
@@ -205,4 +207,9 @@ int SpectrumAnalyserComponent::get_max_frequency_fft_index() const
 void SpectrumAnalyserComponent::set_max_frequency_fft_index(int _max_frequency_fft_index)
 {
 	max_frequency_fft_index = _max_frequency_fft_index;
+}
+
+float SpectrumAnalyserComponent::get_fft_index_upper_limit() const
+{
+	return fft_upper_limit;
 }

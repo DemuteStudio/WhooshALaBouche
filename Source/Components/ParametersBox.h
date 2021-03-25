@@ -11,14 +11,13 @@ using namespace juce;
 class ParametersBox : public juce::Component
 {
 public:
-	ParametersBox(WhooshGeneratorAudioProcessor* processor, int fft_size);
+	ParametersBox::ParametersBox(WhooshGeneratorAudioProcessor* processor, int fft_size);
 	~ParametersBox() override;
 
 	void paint(juce::Graphics&) override;
 	void resized() override;
 
 	void add_listener(Slider::Listener* listener) const;
-
 
 	std::unique_ptr<Slider> threshold_slider;
 	Label threshold_label;

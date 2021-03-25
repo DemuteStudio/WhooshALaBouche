@@ -102,6 +102,8 @@ void WhooshGeneratorAudioProcessor::prepareToPlay(double sampleRate, int samples
 	{
 		element->prepareToPlay(sampleRate, samplesPerBlock);
 	}
+
+
 }
 
 void WhooshGeneratorAudioProcessor::releaseResources()
