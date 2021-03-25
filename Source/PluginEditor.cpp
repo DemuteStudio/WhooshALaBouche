@@ -44,7 +44,8 @@ WhooshGeneratorAudioProcessorEditor::WhooshGeneratorAudioProcessorEditor(WhooshG
 	//====================================================================
 	//OSC
 
-	const bool connected = osc_sender_.connect("10.0.0.34", 8000);
+	// const bool connected = osc_sender_.connect("10.0.0.34", 8000);
+	const bool connected = osc_sender_.connect("127.0.0.1", 6969);
 	if (connected)
 	{
 		DBG("Connected");
@@ -133,7 +134,7 @@ void WhooshGeneratorAudioProcessorEditor::sliderValueChanged(Slider* slider)
 		fft_visualizer_.set_speed(slider->getValue());
 
 		parameters_box_.frequency_variation_speed__value_label.setText(
-			std::to_string((int)(slider->getValue()*100)) + " %",
+			std::to_string((int)(slider->getValue() * 100)) + " %",
 			dontSendNotification);
 	}
 }
@@ -154,9 +155,9 @@ void WhooshGeneratorAudioProcessorEditor::timerCallback()
 	out_parameters_box_.set_slider_value(out_parameters_box::volume, audioProcessor.last_rms_value);
 	out_parameters_box_.set_slider_value(out_parameters_box::frequency, fft_visualizer_.get_last_fft_peak());
 
-
+	osc_sender_.send<float>("/whoosh", std::move(audioProcessor.last_rms_value));
 	// send_osc_message(out_parameters_box::volume, audioProcessor.last_rms_value);
-	// send_osc_message(out_parameters_box::frequency, frequency_peak);
+	// send_osc_message(out_parameters_box::frequency, fft_visualizer_.get_last_fft_peak());
 }
 
 void WhooshGeneratorAudioProcessorEditor::send_osc_message(out_parameters_box::parameter_type type, float value)

@@ -19,10 +19,6 @@
                 file="Source/Components/FFT/SpectrumAnalyser.cpp"/>
           <FILE id="nIEKaQ" name="SpectrumAnalyser.h" compile="0" resource="0"
                 file="Source/Components/FFT/SpectrumAnalyser.h"/>
-          <FILE id="QYmLR5" name="Fft_visualizer.cpp" compile="1" resource="0"
-                file="Source/Components/FFT/Fft_visualizer.cpp"/>
-          <FILE id="mzDOUM" name="Fft_visualizer.h" compile="0" resource="0"
-                file="Source/Components/FFT/Fft_visualizer.h"/>
         </GROUP>
         <FILE id="kPKNJj" name="out_parameters_box.cpp" compile="1" resource="0"
               file="Source/Components/out_parameters_box.cpp"/>
