@@ -44,6 +44,7 @@ public:
 	int get_max_frequency_fft_index() const;
 	void set_max_frequency_fft_index(int _max_frequency_fft_index);
 	float get_fft_index_upper_limit() const;
+	int get_last_fft_peak() const;
 
 	enum
 	{
@@ -53,6 +54,10 @@ public:
 	};
 
 	float rms_blocks_length = 1;
+
+
+	float get_speed() const;
+	void set_speed(const float speed);
 private:
 	juce::dsp::FFT forwardFFT;
 	juce::dsp::WindowingFunction<float> window;
@@ -79,7 +84,11 @@ private:
 	int fft_sum_ = 0;
 	int fft_index_ = 0;
 
+	float variation_speed = 1.; // between 0 and 1
+	int last_fft_peak = 0;
+
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(SpectrumAnalyserComponent)
 };
+
 
 

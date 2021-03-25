@@ -128,6 +128,14 @@ void WhooshGeneratorAudioProcessorEditor::sliderValueChanged(Slider* slider)
 			std::to_string((int)min_frequency) + " / " + std::to_string((int)max_frequency) + " Hz",
 			dontSendNotification);
 	}
+	if (slider->getName() == "fft_variation_speed")
+	{
+		fft_visualizer_.set_speed(slider->getValue());
+
+		parameters_box_.frequency_variation_speed__value_label.setText(
+			std::to_string((int)(slider->getValue()*100)) + " %",
+			dontSendNotification);
+	}
 }
 
 
@@ -144,7 +152,7 @@ void WhooshGeneratorAudioProcessorEditor::timerCallback()
 	waveform.updateVisibleRegion(end_sample, number_of_samples_to_display);
 
 	out_parameters_box_.set_slider_value(out_parameters_box::volume, audioProcessor.last_rms_value);
-	// out_parameters_box_.set_slider_value(out_parameters_box::frequency, frequency_peak);
+	out_parameters_box_.set_slider_value(out_parameters_box::frequency, fft_visualizer_.get_last_fft_peak());
 
 
 	// send_osc_message(out_parameters_box::volume, audioProcessor.last_rms_value);

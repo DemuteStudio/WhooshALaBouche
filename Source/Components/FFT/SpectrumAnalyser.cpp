@@ -60,6 +60,7 @@ void SpectrumAnalyserComponent::calculate_spectrum()
 	if (nextFFTBlockReady)
 	{
 		calculate_next_frame_of_spectrum();
+		last_fft_peak=get_fft_peak();
 		nextFFTBlockReady = false;
 	}
 }
@@ -178,7 +179,11 @@ int SpectrumAnalyserComponent::get_fft_peak()
 	if (max_iterator != fftData.begin() + max_frequency_fft_index)
 	{
 		const auto index = std::distance(fftData.begin(), max_iterator);
-		return index * frequency_interval;
+		const int new_frequency_peak = index * frequency_interval;
+		const int variation = (new_frequency_peak - last_fft_peak) * variation_speed;
+		const int out_fft_peak = last_fft_peak + variation;
+		last_fft_peak = out_fft_peak;
+		return out_fft_peak;
 	}
 	DBG("max");
 	return 0;
@@ -212,4 +217,19 @@ void SpectrumAnalyserComponent::set_max_frequency_fft_index(int _max_frequency_f
 float SpectrumAnalyserComponent::get_fft_index_upper_limit() const
 {
 	return fft_upper_limit;
+}
+
+float SpectrumAnalyserComponent::get_speed() const
+{
+	return variation_speed;
+}
+
+void SpectrumAnalyserComponent::set_speed(const float speed)
+{
+	this->variation_speed = speed;
+}
+
+int SpectrumAnalyserComponent::get_last_fft_peak() const
+{
+	return last_fft_peak;
 }

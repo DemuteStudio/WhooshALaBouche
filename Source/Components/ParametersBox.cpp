@@ -41,18 +41,18 @@ ParametersBox::ParametersBox(WhooshGeneratorAudioProcessor* processor, int fft_s
 	rms_length_value_label.setText(std::to_string(rms_length_value) + " ms", dontSendNotification);
 
 	//fft_order
-	fft_order_slider = std::make_unique<Slider>();
-	fft_order_slider->setSliderStyle(Slider::LinearHorizontal);
-	addAndMakeVisible(fft_order_slider.get());
-	fft_order_slider->setName("fft");
-	fft_order_slider->setRange(1.0, 10.);
-
-	addAndMakeVisible(fft_order_label);
-	fft_order_label.setText("FFT", NotificationType::dontSendNotification);
-
-	addAndMakeVisible(fft_order_value_label);
-	fft_order_value_label.setJustificationType(Justification::centred);
-	fft_order_value_label.setText(std::to_string(fft_size), dontSendNotification);
+	// fft_order_slider = std::make_unique<Slider>();
+	// fft_order_slider->setSliderStyle(Slider::LinearHorizontal);
+	// addAndMakeVisible(fft_order_slider.get());
+	// fft_order_slider->setName("fft");
+	// fft_order_slider->setRange(1.0, 10.);
+	//
+	// addAndMakeVisible(fft_order_label);
+	// fft_order_label.setText("FFT", NotificationType::dontSendNotification);
+	//
+	// addAndMakeVisible(fft_order_value_label);
+	// fft_order_value_label.setJustificationType(Justification::centred);
+	// fft_order_value_label.setText(std::to_string(fft_size), dontSendNotification);
 
 	//frequency band ========================================================================================================================================================================================================================================================================================================================
 	frequency_band_slider = std::make_unique<Slider>();
@@ -62,10 +62,10 @@ ParametersBox::ParametersBox(WhooshGeneratorAudioProcessor* processor, int fft_s
 
 	const float frequency_step = processor->sample_rate / fft_size;
 	const int minimum_frequency = 50;
-	int maximum_frequency = processor->sample_rate/2;
+	int maximum_frequency = processor->sample_rate / 2;
 
-	const int minimum_index = minimum_frequency/ frequency_step;
-	const int maximum_index = maximum_frequency/ frequency_step;
+	const int minimum_index = minimum_frequency / frequency_step;
+	const int maximum_index = maximum_frequency / frequency_step;
 
 
 	frequency_band_slider->setRange(minimum_index, maximum_index);
@@ -80,6 +80,24 @@ ParametersBox::ParametersBox(WhooshGeneratorAudioProcessor* processor, int fft_s
 	frequency_band_value_label.setText(
 		std::to_string(frequency_band_slider->getMinValue()) + " / " + std::to_string(
 			frequency_band_slider->getMaxValue()), dontSendNotification);
+
+
+	//FFT Peak variation Speed========================================================================================================================================================================================================================================================================================================================
+	frequency_variation_speed_slider = std::make_unique<Slider>();
+	frequency_variation_speed_slider->setSliderStyle(Slider::LinearHorizontal);
+	addAndMakeVisible(frequency_variation_speed_slider.get());
+	frequency_variation_speed_slider->setName("fft_variation_speed");
+
+	frequency_variation_speed_slider->setRange(0., 1.);
+	frequency_variation_speed_slider->setValue(1.);
+
+	addAndMakeVisible(frequency_variation_speed_label);
+	frequency_variation_speed_label.setText("SPEED", NotificationType::dontSendNotification);
+
+	addAndMakeVisible(frequency_variation_speed__value_label);
+	frequency_variation_speed__value_label.setJustificationType(Justification::centred);
+	frequency_variation_speed__value_label.setText(
+		std::to_string((int)frequency_variation_speed_slider->getValue()*100) + " % ", dontSendNotification);
 }
 
 ParametersBox::~ParametersBox()
@@ -124,11 +142,11 @@ void ParametersBox::resized()
 	rms_length_slider->setTextBoxStyle(Slider::NoTextBox, true, 0, 0);
 
 
-	auto fft_rectangle = rectangle.removeFromTop(slider_height);
-	fft_order_label.setBounds(fft_rectangle.removeFromLeft(150));
-	fft_order_value_label.setBounds(fft_rectangle.removeFromRight(150));
-	fft_order_slider->setBounds(fft_rectangle);
-	fft_order_slider->setTextBoxStyle(Slider::NoTextBox, true, 0, 0);
+	// auto fft_rectangle = rectangle.removeFromTop(slider_height);
+	// fft_order_label.setBounds(fft_rectangle.removeFromLeft(150));
+	// fft_order_value_label.setBounds(fft_rectangle.removeFromRight(150));
+	// fft_order_slider->setBounds(fft_rectangle);
+	// fft_order_slider->setTextBoxStyle(Slider::NoTextBox, true, 0, 0);
 
 
 	auto frequency_band_rectangle = rectangle.removeFromTop(slider_height);
@@ -136,6 +154,13 @@ void ParametersBox::resized()
 	frequency_band_value_label.setBounds(frequency_band_rectangle.removeFromRight(150));
 	frequency_band_slider->setBounds(frequency_band_rectangle);
 	frequency_band_slider->setTextBoxStyle(Slider::NoTextBox, true, 0, 0);
+
+
+	auto speed_rectangle = rectangle.removeFromTop(slider_height);
+	frequency_variation_speed_label.setBounds(speed_rectangle.removeFromLeft(150));
+	frequency_variation_speed__value_label.setBounds(speed_rectangle.removeFromRight(150));
+	frequency_variation_speed_slider->setBounds(speed_rectangle);
+	frequency_variation_speed_slider->setTextBoxStyle(Slider::NoTextBox, true, 0, 0);
 }
 
 void ParametersBox::add_listener(Slider::Listener* listener) const
@@ -143,4 +168,5 @@ void ParametersBox::add_listener(Slider::Listener* listener) const
 	threshold_slider->addListener(listener);
 	rms_length_slider->addListener(listener);
 	frequency_band_slider->addListener(listener);
+	frequency_variation_speed_slider->addListener(listener);
 }

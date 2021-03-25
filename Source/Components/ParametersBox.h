@@ -37,6 +37,10 @@ public:
 	Label frequency_band_label;
 	Label frequency_band_value_label;
 
+
+	std::unique_ptr<Slider> frequency_variation_speed_slider;
+	Label frequency_variation_speed_label;
+	Label frequency_variation_speed__value_label;
 private:
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ParametersBox)
