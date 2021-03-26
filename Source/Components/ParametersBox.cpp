@@ -15,7 +15,7 @@ ParametersBox::ParametersBox(WhooshGeneratorAudioProcessor* processor, int fft_s
 	threshold_slider->setSliderStyle(Slider::LinearHorizontal);
 	addAndMakeVisible(threshold_slider.get());
 	threshold_slider->setName("threshold");
-	threshold_slider->setRange(0.0, 0.5);
+	// threshold_slider->setRange(0.0, 0.5);
 
 	addAndMakeVisible(threshold_label);
 	threshold_label.setText("Threshold", NotificationType::dontSendNotification);
@@ -30,7 +30,7 @@ ParametersBox::ParametersBox(WhooshGeneratorAudioProcessor* processor, int fft_s
 	rms_length_slider->setSliderStyle(Slider::LinearHorizontal);
 	addAndMakeVisible(rms_length_slider.get());
 	rms_length_slider->setName("rms_length");
-	rms_length_slider->setRange(1.0, 10.);
+	// rms_length_slider->setRange(1.0, 10.);
 
 	addAndMakeVisible(rms_length_label);
 	rms_length_label.setText("RMS Length", NotificationType::dontSendNotification);
@@ -92,12 +92,41 @@ ParametersBox::ParametersBox(WhooshGeneratorAudioProcessor* processor, int fft_s
 	frequency_variation_speed_slider->setValue(1.);
 
 	addAndMakeVisible(frequency_variation_speed_label);
-	frequency_variation_speed_label.setText("SPEED", NotificationType::dontSendNotification);
+	frequency_variation_speed_label.setText("FFT SPEED", NotificationType::dontSendNotification);
 
 	addAndMakeVisible(frequency_variation_speed__value_label);
 	frequency_variation_speed__value_label.setJustificationType(Justification::centred);
 	frequency_variation_speed__value_label.setText(
 		std::to_string((int)frequency_variation_speed_slider->getValue()*100) + " % ", dontSendNotification);
+
+	//Volume variation Speed========================================================================================================================================================================================================================================================================================================================
+	volume_variation_speed_slider = std::make_unique<Slider>();
+	volume_variation_speed_slider->setSliderStyle(Slider::LinearHorizontal);
+	addAndMakeVisible(volume_variation_speed_slider.get());
+	volume_variation_speed_slider->setName("volume_variation_speed");
+
+	volume_variation_speed_slider->setRange(0., 1.);
+	volume_variation_speed_slider->setValue(1.);
+
+	addAndMakeVisible(volume_variation_speed_label);
+	volume_variation_speed_label.setText("VOLUME SPEED", NotificationType::dontSendNotification);
+
+	addAndMakeVisible(volume_variation_speed__value_label);
+	volume_variation_speed__value_label.setJustificationType(Justification::centred);
+	volume_variation_speed__value_label.setText(
+		std::to_string((int)volume_variation_speed_slider->getValue()*100) + " % ", dontSendNotification);
+
+
+
+	sliders_attachment_.push_back( std::make_unique<AudioProcessorValueTreeState::SliderAttachment>(
+		*processor->get_in_state(), "threshold", *threshold_slider));
+	sliders_attachment_.push_back( std::make_unique<AudioProcessorValueTreeState::SliderAttachment>(
+		*processor->get_in_state(), "rms_length", *rms_length_slider));
+	sliders_attachment_.push_back( std::make_unique<AudioProcessorValueTreeState::SliderAttachment>(
+		*processor->get_in_state(), "fft_speed", *frequency_variation_speed_slider));
+	sliders_attachment_.push_back( std::make_unique<AudioProcessorValueTreeState::SliderAttachment>(
+		*processor->get_in_state(), "volume_speed", *volume_variation_speed_slider));
+
 }
 
 ParametersBox::~ParametersBox()
@@ -125,7 +154,7 @@ void ParametersBox::resized()
 	const int height = rectangle.getHeight();
 	int width = rectangle.getWidth();
 
-	const int slider_height = height / 4;
+	const int slider_height = height / 5;
 
 	auto threshold_rectangle = rectangle.removeFromTop(slider_height);
 	threshold_label.setBounds(threshold_rectangle.removeFromLeft(150));
@@ -156,11 +185,17 @@ void ParametersBox::resized()
 	frequency_band_slider->setTextBoxStyle(Slider::NoTextBox, true, 0, 0);
 
 
-	auto speed_rectangle = rectangle.removeFromTop(slider_height);
-	frequency_variation_speed_label.setBounds(speed_rectangle.removeFromLeft(150));
-	frequency_variation_speed__value_label.setBounds(speed_rectangle.removeFromRight(150));
-	frequency_variation_speed_slider->setBounds(speed_rectangle);
+	auto fft_speed_rectangle = rectangle.removeFromTop(slider_height);
+	frequency_variation_speed_label.setBounds(fft_speed_rectangle.removeFromLeft(150));
+	frequency_variation_speed__value_label.setBounds(fft_speed_rectangle.removeFromRight(150));
+	frequency_variation_speed_slider->setBounds(fft_speed_rectangle);
 	frequency_variation_speed_slider->setTextBoxStyle(Slider::NoTextBox, true, 0, 0);
+
+	auto volume_speed_rectangle = rectangle.removeFromTop(slider_height);
+	volume_variation_speed_label.setBounds(volume_speed_rectangle.removeFromLeft(150));
+	volume_variation_speed__value_label.setBounds(volume_speed_rectangle.removeFromRight(150));
+	volume_variation_speed_slider->setBounds(volume_speed_rectangle);
+	volume_variation_speed_slider->setTextBoxStyle(Slider::NoTextBox, true, 0, 0);
 }
 
 void ParametersBox::add_listener(Slider::Listener* listener) const
@@ -169,4 +204,5 @@ void ParametersBox::add_listener(Slider::Listener* listener) const
 	rms_length_slider->addListener(listener);
 	frequency_band_slider->addListener(listener);
 	frequency_variation_speed_slider->addListener(listener);
+	volume_variation_speed_slider->addListener(listener);
 }

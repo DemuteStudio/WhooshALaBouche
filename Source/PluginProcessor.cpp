@@ -10,8 +10,9 @@
 #include "PluginEditor.h"
 
 //==============================================================================
-WhooshGeneratorAudioProcessor::WhooshGeneratorAudioProcessor(): state(std::make_unique<AudioProcessorValueTreeState>(
-	                                                                *this, nullptr, "Parameters", create_parameters()))
+WhooshGeneratorAudioProcessor::WhooshGeneratorAudioProcessor(): out_state_(std::make_unique<AudioProcessorValueTreeState>(
+	                                                                *this, nullptr, "OUT PARAMETERS", create_out_parameters())),in_state_(std::make_unique<AudioProcessorValueTreeState>(
+	                                                                *this, nullptr, "IN PARAMETERS", create_in_parameters()))
 #ifndef JucePlugin_PreferredChannelConfigurations
                                                                 , AudioProcessor(BusesProperties()
 #if ! JucePlugin_IsMidiEffect
@@ -102,8 +103,6 @@ void WhooshGeneratorAudioProcessor::prepareToPlay(double sampleRate, int samples
 	{
 		element->prepareToPlay(sampleRate, samplesPerBlock);
 	}
-
-
 }
 
 void WhooshGeneratorAudioProcessor::releaseResources()
@@ -185,13 +184,15 @@ void WhooshGeneratorAudioProcessor::processBlock(juce::AudioBuffer<float>& buffe
 		{
 			temp_previous_value = last_rms_value;
 
-			last_rms_value = sqrt(samples_squares_sum / bufferToFill.numSamples);
+			new_rms_value = sqrt(samples_squares_sum / bufferToFill.numSamples);
 
-			last_rms_value = (last_rms_value < threshold_value) ? 0. : last_rms_value;
+			new_rms_value = (last_rms_value < threshold_value) ? 0. : new_rms_value;
 
 			samples_squares_sum = 0.0;
 			block_index = 0;
 
+			const float variation = (new_rms_value - last_rms_value) * variation_speed;
+			last_rms_value = last_rms_value + variation;
 		}
 		else
 		{
@@ -249,9 +250,14 @@ my_audio_source& WhooshGeneratorAudioProcessor::getAudioSource()
 }
 
 
-AudioProcessorValueTreeState* WhooshGeneratorAudioProcessor::get_state()
+AudioProcessorValueTreeState* WhooshGeneratorAudioProcessor::get_out_state()
 {
-	return state.get();
+	return out_state_.get();
+}
+
+AudioProcessorValueTreeState* WhooshGeneratorAudioProcessor::get_in_state()
+{
+	return in_state_.get();
 }
 
 
@@ -262,7 +268,7 @@ juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 	return new WhooshGeneratorAudioProcessor();
 }
 
-AudioProcessorValueTreeState::ParameterLayout WhooshGeneratorAudioProcessor::create_parameters()
+AudioProcessorValueTreeState::ParameterLayout WhooshGeneratorAudioProcessor::create_out_parameters()
 {
 	std::vector<std::unique_ptr<RangedAudioParameter>> parameters;
 
@@ -273,6 +279,27 @@ AudioProcessorValueTreeState::ParameterLayout WhooshGeneratorAudioProcessor::cre
 	parameters.push_back(std::make_unique<AudioParameterFloat>("frequency", "FREQUENCY", frequency_range, 0.,
 	                                                           "FREQUENCY", AudioProcessorParameter::genericParameter));
 
+
+	
+
+	return {parameters.begin(), parameters.end()};
+}
+
+AudioProcessorValueTreeState::ParameterLayout WhooshGeneratorAudioProcessor::create_in_parameters()
+{
+
+	std::vector<std::unique_ptr<RangedAudioParameter>> parameters;
+
+	NormalisableRange<float> frequency_range(50., 20000.);
+	frequency_range.setSkewForCentre(1000.);
+
+	parameters.push_back(std::make_unique<AudioParameterFloat>("threshold", "THRESHOLD", 0.0f, .0f, 0.01f));
+	parameters.push_back(std::make_unique<AudioParameterFloat>("rms_length", "RMS LENGTH", 0.0f, 10.0f, 0.01f));
+	parameters.push_back(std::make_unique<AudioParameterFloat>("fft_speed", "FFT SPEED", 0.0f, 1.0f, 0.01f));
+	parameters.push_back(std::make_unique<AudioParameterFloat>("volume_speed", "VOLUME SPEED", 0.0f, 1.0f, 0.01f));
+
+
+	
 
 	return {parameters.begin(), parameters.end()};
 }

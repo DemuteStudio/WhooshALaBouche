@@ -41,6 +41,14 @@ public:
 	std::unique_ptr<Slider> frequency_variation_speed_slider;
 	Label frequency_variation_speed_label;
 	Label frequency_variation_speed__value_label;
+
+
+	std::unique_ptr<Slider> volume_variation_speed_slider;
+	Label volume_variation_speed_label;
+	Label volume_variation_speed__value_label;
+
+
+	std::vector<std::unique_ptr<AudioProcessorValueTreeState::SliderAttachment>> sliders_attachment_;
 private:
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ParametersBox)

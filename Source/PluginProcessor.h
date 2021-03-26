@@ -79,19 +79,24 @@ public:
 
 	float threshold_value = 0.0;
 	float rms_blocks_length = 1;
+	float new_rms_value;
+	float variation_speed = 1.;
 
 	// std::unique_ptr<envelope> rms_envelope;
 	// std::unique_ptr<envelope> rms_envelope_clean;
 	//==============================================================================
-	AudioProcessorValueTreeState* get_state();
-	AudioProcessorValueTreeState::ParameterLayout create_parameters();
+	AudioProcessorValueTreeState* get_out_state();
+	AudioProcessorValueTreeState* get_in_state();
+	AudioProcessorValueTreeState::ParameterLayout create_out_parameters();
+	AudioProcessorValueTreeState::ParameterLayout create_in_parameters();
 
 private:
 	my_audio_source audioSource;
 
 	std::list<fx_chain_element*> fx_chain;
 
-	std::unique_ptr<AudioProcessorValueTreeState > state;
+	std::unique_ptr<AudioProcessorValueTreeState > out_state_;
+	std::unique_ptr<AudioProcessorValueTreeState > in_state_;
 	//==============================================================================
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(WhooshGeneratorAudioProcessor)
 };
