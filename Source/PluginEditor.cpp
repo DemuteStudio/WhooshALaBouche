@@ -5,9 +5,7 @@
 WhooshGeneratorAudioProcessorEditor::WhooshGeneratorAudioProcessorEditor(WhooshGeneratorAudioProcessor& p)
 	: AudioProcessorEditor(&p), audioProcessor(p),
 	  parameters_box_(&p, fft_visualizer_.fft_size),
-	  path("D:\\WHOOSH.txt"), out_stream(path),
 	  out_parameters_box_(p.get_state())
-// envelope_array_(p.rms_envelope.get()) 
 {
 	setLookAndFeel(&my_look_and_feel_);
 	const double time_to_display = 3.;
@@ -17,9 +15,6 @@ WhooshGeneratorAudioProcessorEditor::WhooshGeneratorAudioProcessorEditor(WhooshG
 	addAndMakeVisible(parameters_box_);
 
 	parameters_box_.add_listener(this);
-
-	formatManager.registerBasicFormats();
-
 
 	addAndMakeVisible(&waveform);
 
@@ -38,9 +33,6 @@ WhooshGeneratorAudioProcessorEditor::WhooshGeneratorAudioProcessorEditor(WhooshG
 
 	enableRecording();
 
-	//====================================================================
-	out_stream.write("HELLO WORLD", sizeof("HELLO WORLD"));
-	out_stream.flush();
 	//====================================================================
 	//OSC
 
@@ -152,12 +144,11 @@ void WhooshGeneratorAudioProcessorEditor::timerCallback()
 
 	waveform.updateVisibleRegion(end_sample, number_of_samples_to_display);
 
-	out_parameters_box_.set_slider_value(out_parameters_box::volume, audioProcessor.last_rms_value);
-	out_parameters_box_.set_slider_value(out_parameters_box::frequency, fft_visualizer_.get_last_fft_peak());
+	// out_parameters_box_.set_slider_value(out_parameters_box::volume, audioProcessor.last_rms_value);
+	// out_parameters_box_.set_slider_value(out_parameters_box::frequency, fft_visualizer_.get_last_fft_peak());
 
-	osc_sender_.send<float>("/whoosh", std::move(audioProcessor.last_rms_value));
-	// send_osc_message(out_parameters_box::volume, audioProcessor.last_rms_value);
-	// send_osc_message(out_parameters_box::frequency, fft_visualizer_.get_last_fft_peak());
+	send_osc_message(out_parameters_box::volume, audioProcessor.last_rms_value);
+	send_osc_message(out_parameters_box::frequency, fft_visualizer_.get_last_fft_peak());
 }
 
 void WhooshGeneratorAudioProcessorEditor::send_osc_message(out_parameters_box::parameter_type type, float value)
@@ -193,7 +184,7 @@ void WhooshGeneratorAudioProcessorEditor::enableRecording()
 
 	audioBuffer = temp_audio_buffer.get();
 
-	startTimer(100);
+	startTimerHz(60);
 }
 
 

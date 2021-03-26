@@ -47,7 +47,6 @@ private:
 
 	void timerCallback() override;
 
-	AudioFormatManager formatManager;
 	AudioSampleBuffer* audioBuffer;
 
 	//==================================================
@@ -59,9 +58,6 @@ private:
 	my_audio_source* audio_source;
 	MyLookAndFeel my_look_and_feel_;
 
-	//==================================================
-	File path;
-	FileOutputStream out_stream;
 	//==================================================
 	OSCSender osc_sender_;
 
