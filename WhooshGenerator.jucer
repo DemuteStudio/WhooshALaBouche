@@ -27,38 +27,10 @@
         <FILE id="Hl44vX" name="ButtonsPanel.cpp" compile="1" resource="0"
               file="Source/Components/ButtonsPanel.cpp"/>
         <FILE id="Du2285" name="ButtonsPanel.h" compile="0" resource="0" file="Source/Components/ButtonsPanel.h"/>
-        <GROUP id="{4CA38E45-F534-3132-344F-20E20F6CB587}" name="EnveloppeDrawer">
-          <FILE id="hzN9tP" name="Envelope.cpp" compile="1" resource="0" file="Source/Components/EnvelopeDrawer/Envelope.cpp"/>
-          <FILE id="g9qmGq" name="Envelope.h" compile="0" resource="0" file="Source/Components/EnvelopeDrawer/Envelope.h"/>
-          <FILE id="lVNdIp" name="EnvelopeComponent.cpp" compile="1" resource="0"
-                file="Source/Components/EnvelopeDrawer/EnvelopeComponent.cpp"/>
-          <FILE id="mMd1Bb" name="EnvelopeComponent.h" compile="0" resource="0"
-                file="Source/Components/EnvelopeDrawer/EnvelopeComponent.h"/>
-          <FILE id="McJpiT" name="EnvelopeOpenGLComponent.cpp" compile="1" resource="0"
-                file="Source/Components/EnvelopeDrawer/EnvelopeOpenGLComponent.cpp"/>
-          <FILE id="POiwdq" name="EnvelopeOpenGLComponent.h" compile="0" resource="0"
-                file="Source/Components/EnvelopeDrawer/EnvelopeOpenGLComponent.h"/>
-          <FILE id="TdCtDb" name="EnvelopeSelectedRegionComponent.cpp" compile="1"
-                resource="0" file="Source/Components/EnvelopeDrawer/EnvelopeSelectedRegionComponent.cpp"/>
-          <FILE id="HvL0nk" name="EnvelopeSelectedRegionComponent.h" compile="0"
-                resource="0" file="Source/Components/EnvelopeDrawer/EnvelopeSelectedRegionComponent.h"/>
-        </GROUP>
         <FILE id="o5dZpx" name="AudioBufferSource.cpp" compile="1" resource="0"
               file="Source/Components/AudioBufferSource.cpp"/>
         <FILE id="LdZwxI" name="AudioBufferSource.h" compile="0" resource="0"
               file="Source/Components/AudioBufferSource.h"/>
-        <FILE id="nYEUtp" name="AudioClockComponent.cpp" compile="1" resource="0"
-              file="Source/Components/AudioClockComponent.cpp"/>
-        <FILE id="flTT2E" name="AudioClockComponent.h" compile="0" resource="0"
-              file="Source/Components/AudioClockComponent.h"/>
-        <FILE id="zkxvg1" name="AudioPlaybackPositionComponent.cpp" compile="1"
-              resource="0" file="Source/Components/AudioPlaybackPositionComponent.cpp"/>
-        <FILE id="febaL7" name="AudioPlaybackPositionComponent.h" compile="0"
-              resource="0" file="Source/Components/AudioPlaybackPositionComponent.h"/>
-        <FILE id="esuDha" name="AudioScrollerComponent.cpp" compile="1" resource="0"
-              file="Source/Components/AudioScrollerComponent.cpp"/>
-        <FILE id="poPuCG" name="AudioScrollerComponent.h" compile="0" resource="0"
-              file="Source/Components/AudioScrollerComponent.h"/>
         <FILE id="Dp9Wdv" name="AudioWaveformComponent.cpp" compile="1" resource="0"
               file="Source/Components/AudioWaveformComponent.cpp"/>
         <FILE id="wDMR9b" name="AudioWaveformComponent.h" compile="0" resource="0"
@@ -67,10 +39,6 @@
               resource="0" file="Source/Components/AudioWaveformOpenGLComponent.cpp"/>
         <FILE id="XHLSKi" name="AudioWaveformOpenGLComponent.h" compile="0"
               resource="0" file="Source/Components/AudioWaveformOpenGLComponent.h"/>
-        <FILE id="i9ei2L" name="AudioWaveformSelectedRegionComponent.cpp" compile="1"
-              resource="0" file="Source/Components/AudioWaveformSelectedRegionComponent.cpp"/>
-        <FILE id="DjZeXv" name="AudioWaveformSelectedRegionComponent.h" compile="0"
-              resource="0" file="Source/Components/AudioWaveformSelectedRegionComponent.h"/>
         <FILE id="TdXB1N" name="myAudioSource.cpp" compile="1" resource="0"
               file="Source/Components/myAudioSource.cpp"/>
         <FILE id="NpZLQz" name="myAudioSource.h" compile="0" resource="0" file="Source/Components/myAudioSource.h"/>

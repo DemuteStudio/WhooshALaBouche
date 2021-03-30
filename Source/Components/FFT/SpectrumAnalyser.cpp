@@ -183,6 +183,7 @@ int SpectrumAnalyserComponent::get_fft_peak()
 		const int variation = (new_frequency_peak - last_fft_peak) * variation_speed;
 		const int out_fft_peak = last_fft_peak + variation;
 		last_fft_peak = out_fft_peak;
+		DBG("FFT PEAK VOLUME"<<*max_iterator);
 		return out_fft_peak;
 	}
 	DBG("max");

@@ -2,15 +2,8 @@
 
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
-#include "Components/ButtonsPanel.h"
 #include "Components/ParametersBox.h"
-#include "Components/EnvelopeDrawer/Envelope.h"
-#include "Components/EnvelopeDrawer/EnvelopeComponent.h"
-#include "Components/EnvelopeDrawer/EnvelopeSelectedRegionComponent.h"
 #include "Components/AudioWaveformComponent.h"
-#include "Components/AudioWaveformSelectedRegionComponent.h"
-#include "Components/AudioPlaybackPositionComponent.h"
-#include "Components/AudioScrollerComponent.h"
 #include "Components/MyLookAndFeel.h"
 #include "Components/out_parameters_box.h"
 #include "Components/FFT/SpectrumAnalyser.h"

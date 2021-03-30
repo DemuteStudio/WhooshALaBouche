@@ -1,7 +1,8 @@
 #pragma once
 
-#include "AudioClockComponent.h"
 #include "../JuceLibraryCode/JuceHeader.h"
+#include "AudioWaveformOpenGLComponent.h"
+
 
 using namespace juce;
 

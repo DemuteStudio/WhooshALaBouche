@@ -3,7 +3,6 @@
 #include <JuceHeader.h>
 
 #include "../FxChainElement.h"
-#include "../../PluginProcessor.h"
 
 //==============================================================================
 class SpectrumAnalyserComponent : public juce::Component,
@@ -52,7 +51,6 @@ public:
 		fft_size = 1 << fft_order,
 		scope_size = 512
 	};
-
 	float rms_blocks_length = 1;
 
 
