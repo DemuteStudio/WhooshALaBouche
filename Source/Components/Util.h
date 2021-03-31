@@ -1,33 +1,35 @@
 #pragma once
 
 #include "../JuceLibraryCode/JuceHeader.h"
+#include <algorithm>
 
 
 namespace util
 {
 
-    double xToSeconds (
+    double x_to_seconds (
         float x,
         double visibleRegionStartTime,
         double visibleRegionEndTime,
         juce::Rectangle<float> bounds
     );
 
-    float secondsToX (
+    float seconds_to_x (
         double s,
         double visibleRegionStartTime,
         double visibleRegionEndTime,
         juce::Rectangle<float> bounds
     );
 
-    float flattenX (
+    float flatten_x (
         float x,
         juce::Rectangle<float> bounds
     );
 
-    double flattenSeconds (
+    double flatten_seconds (
         double s,
         double totalLength
     );
 
+    juce::NormalisableRange<float> log_range(const float min, const float max);
 }

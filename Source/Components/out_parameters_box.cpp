@@ -61,7 +61,6 @@ void out_parameters_box::resized()
 
 	auto labels_slice = rectangle.removeFromTop(50).reduced(delta);
 
-	// int height = rectangle.getHeight();
 	const int width = rectangle.getWidth();
 
 	const int number_of_slots = 5;

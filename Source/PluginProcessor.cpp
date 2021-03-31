@@ -26,8 +26,8 @@ WhooshGeneratorAudioProcessor::WhooshGeneratorAudioProcessor(): out_state_(
 #endif
 	                                                                .withOutput(
 		                                                                "Output", juce::AudioChannelSet::stereo(), true)
-	                                                                .withInput("Sidechain",
-	                                                                           juce::AudioChannelSet::stereo())
+	                                                                // .withInput("Sidechain",
+	                                                                //            juce::AudioChannelSet::stereo())
 #endif
                                                                 )
 #endif
@@ -161,7 +161,7 @@ void WhooshGeneratorAudioProcessor::processBlock(juce::AudioBuffer<float>& buffe
 	const int input_buses_count = getBusCount(true);
 
 	AudioBuffer<float> mainInputOutput = getBusBuffer(buffer, true, 0); 
-	AudioBuffer<float> sideChainInput = getBusBuffer(buffer, true, 1);
+	// AudioBuffer<float> sideChainInput = getBusBuffer(buffer, true, 1);
 
 
 	auto selectedBuffer = mainInputOutput;
@@ -254,6 +254,11 @@ my_audio_source& WhooshGeneratorAudioProcessor::getAudioSource()
 	return audioSource;
 }
 
+float WhooshGeneratorAudioProcessor::get_last_rms_value_in_db()
+{
+	return Decibels::gainToDecibels(last_rms_value);
+}
+
 
 AudioProcessorValueTreeState* WhooshGeneratorAudioProcessor::get_out_state()
 {
@@ -273,12 +278,11 @@ juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 	return new WhooshGeneratorAudioProcessor();
 }
 
-AudioProcessorValueTreeState::ParameterLayout WhooshGeneratorAudioProcessor::create_out_parameters()
+AudioProcessorValueTreeState::ParameterLayout WhooshGeneratorAudioProcessor::create_out_parameters() const
 {
 	std::vector<std::unique_ptr<RangedAudioParameter>> parameters;
 
-	NormalisableRange<float> frequency_range(50., 20000.);
-	frequency_range.setSkewForCentre(1000.);
+	NormalisableRange<float> frequency_range = util::log_range(50, 20000);
 
 	parameters.push_back(std::make_unique<AudioParameterFloat>("volume", "VOLUME", 0.0f, 1.0f, 0.01f));
 	parameters.push_back(std::make_unique<AudioParameterFloat>("frequency", "FREQUENCY", frequency_range, 0.,
@@ -288,15 +292,18 @@ AudioProcessorValueTreeState::ParameterLayout WhooshGeneratorAudioProcessor::cre
 	return {parameters.begin(), parameters.end()};
 }
 
-AudioProcessorValueTreeState::ParameterLayout WhooshGeneratorAudioProcessor::create_in_parameters()
+AudioProcessorValueTreeState::ParameterLayout WhooshGeneratorAudioProcessor::create_in_parameters() const
 {
 	std::vector<std::unique_ptr<RangedAudioParameter>> parameters;
 
-	NormalisableRange<float> frequency_range(50., 20000.);
-	frequency_range.setSkewForCentre(1000.);
+	NormalisableRange<float> frequency_range = util::log_range(1,(float)SpectrumAnalyserComponent::fft_size/2);
 
-	parameters.push_back(std::make_unique<AudioParameterFloat>("threshold", "THRESHOLD", 0.0f, .5f, 0.01f));
+	parameters.push_back(std::make_unique<AudioParameterFloat>("threshold", "THRESHOLD", 0.0f, .5f, 0.001f));
 	parameters.push_back(std::make_unique<AudioParameterFloat>("rms_length", "RMS LENGTH", 0.0f, 10.0f, 0.01f));
+	parameters.push_back(std::make_unique<AudioParameterFloat>("min_frequency", "MIN FREQUENCY", frequency_range, 0.,
+	                                                           "MIN FREQUENCY", AudioProcessorParameter::genericParameter));
+	parameters.push_back(std::make_unique<AudioParameterFloat>("max_frequency", "MAX FREQUENCY", frequency_range, SpectrumAnalyserComponent::fft_size,
+	                                                           "MAX FREQUENCY", AudioProcessorParameter::genericParameter));
 	parameters.push_back(std::make_unique<AudioParameterFloat>("fft_speed", "FFT SPEED", 0.0f, 1.0f, 0.01f));
 	parameters.push_back(std::make_unique<AudioParameterFloat>("volume_speed", "VOLUME SPEED", 0.0f, 1.0f, 0.01f));
 

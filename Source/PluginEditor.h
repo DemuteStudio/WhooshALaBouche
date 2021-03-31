@@ -6,7 +6,7 @@
 #include "Components/AudioWaveformComponent.h"
 #include "Components/MyLookAndFeel.h"
 #include "Components/out_parameters_box.h"
-#include "Components/FFT/SpectrumAnalyser.h"
+#include "Components/FFT/SpectrumAnalyserComponent.h"
 
 using namespace juce;
 

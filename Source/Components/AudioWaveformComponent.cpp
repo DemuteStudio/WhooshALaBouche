@@ -1,6 +1,6 @@
 #include "AudioWaveformComponent.h"
 
-#include "TenFtUtil.h"
+#include "Util.h"
 
 
 AudioWaveformComponent::AudioWaveformComponent()
@@ -98,7 +98,7 @@ void AudioWaveformComponent::mouseDoubleClick(const MouseEvent& event)
 		return;
 	}
 
-	double newPosition = util::xToSeconds(
+	double newPosition = util::x_to_seconds(
 		(float)event.getMouseDownX(),
 		visibleRegionStartTime,
 		visibleRegionEndTime,
@@ -123,7 +123,7 @@ void AudioWaveformComponent::mouseDrag(const MouseEvent& event)
 	{
 		int mouseDownX = event.getMouseDownX() +
 			event.getDistanceFromDragStartX();
-		double mouseDownSeconds = util::xToSeconds(
+		double mouseDownSeconds = util::x_to_seconds(
 			(float)mouseDownX,
 			visibleRegionStartTime,
 			visibleRegionEndTime,
@@ -134,7 +134,7 @@ void AudioWaveformComponent::mouseDrag(const MouseEvent& event)
 	}
 	else
 	{
-		float startOfDragX = util::secondsToX(
+		float startOfDragX = util::seconds_to_x(
 			      selectedRegionStartTime,
 			      visibleRegionStartTime,
 			      visibleRegionEndTime,
@@ -142,7 +142,7 @@ void AudioWaveformComponent::mouseDrag(const MouseEvent& event)
 		      ),
 		      endOfDragX = startOfDragX + event.getDistanceFromDragStartX();
 		double newStartTime = selectedRegionStartTime,
-		       newEndTime = util::xToSeconds(
+		       newEndTime = util::x_to_seconds(
 			       endOfDragX,
 			       visibleRegionStartTime,
 			       visibleRegionEndTime,
@@ -175,7 +175,7 @@ void AudioWaveformComponent::mouseDown(const MouseEvent& event)
 
 	if (hasSelectedRegion)
 	{
-		double seconds = util::xToSeconds(
+		double seconds = util::x_to_seconds(
 			(float)mouseDownX,
 			visibleRegionStartTime,
 			visibleRegionEndTime,
@@ -189,7 +189,7 @@ void AudioWaveformComponent::mouseDown(const MouseEvent& event)
 	else
 	{
 		setSelectedRegionStartTime(
-			util::xToSeconds(
+			util::x_to_seconds(
 				(float)mouseDownX,
 				visibleRegionStartTime,
 				visibleRegionEndTime,
@@ -288,8 +288,8 @@ void AudioWaveformComponent::updateSelectedRegion(
 {
 	double totalLength = getTotalLength();
 
-	selectedRegionStartTime = util::flattenSeconds(newStartTime, totalLength);
-	selectedRegionEndTime = util::flattenSeconds(newEndTime, totalLength);
+	selectedRegionStartTime = util::flatten_seconds(newStartTime, totalLength);
+	selectedRegionEndTime = util::flatten_seconds(newEndTime, totalLength);
 
 	listeners.call([this](Listener& l) { l.selectedRegionChanged(this); });
 }

@@ -1,7 +1,8 @@
 #pragma once
 
 #include <JuceHeader.h>
-#include <cctype>
+#include "TwoValueSliderAttachment.h"
+
 using namespace juce;
 
 //==============================================================================
@@ -21,6 +22,7 @@ public:
 
 
 	std::vector<std::unique_ptr<AudioProcessorValueTreeState::SliderAttachment>> sliders_attachment_;
+	std::vector<std::unique_ptr<TwoValueSliderAttachment>> two_values_sliders_attachment_;
 
 
 	enum parameter_type

@@ -1,9 +1,9 @@
-#include "TenFtUtil.h"
+#include "Util.h"
 
 namespace util
 {
 
-    double xToSeconds (
+    double x_to_seconds (
         float x,
         double visibleRegionStartTime,
         double visibleRegionEndTime,
@@ -20,7 +20,7 @@ namespace util
             visibleRegionStartTime;
     }
 
-    float secondsToX (
+    float seconds_to_x (
         double s,
         double visibleRegionStartTime,
         double visibleRegionEndTime,
@@ -36,7 +36,7 @@ namespace util
             bounds.getWidth ();
     }
 
-    float flattenX (
+    float flatten_x (
         float x,
         juce::Rectangle<float> bounds
     )
@@ -52,7 +52,7 @@ namespace util
         return x;
     }
 
-    double flattenSeconds (double s, double totalLength)
+    double flatten_seconds (double s, double totalLength)
     {
         if (s < 0.0f)
         {
@@ -65,4 +65,14 @@ namespace util
         return s;
     }
 
+    juce::NormalisableRange<float> log_range(const float min, const float max)
+    {
+	    const auto range{std::log2(max / min)};
+	    return {
+		    min, max,
+		    [=](float min, float, float v) { return std::exp2(v * range) * min; },
+		    [=](float min, float, float v) { return std::log2(v / min) / range; },
+		    [](float _min, float _max, float v) { return std::clamp(v, _min, _max); }
+	    };
+    }
 }

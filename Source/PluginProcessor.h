@@ -12,7 +12,7 @@
 
 #include "Components/myAudioSource.h"
 #include "Components/FxChainElement.h"
-
+#include "Components/Util.h"
 
 using namespace juce;
 
@@ -67,6 +67,7 @@ public:
 
 	//==============================================================================
 	my_audio_source& getAudioSource();
+	float get_last_rms_value_in_db();
 
 	double sample_rate;
 	float last_rms_value = 1.0;
@@ -87,8 +88,8 @@ public:
 	//==============================================================================
 	AudioProcessorValueTreeState* get_out_state();
 	AudioProcessorValueTreeState* get_in_state();
-	AudioProcessorValueTreeState::ParameterLayout create_out_parameters();
-	AudioProcessorValueTreeState::ParameterLayout create_in_parameters();
+	AudioProcessorValueTreeState::ParameterLayout create_out_parameters() const;
+	AudioProcessorValueTreeState::ParameterLayout create_in_parameters() const;
 
 private:
 	my_audio_source audioSource;

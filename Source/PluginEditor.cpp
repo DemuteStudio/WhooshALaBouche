@@ -102,7 +102,7 @@ void WhooshGeneratorAudioProcessorEditor::sliderValueChanged(Slider* slider)
 	if (slider->getName() == "rms_length")
 	{
 		audioProcessor.rms_blocks_length = slider->getValue();
-		fft_visualizer_.rms_blocks_length = slider->getValue();
+		// fft_visualizer_.rms_blocks_length = slider->getValue();
 
 		const int rms_length_value = slider->getValue() * ((audioProcessor.getBlockSize() / audioProcessor.sample_rate)
 			* 1000.);
@@ -152,7 +152,9 @@ void WhooshGeneratorAudioProcessorEditor::timerCallback()
 
 	waveform.updateVisibleRegion(end_sample, number_of_samples_to_display);
 
-	out_parameters_box_.set_slider_value(out_parameters_box::volume, audioProcessor.last_rms_value);
+	float volume_db = audioProcessor.get_last_rms_value_in_db();
+
+	out_parameters_box_.set_slider_value(out_parameters_box::volume, audioProcessor.get_last_rms_value_in_db());
 	out_parameters_box_.set_slider_value(out_parameters_box::frequency, fft_visualizer_.get_last_fft_peak());
 
 	send_osc_message(out_parameters_box::volume, audioProcessor.last_rms_value);

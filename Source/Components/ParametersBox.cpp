@@ -5,11 +5,12 @@
 //==============================================================================
 ParametersBox::ParametersBox(AudioProcessor* processor, AudioProcessorValueTreeState* parameters_state, int fft_size):
 	threshold("threshold", "THRESHOLD", parameter_type::THRESHOLD),
-	rms_length("rms_length","RMS LENGTH", parameter_type::RMS_LENGTH),
-	fft_order("fft_order","FFT ORDER",parameter_type::FFT_ORDER ),
-	frequency_band("frequency_band","FREQUENCY BAND", parameter_type::FREQUENCY_BAND,Slider::TwoValueHorizontal),
-	frequency_variation_speed("frequency_variation_speed","FREQUENCY SPEED", parameter_type::FREQUENCY_VARIATION_SPEED),
-	volume_variation_speed("volume_variation_speed","VOLUME SPEED", parameter_type::VOLUME_VARIATION_SPEED)
+	rms_length("rms_length", "RMS LENGTH", parameter_type::RMS_LENGTH),
+	fft_order("fft_order", "FFT ORDER", parameter_type::FFT_ORDER),
+	frequency_band("frequency_band", "FREQUENCY BAND", parameter_type::FREQUENCY_BAND, Slider::TwoValueHorizontal),
+	frequency_variation_speed("frequency_variation_speed", "FREQUENCY SPEED",
+	                          parameter_type::FREQUENCY_VARIATION_SPEED),
+	volume_variation_speed("volume_variation_speed", "VOLUME SPEED", parameter_type::VOLUME_VARIATION_SPEED)
 
 {
 	const double samples_per_block = processor->getBlockSize();
@@ -28,19 +29,19 @@ ParametersBox::ParametersBox(AudioProcessor* processor, AudioProcessorValueTreeS
 	threshold.slider->setValue(0);
 	rms_length.slider->setValue(0);
 
-	const float frequency_step = sample_rate / fft_size;
-	const int minimum_frequency = 50;
-	int maximum_frequency = sample_rate / 2;
-	
-	const int minimum_index = minimum_frequency / frequency_step;
-	const int maximum_index = maximum_frequency / frequency_step;
-	
-	
-	frequency_band.slider->setRange(minimum_index, maximum_index);
-	frequency_band.slider->setMinAndMaxValues(minimum_index, maximum_index);
-	frequency_band.slider->setSkewFactorFromMidPoint(1000. / frequency_step);
-	
-	
+	// const float frequency_step = sample_rate / fft_size;
+	// const int minimum_frequency = 50;
+	// int maximum_frequency = sample_rate / 2;
+	//
+	// const int minimum_index = minimum_frequency / frequency_step;
+	// const int maximum_index = maximum_frequency / frequency_step;
+
+
+	// frequency_band.slider->setRange(minimum_index, maximum_index);
+	// frequency_band.slider->setMinAndMaxValues(minimum_index, maximum_index);
+	// frequency_band.slider->setSkewFactorFromMidPoint(1000. / frequency_step);
+
+
 	// frequency_band.value_label.setText(
 	// 	std::to_string(frequency_band.slider->getMinValue()) + " / " + std::to_string(
 	// 		frequency_band.slider->getMaxValue()), dontSendNotification);
@@ -89,11 +90,14 @@ ParametersBox::ParametersBox(AudioProcessor* processor, AudioProcessorValueTreeS
 		*parameters_state, "fft_speed", *frequency_variation_speed.slider));
 	sliders_attachment_.push_back(std::make_unique<AudioProcessorValueTreeState::SliderAttachment>(
 		*parameters_state, "volume_speed", *volume_variation_speed.slider));
+	two_values_sliders_attachment_.push_back(std::make_unique<TwoValueSliderAttachment>(
+		*parameters_state, "min_frequency", "max_frequency", *frequency_band.slider));
 }
 
 ParametersBox::~ParametersBox()
 {
 	sliders_attachment_.clear();
+	two_values_sliders_attachment_.clear();
 }
 
 void ParametersBox::paint(juce::Graphics& g)
@@ -135,7 +139,7 @@ void ParametersBox::add_listener(Slider::Listener* listener) const
 	volume_variation_speed.slider->addListener(listener);
 }
 
-ParametersBox::parameter_gui::parameter_gui(const String id, const String text,  parameter_type type)
+ParametersBox::parameter_gui::parameter_gui(const String id, const String text, parameter_type type)
 {
 	slider = std::make_unique<Slider>();
 	slider->setSliderStyle(Slider::LinearHorizontal);
@@ -155,17 +159,16 @@ ParametersBox::parameter_gui::parameter_gui(const String id, const String text, 
 }
 
 ParametersBox::parameter_gui::parameter_gui(const String id, const String text, parameter_type type,
-                                            const Slider::SliderStyle style): parameter_gui(id,text, type)
+                                            const Slider::SliderStyle style): parameter_gui(id, text, type)
 {
 	slider->setSliderStyle(style);
 }
+
 void ParametersBox::parameter_gui::resized()
 {
-	
 	auto rectangle = getLocalBounds();
 	label.setBounds(rectangle.removeFromLeft(150));
 	value_label.setBounds(rectangle.removeFromRight(150));
 	slider->setBounds(rectangle);
 	slider->setTextBoxStyle(Slider::NoTextBox, true, 0, 0);
 }
-
