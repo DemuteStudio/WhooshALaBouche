@@ -17,6 +17,10 @@
         <FILE id="RmY2e7" name="Util.h" compile="0" resource="0" file="Source/Components/Util.h"/>
       </GROUP>
       <GROUP id="{D19AE344-B3E1-CD7B-15BE-280F3E1512FD}" name="BackEnd">
+        <FILE id="n3A0Ax" name="VolumeAnalyzer.cpp" compile="1" resource="0"
+              file="Source/Components/VolumeAnalyzer.cpp"/>
+        <FILE id="lh87xP" name="VolumeAnalyzer.h" compile="0" resource="0"
+              file="Source/Components/VolumeAnalyzer.h"/>
         <FILE id="TdXB1N" name="myAudioSource.cpp" compile="1" resource="0"
               file="Source/Components/myAudioSource.cpp"/>
         <FILE id="NpZLQz" name="myAudioSource.h" compile="0" resource="0" file="Source/Components/myAudioSource.h"/>

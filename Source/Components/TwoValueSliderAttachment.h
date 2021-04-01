@@ -1,13 +1,3 @@
-/*
-  ==============================================================================
-
-    TwoValueSliderAttachment.h
-    Created: 31 Mar 2021 10:53:41am
-    Author:  arnau
-
-  ==============================================================================
-*/
-
 #pragma once
 
 
@@ -84,16 +74,48 @@ private:
 				sl.getSliderStyle() == Slider::TwoValueVertical
 			);
 
-			NormalisableRange<float> range(
-				s.getParameterRange(minParamID).start,
 
-				s.getParameterRange(maxParamID).end,
-				s.getParameterRange(maxParamID).interval,
-				s.getParameterRange(maxParamID).skew
-			);
+			auto range = s.getParameterRange(minParamID);
 
-			slider.setRange(range.start, range.end, range.interval);
-			slider.setSkewFactor(range.skew, range.symmetricSkew);
+			auto convertFrom0To1Function = [range](double currentRangeStart,
+			                                       double currentRangeEnd,
+			                                       double normalisedValue) mutable
+			{
+				range.start = (float)currentRangeStart;
+				range.end = (float)currentRangeEnd;
+				return (double)range.convertFrom0to1((float)normalisedValue);
+			};
+
+			auto convertTo0To1Function = [range](double currentRangeStart,
+			                                     double currentRangeEnd,
+			                                     double mappedValue) mutable
+			{
+				range.start = (float)currentRangeStart;
+				range.end = (float)currentRangeEnd;
+				return (double)range.convertTo0to1((float)mappedValue);
+			};
+
+			auto snapToLegalValueFunction = [range](double currentRangeStart,
+			                                        double currentRangeEnd,
+			                                        double mappedValue) mutable
+			{
+				range.start = (float)currentRangeStart;
+				range.end = (float)currentRangeEnd;
+				return (double)range.snapToLegalValue((float)mappedValue);
+			};
+
+			NormalisableRange<double> newRange{
+				(double)range.start,
+				(double)range.end,
+				std::move(convertFrom0To1Function),
+				std::move(convertTo0To1Function),
+				std::move(snapToLegalValueFunction)
+			};
+			newRange.interval = range.interval;
+			newRange.skew = range.skew;
+			newRange.symmetricSkew = range.symmetricSkew;
+
+			slider.setNormalisableRange(newRange);
 
 			sendInitialUpdate();
 			slider.addListener(this);

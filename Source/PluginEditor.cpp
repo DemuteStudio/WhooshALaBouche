@@ -5,11 +5,12 @@
 WhooshGeneratorAudioProcessorEditor::WhooshGeneratorAudioProcessorEditor(WhooshGeneratorAudioProcessor& p)
 	: AudioProcessorEditor(&p), audioProcessor(p),
 	  parameters_box_(&p, p.get_in_state(), fft_visualizer_.fft_size),
-	  out_parameters_box_(p.get_out_state())
+	  out_parameters_box_(p.get_out_state()),
+	  volume_analyzer_()
 {
 	setLookAndFeel(&my_look_and_feel_);
 	const double time_to_display = 3.;
-	number_of_samples_to_display = time_to_display * p.sample_rate;
+	number_of_samples_to_display = time_to_display * p.getSampleRate();
 
 	audio_source = &audioProcessor.getAudioSource();
 	addAndMakeVisible(parameters_box_);
@@ -22,6 +23,7 @@ WhooshGeneratorAudioProcessorEditor::WhooshGeneratorAudioProcessorEditor(WhooshG
 
 	addAndMakeVisible(&fft_visualizer_);
 	audioProcessor.add_element_to_fx_chain(&fft_visualizer_);
+	audioProcessor.add_element_to_fx_chain(&volume_analyzer_);
 
 
 	waveform.addListener(audio_source);
@@ -95,16 +97,17 @@ void WhooshGeneratorAudioProcessorEditor::sliderValueChanged(Slider* slider)
 	//TODO: change identification method 
 	if (slider->getName() == "threshold")
 	{
-		audioProcessor.threshold_value = slider->getValue();
+		volume_analyzer_.threshold_value = slider->getValue();
 		const int threshold_value_db = Decibels::gainToDecibels(slider->getValue());
 		parameters_box_.threshold.value_label.setText(std::to_string(threshold_value_db) + " dB", dontSendNotification);
 	}
 	if (slider->getName() == "rms_length")
 	{
-		audioProcessor.rms_blocks_length = slider->getValue();
+		volume_analyzer_.rms_blocks_length = slider->getValue();
 		// fft_visualizer_.rms_blocks_length = slider->getValue();
 
-		const int rms_length_value = slider->getValue() * ((audioProcessor.getBlockSize() / audioProcessor.sample_rate)
+		const int rms_length_value = slider->getValue() * ((audioProcessor.getBlockSize() / audioProcessor.
+				getSampleRate())
 			* 1000.);
 		parameters_box_.rms_length.value_label.setText(std::to_string(rms_length_value) + " ms", dontSendNotification);
 	}
@@ -131,7 +134,7 @@ void WhooshGeneratorAudioProcessorEditor::sliderValueChanged(Slider* slider)
 	}
 	if (slider->getName() == "volume_variation_speed")
 	{
-		audioProcessor.variation_speed = slider->getValue();
+		volume_analyzer_.variation_speed = slider->getValue();
 
 		parameters_box_.volume_variation_speed.value_label.setText(
 			std::to_string((int)(slider->getValue() * 100)) + " %",
@@ -152,12 +155,13 @@ void WhooshGeneratorAudioProcessorEditor::timerCallback()
 
 	waveform.updateVisibleRegion(end_sample, number_of_samples_to_display);
 
-	float volume_db = audioProcessor.get_last_rms_value_in_db();
+	const float volume_db = volume_analyzer_.get_last_rms_value_in_db();
+	const float volume_slider_value = juce::jmap<float>(volume_db, -50., 0., 0., 1.);
 
-	out_parameters_box_.set_slider_value(out_parameters_box::volume, audioProcessor.get_last_rms_value_in_db());
+	out_parameters_box_.set_slider_value(out_parameters_box::volume, volume_slider_value);
 	out_parameters_box_.set_slider_value(out_parameters_box::frequency, fft_visualizer_.get_last_fft_peak());
 
-	send_osc_message(out_parameters_box::volume, audioProcessor.last_rms_value);
+	send_osc_message(out_parameters_box::volume, volume_analyzer_.last_rms_value);
 	send_osc_message(out_parameters_box::frequency, fft_visualizer_.get_last_fft_peak());
 }
 
@@ -196,4 +200,3 @@ void WhooshGeneratorAudioProcessorEditor::enableRecording()
 
 	startTimerHz(60);
 }
-

@@ -8,7 +8,6 @@
 //==============================================================================
 class SpectrumAnalyserComponent : public juce::Component,
                                   private juce::Timer,
-                                  public fx_chain_element,
                                   public SpectrumAnalyzer
 
 {
@@ -20,9 +19,6 @@ public:
 	{
 	}
 
-	//==============================================================================
-	void getNextAudioBlock(const juce::AudioSourceChannelInfo& bufferToFill) override;
-	void prepareToPlay(double sampleRate, int samplesPerBlock) override;
 	//==============================================================================
 	void paint(juce::Graphics& g) override;
 	//==============================================================================

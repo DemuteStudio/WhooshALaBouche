@@ -6,6 +6,7 @@
 #include "Components/AudioWaveformComponent.h"
 #include "Components/MyLookAndFeel.h"
 #include "Components/out_parameters_box.h"
+#include "Components/VolumeAnalyzer.h"
 #include "Components/FFT/SpectrumAnalyserComponent.h"
 
 using namespace juce;
@@ -47,6 +48,7 @@ private:
 	out_parameters_box out_parameters_box_;
 	SpectrumAnalyserComponent fft_visualizer_;
 	//==================================================
+	VolumeAnalyzer volume_analyzer_;
 
 	my_audio_source* audio_source;
 	MyLookAndFeel my_look_and_feel_;

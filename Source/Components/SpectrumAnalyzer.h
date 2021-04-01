@@ -2,12 +2,20 @@
 #include "ISpectrumAnalyzer.h"
 #include <JuceHeader.h>
 
-class SpectrumAnalyzer: public ISpectrumAnalyzer
+#include "FxChainElement.h"
+
+class SpectrumAnalyzer : public ISpectrumAnalyzer,
+                         public fx_chain_element
+
 {
 public:
 
 	SpectrumAnalyzer();
 
+	//==============================================================================
+	void getNextAudioBlock(const juce::AudioSourceChannelInfo& bufferToFill) override;
+	void prepareToPlay(double sampleRate, int samplesPerBlock) override;
+	//==============================================================================
 	void calculate_spectrum() override;
 	void add_current_spectrum_to_accumulator_buffer() override;
 	void calculate_mean_fft_data() override;
@@ -36,6 +44,7 @@ public:
 		fft_size = 1 << fft_order,
 		scope_size = 512
 	};
+
 protected:
 	double sample_rate;
 	double frequency_interval;
@@ -71,5 +80,4 @@ private:
 	float rms_blocks_length = 1;
 
 	juce::dsp::WindowingFunction<float> window;
-
 };

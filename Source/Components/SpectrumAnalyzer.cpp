@@ -6,6 +6,23 @@ SpectrumAnalyzer::SpectrumAnalyzer(): forwardFFT(fft_order),
 {
 }
 
+void SpectrumAnalyzer::getNextAudioBlock(const juce::AudioSourceChannelInfo& bufferToFill)
+{
+	if (bufferToFill.buffer->getNumChannels() > 0)
+	{
+		const auto* channelData = bufferToFill.buffer->getReadPointer(0, bufferToFill.startSample);
+
+		for (auto i = 0; i < bufferToFill.numSamples; ++i)
+			push_next_sample_into_fifo(channelData[i]);
+	}
+}
+
+void SpectrumAnalyzer::prepareToPlay(double sampleRate, int samplesPerBlock)
+{
+	sample_rate = sampleRate;
+	frequency_interval = (1. / fft_size) * sampleRate;
+	fft_upper_limit = fft_size / 2;
+}
 void SpectrumAnalyzer::calculate_spectrum()
 {
 	if (nextFFTBlockReady)

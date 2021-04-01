@@ -103,7 +103,6 @@ void WhooshGeneratorAudioProcessor::changeProgramName(int index, const juce::Str
 //==============================================================================
 void WhooshGeneratorAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock)
 {
-	sample_rate = sampleRate;
 	audioSource.prepareToPlay(samplesPerBlock, sampleRate);
 	for (std::list<fx_chain_element*>::value_type element : fx_chain)
 	{
@@ -163,49 +162,10 @@ void WhooshGeneratorAudioProcessor::processBlock(juce::AudioBuffer<float>& buffe
 	AudioBuffer<float> mainInputOutput = getBusBuffer(buffer, true, 0); 
 	// AudioBuffer<float> sideChainInput = getBusBuffer(buffer, true, 1);
 
-
 	auto selectedBuffer = mainInputOutput;
 	auto bufferToFill = AudioSourceChannelInfo(selectedBuffer);
 
-	for (auto channel = 0; channel < total_num_output_channels; ++channel)
-	{
-		const auto actual_input_channel = 0;
-		const auto* inputBuffer = bufferToFill.buffer->getReadPointer(
-			actual_input_channel, bufferToFill.startSample);
-		auto* outputBuffer = bufferToFill.buffer->getWritePointer(channel, bufferToFill.startSample);
 
-
-		for (auto sample = 0; sample < bufferToFill.numSamples; ++sample)
-		{
-			//Volume
-			samples_squares_sum += inputBuffer[sample] * inputBuffer[sample];
-
-			(last_rms_value >= threshold_value)
-				? outputBuffer[sample] = inputBuffer[sample]
-				: outputBuffer[sample] = 0;
-		}
-	}
-
-	if (block_index >= rms_blocks_length)
-	{
-		temp_previous_value = last_rms_value;
-
-		new_rms_value = sqrt(samples_squares_sum / bufferToFill.numSamples);
-
-		new_rms_value = (last_rms_value < threshold_value) ? 0. : new_rms_value;
-
-		samples_squares_sum = 0.0;
-		block_index = 0;
-
-		const float variation = (new_rms_value - last_rms_value) * variation_speed;
-		last_rms_value = last_rms_value + variation;
-	}
-	else
-	{
-		block_index++;
-	}
-
-	sample_index += bufferToFill.buffer->getNumSamples();
 	for (std::list<fx_chain_element>::value_type* element : fx_chain)
 	{
 		element->getNextAudioBlock(bufferToFill);
@@ -222,7 +182,7 @@ bool WhooshGeneratorAudioProcessor::hasEditor() const
 void WhooshGeneratorAudioProcessor::add_element_to_fx_chain(fx_chain_element* element)
 {
 	fx_chain.push_back(element);
-	element->prepareToPlay(sample_rate, getBlockSize());
+	element->prepareToPlay(getSampleRate(), getBlockSize());
 }
 
 void WhooshGeneratorAudioProcessor::remove_element_to_fx_chain(fx_chain_element* element)
@@ -254,10 +214,6 @@ my_audio_source& WhooshGeneratorAudioProcessor::getAudioSource()
 	return audioSource;
 }
 
-float WhooshGeneratorAudioProcessor::get_last_rms_value_in_db()
-{
-	return Decibels::gainToDecibels(last_rms_value);
-}
 
 
 AudioProcessorValueTreeState* WhooshGeneratorAudioProcessor::get_out_state()

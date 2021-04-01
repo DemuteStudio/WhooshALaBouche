@@ -67,21 +67,7 @@ public:
 
 	//==============================================================================
 	my_audio_source& getAudioSource();
-	float get_last_rms_value_in_db();
 
-	double sample_rate;
-	float last_rms_value = 1.0;
-	float samples_squares_sum = 0.0;
-	int block_index = 0;
-	int sample_index = 0;
-	float temp_previous_value = 0.;
-	bool is_rms_different = true;
-
-
-	float threshold_value = 0.0;
-	float rms_blocks_length = 1;
-	float new_rms_value;
-	float variation_speed = 1.;
 
 	// std::unique_ptr<envelope> rms_envelope;
 	// std::unique_ptr<envelope> rms_envelope_clean;
