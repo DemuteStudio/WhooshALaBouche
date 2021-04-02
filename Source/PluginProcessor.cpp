@@ -238,7 +238,7 @@ AudioProcessorValueTreeState::ParameterLayout WhooshGeneratorAudioProcessor::cre
 {
 	std::vector<std::unique_ptr<RangedAudioParameter>> parameters;
 
-	NormalisableRange<float> frequency_range = util::log_range(50, 20000);
+	NormalisableRange<float> frequency_range = util::log_range<float>(50., 20000.);
 
 	parameters.push_back(std::make_unique<AudioParameterFloat>("volume", "VOLUME", 0.0f, 1.0f, 0.01f));
 	parameters.push_back(std::make_unique<AudioParameterFloat>("frequency", "FREQUENCY", frequency_range, 0.,
@@ -252,16 +252,16 @@ AudioProcessorValueTreeState::ParameterLayout WhooshGeneratorAudioProcessor::cre
 {
 	std::vector<std::unique_ptr<RangedAudioParameter>> parameters;
 
-	NormalisableRange<float> frequency_range = util::log_range(1,(float)SpectrumAnalyserComponent::fft_size/2);
+	NormalisableRange<float> frequency_range = util::log_range<float>(1.,(float)SpectrumAnalyserComponent::fft_size/2);
 
-	parameters.push_back(std::make_unique<AudioParameterFloat>("threshold", "THRESHOLD", 0.0f, .5f, 0.001f));
-	parameters.push_back(std::make_unique<AudioParameterFloat>("rms_length", "RMS LENGTH", 0.0f, 10.0f, 0.01f));
+	parameters.push_back(std::make_unique<AudioParameterFloat>("threshold", "THRESHOLD", 0.0f, .5f, 0.f));
+	parameters.push_back(std::make_unique<AudioParameterFloat>("rms_length", "RMS LENGTH", 0.0f, 10.0f, 0.f));
 	parameters.push_back(std::make_unique<AudioParameterFloat>("min_frequency", "MIN FREQUENCY", frequency_range, 0.,
 	                                                           "MIN FREQUENCY", AudioProcessorParameter::genericParameter));
 	parameters.push_back(std::make_unique<AudioParameterFloat>("max_frequency", "MAX FREQUENCY", frequency_range, SpectrumAnalyserComponent::fft_size,
 	                                                           "MAX FREQUENCY", AudioProcessorParameter::genericParameter));
-	parameters.push_back(std::make_unique<AudioParameterFloat>("fft_speed", "FFT SPEED", 0.0f, 1.0f, 0.01f));
-	parameters.push_back(std::make_unique<AudioParameterFloat>("volume_speed", "VOLUME SPEED", 0.0f, 1.0f, 0.01f));
+	parameters.push_back(std::make_unique<AudioParameterFloat>("fft_speed", "FFT SPEED", 0.0f, 1.0f, 1.f));
+	parameters.push_back(std::make_unique<AudioParameterFloat>("volume_speed", "VOLUME SPEED", 0.0f, 1.0f, 1.f));
 
 
 	return {parameters.begin(), parameters.end()};

@@ -1,34 +1,21 @@
 #include <JuceHeader.h>
 #include "out_parameters_box.h"
 
+#include "Util.h"
+
 //==============================================================================
-out_parameters_box::out_parameters_box(AudioProcessorValueTreeState* processor_state)
+out_parameters_box::out_parameters_box(AudioProcessorValueTreeState* processor_state):
+	volume_out("volume_out", "VOLUME", util::parameter_type::VOLUME),
+	frequency_out("frequency_peak", "FREQUENCY PEAK", util::parameter_type::FREQUENCY_PEAK)
 {
-	addAndMakeVisible(volume_out_slider_);
-	volume_out_slider_.setSliderStyle(Slider::LinearVertical);
-	volume_out_slider_.setTextBoxStyle(Slider::NoTextBox, true, 0, 0);
-	volume_out_slider_.setRange(0., 1., 0.);
 
-
-	addAndMakeVisible(volume_out_label_);
-	volume_out_label_.setText("VOLUME", dontSendNotification);
-	volume_out_label_.setJustificationType(Justification::centred);
-
-	addAndMakeVisible(frequency_out_slider_);
-	frequency_out_slider_.setSliderStyle(Slider::LinearVertical);
-	frequency_out_slider_.setTextBoxStyle(Slider::NoTextBox, true, 0, 0);
-	frequency_out_slider_.setRange(50, 20000, 0.1);
-	frequency_out_slider_.setSkewFactorFromMidPoint(1000.);
-
-
-	addAndMakeVisible(frequency_out_label_);
-	frequency_out_label_.setText("FREQUENCY", dontSendNotification);
-	frequency_out_label_.setJustificationType(Justification::centred);
+	addAndMakeVisible(volume_out);
+	addAndMakeVisible(frequency_out);
 
 	volume_out_attachment_ = std::make_unique<AudioProcessorValueTreeState::SliderAttachment>(
-		*processor_state, "volume", volume_out_slider_);
+		*processor_state, "volume", *volume_out.slider);
 	frequency_out_attachment_ = std::make_unique<AudioProcessorValueTreeState::SliderAttachment>(
-		*processor_state, "frequency", frequency_out_slider_);
+		*processor_state, "frequency", *frequency_out.slider);
 
 }
 
@@ -56,48 +43,40 @@ void out_parameters_box::paint(juce::Graphics& g)
 
 void out_parameters_box::resized()
 {
-	const int delta = 5;
 	auto rectangle = getLocalBounds();
-
-	auto labels_slice = rectangle.removeFromTop(50).reduced(delta);
 
 	const int width = rectangle.getWidth();
 
 	const int number_of_slots = 5;
 	const int slot_width = width / number_of_slots;
 
-	volume_out_slider_.setBounds(rectangle.removeFromLeft(slot_width).reduced(delta));
-	volume_out_label_.setBounds(labels_slice.removeFromLeft(slot_width).reduced(delta));
+	volume_out.setBounds(rectangle.removeFromLeft(slot_width));
+	frequency_out.setBounds(rectangle.removeFromLeft(slot_width));
 
-	frequency_out_slider_.setBounds(rectangle.removeFromLeft(slot_width).reduced(delta));
-	frequency_out_label_.setBounds(labels_slice.removeFromLeft(slot_width).reduced(delta));
-	// frequency_out_slider_.setTextBoxStyle(Slider::TextBoxBelow, true, slot_width, 20);
 }
 
-void out_parameters_box::set_slider_value(parameter_type parameter, float value)
+void out_parameters_box::set_slider_value(util::parameter_type parameter, float value)
 {
 	switch (parameter)
 	{
-	case volume:
-		volume_out_slider_.setValue(value);
+	case util::VOLUME:
+		volume_out.slider->setValue(value);
 		break;
-	case frequency:
-		frequency_out_slider_.setValue(value);
+	case util::FREQUENCY_PEAK:
+		frequency_out.slider->setValue(value);
 		break;
 	default: ;
 	}
 
 }
 
-void out_parameters_box::set_slider_range(parameter_type parameter, int new_min, int new_max)
+void out_parameters_box::parameter_gui_component::resized()
 {
-	switch (parameter)
-	{
-	case volume:
-		break;
-	case frequency:
-		frequency_out_slider_.setRange(new_min, new_max);
-		break;
-	default: ;
-	}
+	auto rectangle = getLocalBounds();
+
+	const int delta = 5;
+
+	label.setBounds(rectangle.removeFromTop(50).reduced(delta));
+	slider->setBounds(rectangle.reduced(delta));
+	slider->setTextBoxStyle(Slider::NoTextBox, true, 0, 0);
 }

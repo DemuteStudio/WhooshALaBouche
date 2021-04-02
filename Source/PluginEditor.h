@@ -56,7 +56,7 @@ private:
 	//==================================================
 	OSCSender osc_sender_;
 
-	void send_osc_message(out_parameters_box::parameter_type type, float value);
+	void send_osc_message(util::parameter_type type, float value);
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(WhooshGeneratorAudioProcessorEditor)
 };

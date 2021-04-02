@@ -103,12 +103,10 @@ void WhooshGeneratorAudioProcessorEditor::sliderValueChanged(Slider* slider)
 	}
 	if (slider->getName() == "rms_length")
 	{
-		volume_analyzer_.rms_blocks_length = slider->getValue();
-		// fft_visualizer_.rms_blocks_length = slider->getValue();
+		volume_analyzer_.rms_blocks_length = slider->getValue();                                                                                                                                    
 
-		const int rms_length_value = slider->getValue() * ((audioProcessor.getBlockSize() / audioProcessor.
-				getSampleRate())
-			* 1000.);
+		const int rms_length_value = (slider->getValue()+1) * ((audioProcessor.getBlockSize() / audioProcessor.
+			getSampleRate()) * 1000.);
 		parameters_box_.rms_length.value_label.setText(std::to_string(rms_length_value) + " ms", dontSendNotification);
 	}
 
@@ -158,22 +156,22 @@ void WhooshGeneratorAudioProcessorEditor::timerCallback()
 	const float volume_db = volume_analyzer_.get_last_rms_value_in_db();
 	const float volume_slider_value = juce::jmap<float>(volume_db, -50., 0., 0., 1.);
 
-	out_parameters_box_.set_slider_value(out_parameters_box::volume, volume_slider_value);
-	out_parameters_box_.set_slider_value(out_parameters_box::frequency, fft_visualizer_.get_last_fft_peak());
+	out_parameters_box_.set_slider_value(util::VOLUME, volume_slider_value);
+	out_parameters_box_.set_slider_value(util::FREQUENCY_PEAK, fft_visualizer_.get_last_fft_peak());
 
-	send_osc_message(out_parameters_box::volume, volume_analyzer_.last_rms_value);
-	send_osc_message(out_parameters_box::frequency, fft_visualizer_.get_last_fft_peak());
+	send_osc_message(util::VOLUME, volume_analyzer_.last_rms_value);
+	send_osc_message(util::FREQUENCY_PEAK, fft_visualizer_.get_last_fft_peak());
 }
 
-void WhooshGeneratorAudioProcessorEditor::send_osc_message(out_parameters_box::parameter_type type, float value)
+void WhooshGeneratorAudioProcessorEditor::send_osc_message(util::parameter_type type, float value)
 {
 	String type_string = "";
 	switch (type)
 	{
-	case out_parameters_box::volume:
+	case util::VOLUME:
 		type_string = "/volume";
 		break;
-	case out_parameters_box::frequency:
+	case util::FREQUENCY_PEAK:
 		type_string = "/frequency";
 		break;
 	default:

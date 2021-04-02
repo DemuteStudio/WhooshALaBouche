@@ -42,6 +42,9 @@
               file="Source/Components/OpenGLComponent.h"/>
       </GROUP>
       <GROUP id="{5432A927-7F5C-12C5-3DE5-D3A25A65DD70}" name="Components">
+        <FILE id="j3UHxS" name="GuiParameter.cpp" compile="1" resource="0"
+              file="Source/Components/GuiParameter.cpp"/>
+        <FILE id="j6GGpM" name="GuiParameter.h" compile="0" resource="0" file="Source/Components/GuiParameter.h"/>
         <FILE id="OI2qvm" name="SpectrumAnalyserComponent.cpp" compile="1"
               resource="0" file="Source/Components/FFT/SpectrumAnalyserComponent.cpp"/>
         <FILE id="nIEKaQ" name="SpectrumAnalyserComponent.h" compile="0" resource="0"

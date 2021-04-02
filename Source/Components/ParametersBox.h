@@ -1,7 +1,10 @@
 #pragma once
 
 #include <JuceHeader.h>
+
+#include "GuiParameter.h"
 #include "TwoValueSliderAttachment.h"
+#include "Util.h"
 
 using namespace juce;
 
@@ -25,36 +28,28 @@ public:
 	std::vector<std::unique_ptr<TwoValueSliderAttachment>> two_values_sliders_attachment_;
 
 
-	enum parameter_type
+	struct parameter_gui_component : public parameter_gui
 	{
-		THRESHOLD,
-		RMS_LENGTH,
-		FFT_ORDER,
-		FREQUENCY_BAND,
-		FREQUENCY_VARIATION_SPEED,
-		VOLUME_VARIATION_SPEED
-	};
+		parameter_gui_component(const String id, const String text, util::parameter_type type): parameter_gui(
+			id, text, type)
+		{
+		}
 
-	struct parameter_gui : public juce::Component
-	{
-		std::unique_ptr<Slider> slider;
-		Label label;
-		Label value_label;
-		parameter_type parameter_type_;
+		parameter_gui_component(const String id, const String text, util::parameter_type type,
+		                        const Slider::SliderStyle style): parameter_gui(id, text, type, style)
+		{
+		}
 
-		parameter_gui(const String id, const String text,  parameter_type type);
 		void resized() override;
-
-		parameter_gui(const String id, const String text, parameter_type type, const Slider::SliderStyle style);
 	};
 
 
-	parameter_gui threshold;
-	parameter_gui rms_length;
-	parameter_gui fft_order;
-	parameter_gui frequency_band;
-	parameter_gui frequency_variation_speed;
-	parameter_gui volume_variation_speed;
+	parameter_gui_component threshold;
+	parameter_gui_component rms_length;
+	parameter_gui_component fft_order;
+	parameter_gui_component frequency_band;
+	parameter_gui_component frequency_variation_speed;
+	parameter_gui_component volume_variation_speed;
 
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ParametersBox)

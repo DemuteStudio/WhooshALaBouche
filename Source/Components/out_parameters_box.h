@@ -2,6 +2,10 @@
 
 #include <JuceHeader.h>
 
+
+#include "GuiParameter.h"
+#include "Util.h"
+
 using namespace juce;
 
 //==============================================================================
@@ -11,31 +15,26 @@ using namespace juce;
 class out_parameters_box : public juce::Component
 {
 public:
-	enum parameter_type
-	{
-		volume,
-		frequency
-	};
 
 	out_parameters_box(AudioProcessorValueTreeState* processor_state);
 	~out_parameters_box() override;
 
 	void paint(juce::Graphics&) override;
 	void resized() override;
-	void set_slider_value(::out_parameters_box::parameter_type parameter, float value);
-	void set_slider_range(parameter_type parameter, int new_min, int new_max);
+	void set_slider_value(util::parameter_type parameter, float value);
 
+	struct parameter_gui_component: public parameter_gui 
+	{
+		parameter_gui_component(const String id, const String text, util::parameter_type type): parameter_gui(id, text, type, Slider::LinearVertical){}
+		void resized() override;
+	};
 
 private:
-	Slider volume_out_slider_;
-	Slider frequency_out_slider_;
+	parameter_gui_component volume_out;
+	parameter_gui_component frequency_out;
 
 	std::unique_ptr<AudioProcessorValueTreeState::SliderAttachment> volume_out_attachment_;
 	std::unique_ptr<AudioProcessorValueTreeState::SliderAttachment> frequency_out_attachment_;
-
-
-	Label volume_out_label_;
-	Label frequency_out_label_;
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(out_parameters_box)
 };
