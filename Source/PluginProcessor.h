@@ -13,6 +13,9 @@
 #include "Components/myAudioSource.h"
 #include "Components/FxChainElement.h"
 #include "Components/Util.h"
+#include "Components/OutParametersState.h"
+#include "Components/InParametersState.h"
+
 
 using namespace juce;
 
@@ -72,18 +75,14 @@ public:
 	// std::unique_ptr<envelope> rms_envelope;
 	// std::unique_ptr<envelope> rms_envelope_clean;
 	//==============================================================================
-	AudioProcessorValueTreeState* get_out_state();
-	AudioProcessorValueTreeState* get_in_state();
-	AudioProcessorValueTreeState::ParameterLayout create_out_parameters() const;
-	AudioProcessorValueTreeState::ParameterLayout create_in_parameters() const;
+	OutParametersState out_parameters;
+	InParametersState in_parameters;
 
 private:
 	my_audio_source audioSource;
 
 	std::list<fx_chain_element*> fx_chain;
 
-	std::unique_ptr<AudioProcessorValueTreeState > out_state_;
-	std::unique_ptr<AudioProcessorValueTreeState > in_state_;
 	//==============================================================================
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(WhooshGeneratorAudioProcessor)
 };

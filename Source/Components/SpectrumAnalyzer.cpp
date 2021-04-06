@@ -23,6 +23,7 @@ void SpectrumAnalyzer::prepareToPlay(double sampleRate, int samplesPerBlock)
 	frequency_interval = (1. / fft_size) * sampleRate;
 	fft_upper_limit = fft_size / 2;
 }
+
 void SpectrumAnalyzer::calculate_spectrum()
 {
 	if (nextFFTBlockReady)
@@ -126,20 +127,31 @@ int SpectrumAnalyzer::get_fft_peak()
 	jassert(
 		min_frequency_fft_index >= 0 && max_frequency_fft_index <= fft_size && min_frequency_fft_index <=
 		max_frequency_fft_index);
+
 	const auto max_iterator = std::max_element(fftData.begin() + min_frequency_fft_index,
 	                                           fftData.begin() + max_frequency_fft_index);
-	if (max_iterator != fftData.begin() + max_frequency_fft_index)
+
+	const auto max_index_iterator = fftData.begin() + max_frequency_fft_index;
+
+	if (max_iterator != max_index_iterator)
 	{
-		const auto index = std::distance(fftData.begin(), max_iterator);
-		const int new_frequency_peak = index * frequency_interval;
-		const int variation = (new_frequency_peak - last_fft_peak) * variation_speed;
-		const int out_fft_peak = last_fft_peak + variation;
-		last_fft_peak = out_fft_peak;
-		DBG("FFT PEAK VOLUME  "<<*max_iterator <<"   out:  "<<out_fft_peak);
-		return out_fft_peak;
+		const float peak_amplitude = *max_iterator;
+		if (peak_amplitude >= threshold)
+		{
+			const auto index = std::distance(fftData.begin(), max_iterator);
+
+			const int new_frequency_peak = index * frequency_interval;
+
+			const int variation = (new_frequency_peak - last_fft_peak) * variation_speed;
+
+			const int out_fft_peak = last_fft_peak + variation;
+			last_fft_peak = out_fft_peak;
+
+			// DBG("FFT PEAK VOLUME  "<<*max_iterator <<"   out:  "<<out_fft_peak);
+			return out_fft_peak;
+		}
 	}
-	DBG("max");
-	return 0;
+	return last_fft_peak;
 }
 
 double SpectrumAnalyzer::get_frequency_interval() const

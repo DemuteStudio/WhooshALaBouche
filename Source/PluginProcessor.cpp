@@ -10,15 +10,11 @@
 #include "PluginEditor.h"
 
 //==============================================================================
-WhooshGeneratorAudioProcessor::WhooshGeneratorAudioProcessor(): out_state_(
-	                                                                std::make_unique<AudioProcessorValueTreeState>(
-		                                                                *this, nullptr, "OUT PARAMETERS",
-		                                                                create_out_parameters())), in_state_(
-	                                                                std::make_unique<AudioProcessorValueTreeState>(
-		                                                                *this, nullptr, "IN PARAMETERS",
-		                                                                create_in_parameters()))
+WhooshGeneratorAudioProcessor::WhooshGeneratorAudioProcessor(): out_parameters(this),
+                                                                in_parameters(
+	                                                                this, SpectrumAnalyserComponent::fft_size),
 #ifndef JucePlugin_PreferredChannelConfigurations
-                                                                , AudioProcessor(BusesProperties()
+                                                                AudioProcessor(BusesProperties()
 #if ! JucePlugin_IsMidiEffect
 #if ! JucePlugin_IsSynth
 	                                                                .withInput("Input", juce::AudioChannelSet::stereo(),
@@ -216,16 +212,6 @@ my_audio_source& WhooshGeneratorAudioProcessor::getAudioSource()
 
 
 
-AudioProcessorValueTreeState* WhooshGeneratorAudioProcessor::get_out_state()
-{
-	return out_state_.get();
-}
-
-AudioProcessorValueTreeState* WhooshGeneratorAudioProcessor::get_in_state()
-{
-	return in_state_.get();
-}
-
 
 //==============================================================================
 // This creates new instances of the plugin..
@@ -234,35 +220,4 @@ juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 	return new WhooshGeneratorAudioProcessor();
 }
 
-AudioProcessorValueTreeState::ParameterLayout WhooshGeneratorAudioProcessor::create_out_parameters() const
-{
-	std::vector<std::unique_ptr<RangedAudioParameter>> parameters;
 
-	NormalisableRange<float> frequency_range = util::log_range<float>(50., 20000.);
-
-	parameters.push_back(std::make_unique<AudioParameterFloat>("volume", "VOLUME", 0.0f, 1.0f, 0.01f));
-	parameters.push_back(std::make_unique<AudioParameterFloat>("frequency", "FREQUENCY", frequency_range, 0.,
-	                                                           "FREQUENCY", AudioProcessorParameter::genericParameter));
-
-
-	return {parameters.begin(), parameters.end()};
-}
-
-AudioProcessorValueTreeState::ParameterLayout WhooshGeneratorAudioProcessor::create_in_parameters() const
-{
-	std::vector<std::unique_ptr<RangedAudioParameter>> parameters;
-
-	NormalisableRange<float> frequency_range = util::log_range<float>(1.,(float)SpectrumAnalyserComponent::fft_size/2);
-
-	parameters.push_back(std::make_unique<AudioParameterFloat>("threshold", "THRESHOLD", 0.0f, .5f, 0.f));
-	parameters.push_back(std::make_unique<AudioParameterFloat>("rms_length", "RMS LENGTH", 0.0f, 10.0f, 0.f));
-	parameters.push_back(std::make_unique<AudioParameterFloat>("min_frequency", "MIN FREQUENCY", frequency_range, 0.,
-	                                                           "MIN FREQUENCY", AudioProcessorParameter::genericParameter));
-	parameters.push_back(std::make_unique<AudioParameterFloat>("max_frequency", "MAX FREQUENCY", frequency_range, SpectrumAnalyserComponent::fft_size,
-	                                                           "MAX FREQUENCY", AudioProcessorParameter::genericParameter));
-	parameters.push_back(std::make_unique<AudioParameterFloat>("fft_speed", "FFT SPEED", 0.0f, 1.0f, 1.f));
-	parameters.push_back(std::make_unique<AudioParameterFloat>("volume_speed", "VOLUME SPEED", 0.0f, 1.0f, 1.f));
-
-
-	return {parameters.begin(), parameters.end()};
-}

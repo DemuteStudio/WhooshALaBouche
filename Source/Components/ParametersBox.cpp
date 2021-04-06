@@ -26,6 +26,7 @@ ParametersBox::ParametersBox(AudioProcessor* processor, AudioProcessorValueTreeS
 	addAndMakeVisible(frequency_variation_speed);
 	addAndMakeVisible(volume_variation_speed);
 
+
 	sliders_attachment_.push_back(std::make_unique<AudioProcessorValueTreeState::SliderAttachment>(
 		*parameters_state, "threshold", *threshold.slider));
 	sliders_attachment_.push_back(std::make_unique<AudioProcessorValueTreeState::SliderAttachment>(

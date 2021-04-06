@@ -6,6 +6,14 @@
   <MAINGROUP id="MGtDsZ" name="WhooshGenerator">
     <GROUP id="{5BEADBA9-EE88-C0EB-E7A8-52E1335C79AC}" name="Source">
       <GROUP id="{F968154D-E84D-0FEE-BEFC-539B690BC763}" name="Utils">
+        <FILE id="HQzx07" name="FrequencyPeakParameter.cpp" compile="1" resource="0"
+              file="Source/Components/FrequencyPeakParameter.cpp"/>
+        <FILE id="eCWvBP" name="FrequencyPeakParameter.h" compile="0" resource="0"
+              file="Source/Components/FrequencyPeakParameter.h"/>
+        <FILE id="t4sLK2" name="VolumeParameter.cpp" compile="1" resource="0"
+              file="Source/Components/VolumeParameter.cpp"/>
+        <FILE id="owXAvv" name="VolumeParameter.h" compile="0" resource="0"
+              file="Source/Components/VolumeParameter.h"/>
         <FILE id="rlBl4N" name="TwoValueSliderAttachment.cpp" compile="1" resource="0"
               file="Source/Components/TwoValueSliderAttachment.cpp"/>
         <FILE id="STipRT" name="TwoValueSliderAttachment.h" compile="0" resource="0"
@@ -17,6 +25,14 @@
         <FILE id="RmY2e7" name="Util.h" compile="0" resource="0" file="Source/Components/Util.h"/>
       </GROUP>
       <GROUP id="{D19AE344-B3E1-CD7B-15BE-280F3E1512FD}" name="BackEnd">
+        <FILE id="uqFl3Z" name="InParametersState.cpp" compile="1" resource="0"
+              file="Source/Components/InParametersState.cpp"/>
+        <FILE id="bGM446" name="InParametersState.h" compile="0" resource="0"
+              file="Source/Components/InParametersState.h"/>
+        <FILE id="IibgYn" name="OutParametersState.cpp" compile="1" resource="0"
+              file="Source/Components/OutParametersState.cpp"/>
+        <FILE id="ZLTEMG" name="OutParametersState.h" compile="0" resource="0"
+              file="Source/Components/OutParametersState.h"/>
         <FILE id="n3A0Ax" name="VolumeAnalyzer.cpp" compile="1" resource="0"
               file="Source/Components/VolumeAnalyzer.cpp"/>
         <FILE id="lh87xP" name="VolumeAnalyzer.h" compile="0" resource="0"
@@ -34,17 +50,48 @@
               file="Source/Components/SpectrumAnalyzer.h"/>
       </GROUP>
       <GROUP id="{545FF096-DE0F-0736-B733-685C852460AB}" name="Abstract Classes">
+        <FILE id="iq5Ctb" name="ParametersState.cpp" compile="1" resource="0"
+              file="Source/Components/ParametersState.cpp"/>
+        <FILE id="WWQuBR" name="ParametersState.h" compile="0" resource="0"
+              file="Source/Components/ParametersState.h"/>
         <FILE id="onht9Q" name="FxChainElement.h" compile="0" resource="0"
               file="Source/Components/FxChainElement.h"/>
+        <FILE id="j3UHxS" name="GuiParameter.cpp" compile="1" resource="0"
+              file="Source/Components/GuiParameter.cpp"/>
+        <FILE id="j6GGpM" name="GuiParameter.h" compile="0" resource="0" file="Source/Components/GuiParameter.h"/>
         <FILE id="xmJuvW" name="ISpectrumAnalyzer.h" compile="0" resource="0"
               file="Source/Components/ISpectrumAnalyzer.h"/>
         <FILE id="eN60mY" name="OpenGLComponent.h" compile="0" resource="0"
               file="Source/Components/OpenGLComponent.h"/>
+        <FILE id="YaqNU1" name="Parameter.cpp" compile="1" resource="0" file="Source/Components/Parameter.cpp"/>
+        <FILE id="OZTRgq" name="Parameter.h" compile="0" resource="0" file="Source/Components/Parameter.h"/>
       </GROUP>
       <GROUP id="{5432A927-7F5C-12C5-3DE5-D3A25A65DD70}" name="Components">
-        <FILE id="j3UHxS" name="GuiParameter.cpp" compile="1" resource="0"
-              file="Source/Components/GuiParameter.cpp"/>
-        <FILE id="j6GGpM" name="GuiParameter.h" compile="0" resource="0" file="Source/Components/GuiParameter.h"/>
+        <GROUP id="{87A0E444-EEA3-8CFD-00E9-3E8580CFDF6F}" name="EXTERN">
+          <GROUP id="{5B0DBFCA-A7A4-538C-90B5-050CB16D7060}" name="LevelMeter">
+            <FILE id="EC94uT" name="LevelMeter.cpp" compile="1" resource="0" file="Source/Components/VUmeters/LevelMeter/LevelMeter.cpp"/>
+            <FILE id="RkNDxh" name="LevelMeter.h" compile="0" resource="0" file="Source/Components/VUmeters/LevelMeter/LevelMeter.h"/>
+            <FILE id="rtJImA" name="LevelMeterSource.h" compile="0" resource="0"
+                  file="Source/Components/VUmeters/LevelMeter/LevelMeterSource.h"/>
+          </GROUP>
+          <GROUP id="{06131625-8024-477D-01BC-EEA1076AB621}" name="LookAndFeel">
+            <FILE id="YlwZh3" name="LevelMeterLookAndFeel.h" compile="0" resource="0"
+                  file="Source/Components/VUmeters/LookAndFeel/LevelMeterLookAndFeel.h"/>
+            <FILE id="c56WiQ" name="LevelMeterLookAndFeelMethods.h" compile="0"
+                  resource="0" file="Source/Components/VUmeters/LookAndFeel/LevelMeterLookAndFeelMethods.h"/>
+            <FILE id="Wsq0cM" name="SoundFieldLookAndFeelMethods.h" compile="0"
+                  resource="0" file="Source/Components/VUmeters/LookAndFeel/SoundFieldLookAndFeelMethods.h"/>
+          </GROUP>
+          <GROUP id="{18AD836F-DF98-A15E-173C-2C19107E94CE}" name="Visualisers">
+            <FILE id="A2z6Nq" name="OutlineBuffer.h" compile="0" resource="0" file="Source/Components/VUmeters/Visualisers/OutlineBuffer.h"/>
+            <FILE id="Ey3iRO" name="StereoFieldBuffer.h" compile="0" resource="0"
+                  file="Source/Components/VUmeters/Visualisers/StereoFieldBuffer.h"/>
+            <FILE id="K22LZZ" name="StereoFieldComponent.h" compile="0" resource="0"
+                  file="Source/Components/VUmeters/Visualisers/StereoFieldComponent.h"/>
+          </GROUP>
+          <FILE id="BE9aWw" name="ff_meters.cpp" compile="1" resource="0" file="Source/Components/VUmeters/ff_meters.cpp"/>
+          <FILE id="WjsR6D" name="ff_meters.h" compile="0" resource="0" file="Source/Components/VUmeters/ff_meters.h"/>
+        </GROUP>
         <FILE id="OI2qvm" name="SpectrumAnalyserComponent.cpp" compile="1"
               resource="0" file="Source/Components/FFT/SpectrumAnalyserComponent.cpp"/>
         <FILE id="nIEKaQ" name="SpectrumAnalyserComponent.h" compile="0" resource="0"

@@ -4,8 +4,8 @@
 //==============================================================================
 WhooshGeneratorAudioProcessorEditor::WhooshGeneratorAudioProcessorEditor(WhooshGeneratorAudioProcessor& p)
 	: AudioProcessorEditor(&p), audioProcessor(p),
-	  parameters_box_(&p, p.get_in_state(), fft_visualizer_.fft_size),
-	  out_parameters_box_(p.get_out_state()),
+	  parameters_box_(&p, p.in_parameters.get_state(), fft_visualizer_.fft_size),
+	  out_parameters_box_(p.out_parameters.get_state()),
 	  volume_analyzer_()
 {
 	setLookAndFeel(&my_look_and_feel_);
@@ -154,12 +154,13 @@ void WhooshGeneratorAudioProcessorEditor::timerCallback()
 	waveform.updateVisibleRegion(end_sample, number_of_samples_to_display);
 
 	const float volume_db = volume_analyzer_.get_last_rms_value_in_db();
-	const float volume_slider_value = juce::jmap<float>(volume_db, -50., 0., 0., 1.);
+	const float volume_slider_value = juce::jmap<float>(volume_db, -120., 0., 0., 1.);
 
-	out_parameters_box_.set_slider_value(util::VOLUME, volume_slider_value);
+	out_parameters_box_.set_slider_value(util::VOLUME, volume_db);
+	// out_parameters_box_.set_slider_value(util::VOLUME, volume_db);
 	out_parameters_box_.set_slider_value(util::FREQUENCY_PEAK, fft_visualizer_.get_last_fft_peak());
 
-	send_osc_message(util::VOLUME, volume_analyzer_.last_rms_value);
+	send_osc_message(util::VOLUME, volume_slider_value);
 	send_osc_message(util::FREQUENCY_PEAK, fft_visualizer_.get_last_fft_peak());
 }
 

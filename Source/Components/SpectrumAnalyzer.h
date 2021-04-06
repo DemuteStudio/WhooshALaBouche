@@ -45,6 +45,7 @@ public:
 		scope_size = 512
 	};
 
+	float threshold = 0.;
 protected:
 	double sample_rate;
 	double frequency_interval;
