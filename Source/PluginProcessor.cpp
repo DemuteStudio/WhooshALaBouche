@@ -164,7 +164,7 @@ void WhooshGeneratorAudioProcessor::processBlock(juce::AudioBuffer<float>& buffe
 
 	for (std::list<fx_chain_element>::value_type* element : fx_chain)
 	{
-		element->getNextAudioBlock(bufferToFill);
+		element->getNextAudioBlock(buffer);
 	}
 	audioSource.getNextAudioBlock(bufferToFill);
 }

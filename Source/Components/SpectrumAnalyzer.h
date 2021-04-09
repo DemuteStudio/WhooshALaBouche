@@ -13,7 +13,7 @@ public:
 	SpectrumAnalyzer();
 
 	//==============================================================================
-	void getNextAudioBlock(const juce::AudioSourceChannelInfo& bufferToFill) override;
+	void getNextAudioBlock(juce::AudioBuffer<float>& bufferToFill) override;
 	void prepareToPlay(double sampleRate, int samplesPerBlock) override;
 	//==============================================================================
 	void calculate_spectrum() override;

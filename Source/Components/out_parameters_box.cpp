@@ -20,10 +20,14 @@ out_parameters_box::out_parameters_box(AudioProcessorValueTreeState* processor_s
 
 	volume_out.slider->textFromValueFunction = [](double value)-> String
 	{
-		const float value_in_db = value;
-		return std::to_string(value_in_db);
+		const int value_in_db = Decibels::gainToDecibels(value);
+		return std::to_string(value_in_db) +  " dB";
 	};
 
+	frequency_out.slider->textFromValueFunction = [](double value)-> String
+	{
+		return std::to_string((int)value) +  " Hz";
+	};
 	addAndMakeVisible(show_values_button);
 	show_values_button.setButtonText("SHOW VALUES");
 	show_values_button.addListener(this);

@@ -38,6 +38,7 @@ public:
 		bool show_values = false;
 	};
 
+
 private:
 	std::vector<parameter_gui_component*> parameters_components;
 

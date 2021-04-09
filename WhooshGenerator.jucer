@@ -67,31 +67,6 @@
         <FILE id="OZTRgq" name="Parameter.h" compile="0" resource="0" file="Source/Components/Parameter.h"/>
       </GROUP>
       <GROUP id="{5432A927-7F5C-12C5-3DE5-D3A25A65DD70}" name="Components">
-        <GROUP id="{87A0E444-EEA3-8CFD-00E9-3E8580CFDF6F}" name="EXTERN">
-          <GROUP id="{5B0DBFCA-A7A4-538C-90B5-050CB16D7060}" name="LevelMeter">
-            <FILE id="EC94uT" name="LevelMeter.cpp" compile="1" resource="0" file="Source/Components/VUmeters/LevelMeter/LevelMeter.cpp"/>
-            <FILE id="RkNDxh" name="LevelMeter.h" compile="0" resource="0" file="Source/Components/VUmeters/LevelMeter/LevelMeter.h"/>
-            <FILE id="rtJImA" name="LevelMeterSource.h" compile="0" resource="0"
-                  file="Source/Components/VUmeters/LevelMeter/LevelMeterSource.h"/>
-          </GROUP>
-          <GROUP id="{06131625-8024-477D-01BC-EEA1076AB621}" name="LookAndFeel">
-            <FILE id="YlwZh3" name="LevelMeterLookAndFeel.h" compile="0" resource="0"
-                  file="Source/Components/VUmeters/LookAndFeel/LevelMeterLookAndFeel.h"/>
-            <FILE id="c56WiQ" name="LevelMeterLookAndFeelMethods.h" compile="0"
-                  resource="0" file="Source/Components/VUmeters/LookAndFeel/LevelMeterLookAndFeelMethods.h"/>
-            <FILE id="Wsq0cM" name="SoundFieldLookAndFeelMethods.h" compile="0"
-                  resource="0" file="Source/Components/VUmeters/LookAndFeel/SoundFieldLookAndFeelMethods.h"/>
-          </GROUP>
-          <GROUP id="{18AD836F-DF98-A15E-173C-2C19107E94CE}" name="Visualisers">
-            <FILE id="A2z6Nq" name="OutlineBuffer.h" compile="0" resource="0" file="Source/Components/VUmeters/Visualisers/OutlineBuffer.h"/>
-            <FILE id="Ey3iRO" name="StereoFieldBuffer.h" compile="0" resource="0"
-                  file="Source/Components/VUmeters/Visualisers/StereoFieldBuffer.h"/>
-            <FILE id="K22LZZ" name="StereoFieldComponent.h" compile="0" resource="0"
-                  file="Source/Components/VUmeters/Visualisers/StereoFieldComponent.h"/>
-          </GROUP>
-          <FILE id="BE9aWw" name="ff_meters.cpp" compile="1" resource="0" file="Source/Components/VUmeters/ff_meters.cpp"/>
-          <FILE id="WjsR6D" name="ff_meters.h" compile="0" resource="0" file="Source/Components/VUmeters/ff_meters.h"/>
-        </GROUP>
         <FILE id="OI2qvm" name="SpectrumAnalyserComponent.cpp" compile="1"
               resource="0" file="Source/Components/FFT/SpectrumAnalyserComponent.cpp"/>
         <FILE id="nIEKaQ" name="SpectrumAnalyserComponent.h" compile="0" resource="0"

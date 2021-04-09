@@ -6,14 +6,17 @@ SpectrumAnalyzer::SpectrumAnalyzer(): forwardFFT(fft_order),
 {
 }
 
-void SpectrumAnalyzer::getNextAudioBlock(const juce::AudioSourceChannelInfo& bufferToFill)
+void SpectrumAnalyzer::getNextAudioBlock(juce::AudioBuffer<float>& bufferToFill)
 {
-	if (bufferToFill.buffer->getNumChannels() > 0)
+	if (bufferToFill.getNumChannels() > 0)
 	{
-		const auto* channelData = bufferToFill.buffer->getReadPointer(0, bufferToFill.startSample);
+		for (int channel = 0; channel < bufferToFill.getNumChannels(); ++channel)
+		{
+			const auto* channelData = bufferToFill.getReadPointer(channel, 0);
 
-		for (auto i = 0; i < bufferToFill.numSamples; ++i)
-			push_next_sample_into_fifo(channelData[i]);
+			for (auto i = 0; i < bufferToFill.getNumSamples(); ++i)
+				push_next_sample_into_fifo(channelData[i]);
+		}
 	}
 }
 

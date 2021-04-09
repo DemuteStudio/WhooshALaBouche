@@ -9,9 +9,27 @@ class VolumeAnalyzer:public fx_chain_element
 public:
 	VolumeAnalyzer();
 
-	void getNextAudioBlock(const juce::AudioSourceChannelInfo& bufferToFill) override;
+	void getNextAudioBlock(AudioBuffer<float>& bufferToFill) override;
 	void prepareToPlay(double sampleRate, int samplesPerBlock) override;
+	//=================================================================================================
+	void apply_threshold_to_buffer(const float* inputBuffer, float* outputBuffer);
+	void accumulate_samples(const float* inputBuffer);
+	void calculate_rms();
+	float calculate_variation() const;
+	bool end_of_integration_period() const;
+	//=================================================================================================
 
+	//=================================================================================================
+	struct zero_crossing_detector
+	{
+		zero_crossing_detector() = default;
+		bool soundEnabled = false;
+	};
+	//=================================================================================================
+	float get_last_rms_value_in_db() const;
+	float get_last_rms_value() const ;
+
+public:
 	double sample_rate;
 	float last_rms_value = 1.0;
 	float samples_squares_sum = 0.0;
@@ -24,6 +42,5 @@ public:
 	float rms_blocks_length = 1;
 	float new_rms_value;
 	float variation_speed = 1.;
-	//=================================================================================================
-	float get_last_rms_value_in_db() const;
+	int samples_per_block = 0;
 };

@@ -153,14 +153,15 @@ void WhooshGeneratorAudioProcessorEditor::timerCallback()
 
 	waveform.updateVisibleRegion(end_sample, number_of_samples_to_display);
 
-	const float volume_db = volume_analyzer_.get_last_rms_value_in_db();
-	const float volume_slider_value = juce::jmap<float>(volume_db, -120., 0., 0., 1.);
+	// const float volume_db = volume_analyzer_.get_last_rms_value_in_db();
+	const float volume_gain = volume_analyzer_.get_last_rms_value();
+	// const float volume_slider_value = juce::jmap<float>(volume_db, -120., 0., 0., 1.);
 
-	out_parameters_box_.set_slider_value(util::VOLUME, volume_db);
+	out_parameters_box_.set_slider_value(util::VOLUME, volume_gain);
 	// out_parameters_box_.set_slider_value(util::VOLUME, volume_db);
 	out_parameters_box_.set_slider_value(util::FREQUENCY_PEAK, fft_visualizer_.get_last_fft_peak());
 
-	send_osc_message(util::VOLUME, volume_slider_value);
+	send_osc_message(util::VOLUME, volume_gain);
 	send_osc_message(util::FREQUENCY_PEAK, fft_visualizer_.get_last_fft_peak());
 }
 
@@ -197,5 +198,5 @@ void WhooshGeneratorAudioProcessorEditor::enableRecording()
 
 	audioBuffer = temp_audio_buffer.get();
 
-	startTimerHz(60);
+	startTimerHz(100);
 }
