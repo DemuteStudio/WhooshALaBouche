@@ -1,14 +1,15 @@
 #pragma once
 #include <JuceHeader.h>
+
+#include "Analyzer.h"
 #include "FxChainElement.h"
 
 using namespace juce;
 
-class VolumeAnalyzer:public fx_chain_element
+class VolumeAnalyzer:public fx_chain_element, public Analyzer
 {
 public:
-	VolumeAnalyzer();
-
+	VolumeAnalyzer(AudioParameterFloat* parameter);
 	void getNextAudioBlock(AudioBuffer<float>& bufferToFill) override;
 	void prepareToPlay(double sampleRate, int samplesPerBlock) override;
 	//=================================================================================================
@@ -27,9 +28,9 @@ public:
 	};
 	//=================================================================================================
 	float get_last_rms_value_in_db() const;
-	float get_last_rms_value() const ;
+	float get_last_value() const override ;
+	String get_osc_address()const override;
 
-public:
 	double sample_rate;
 	float last_rms_value = 1.0;
 	float samples_squares_sum = 0.0;

@@ -2,15 +2,20 @@
 #include "ISpectrumAnalyzer.h"
 #include <JuceHeader.h>
 
+
+#include "Analyzer.h"
 #include "FxChainElement.h"
 
+using namespace juce;
+
 class SpectrumAnalyzer : public ISpectrumAnalyzer,
-                         public fx_chain_element
+                         public fx_chain_element,
+                         public Analyzer
 
 {
 public:
 
-	SpectrumAnalyzer();
+	SpectrumAnalyzer(AudioParameterFloat* parameter);
 
 	//==============================================================================
 	void getNextAudioBlock(juce::AudioBuffer<float>& bufferToFill) override;
@@ -33,9 +38,12 @@ public:
 	int get_max_frequency_fft_index() const;
 	void set_max_frequency_fft_index(int _max_frequency_fft_index);
 	float get_fft_index_upper_limit() const;
-	int get_last_fft_peak() const;
 	float get_speed() const;
 	void set_speed(const float speed);
+
+	//===============================================================================
+	float get_last_value() const override;
+	String get_osc_address() const override;
 
 	//===============================================================================
 	enum
@@ -46,7 +54,7 @@ public:
 	};
 
 	float threshold = 0.;
-protected:
+public:
 	double sample_rate;
 	double frequency_interval;
 	float fft_upper_limit;

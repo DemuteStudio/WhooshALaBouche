@@ -15,6 +15,6 @@ AudioProcessorValueTreeState::ParameterLayout OutParametersState::create_paramet
 	parameters.push_back(std::make_unique<AudioParameterFloat>("frequency", "FREQUENCY", frequency_range, 0.,
 	                                                           "FREQUENCY", AudioProcessorParameter::genericParameter));
 
-
 	return {parameters.begin(), parameters.end()};
+	
 }

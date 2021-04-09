@@ -5,17 +5,14 @@
 	{
 		slider = std::make_unique<Slider>();
 		slider->setSliderStyle(Slider::LinearHorizontal);
+		slider->setTextBoxIsEditable(false);
 		addAndMakeVisible(slider.get());
 		slider->setName(id);
+
 
 		addAndMakeVisible(label);
 
 		label.setText(text, NotificationType::dontSendNotification);
-
-		addAndMakeVisible(value_label);
-		value_label.setJustificationType(Justification::centred);
-
-		slider->setValue(100);
 
 		parameter_type_ = type;
 	}

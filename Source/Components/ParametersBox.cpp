@@ -2,15 +2,17 @@
 
 #include <JuceHeader.h>
 
-//==============================================================================
+
 ParametersBox::ParametersBox(AudioProcessor* processor, AudioProcessorValueTreeState* parameters_state, int fft_size):
 	threshold("threshold", "THRESHOLD", util::parameter_type::THRESHOLD),
 	rms_length("rms_length", "RMS LENGTH", util::parameter_type::RMS_LENGTH),
 	fft_order("fft_order", "FFT ORDER", util::parameter_type::FFT_ORDER),
-	frequency_band("frequency_band", "FREQUENCY BAND", util::parameter_type::FREQUENCY_BAND, Slider::TwoValueHorizontal),
+	frequency_band("frequency_band", "FREQUENCY BAND", util::parameter_type::FREQUENCY_BAND,
+	               Slider::TwoValueHorizontal),
 	frequency_variation_speed("frequency_variation_speed", "FREQUENCY SPEED",
 	                          util::parameter_type::FREQUENCY_VARIATION_SPEED),
-	volume_variation_speed("volume_variation_speed", "VOLUME SPEED", util::parameter_type::VOLUME_VARIATION_SPEED)
+	volume_variation_speed("volume_variation_speed", "VOLUME SPEED", util::parameter_type::VOLUME_VARIATION_SPEED),
+	processor(processor)
 
 {
 	const double samples_per_block = processor->getBlockSize();
@@ -27,16 +29,9 @@ ParametersBox::ParametersBox(AudioProcessor* processor, AudioProcessorValueTreeS
 	addAndMakeVisible(volume_variation_speed);
 
 
-	sliders_attachment_.push_back(std::make_unique<AudioProcessorValueTreeState::SliderAttachment>(
-		*parameters_state, "threshold", *threshold.slider));
-	sliders_attachment_.push_back(std::make_unique<AudioProcessorValueTreeState::SliderAttachment>(
-		*parameters_state, "rms_length", *rms_length.slider));
-	sliders_attachment_.push_back(std::make_unique<AudioProcessorValueTreeState::SliderAttachment>(
-		*parameters_state, "fft_speed", *frequency_variation_speed.slider));
-	sliders_attachment_.push_back(std::make_unique<AudioProcessorValueTreeState::SliderAttachment>(
-		*parameters_state, "volume_speed", *volume_variation_speed.slider));
-	two_values_sliders_attachment_.push_back(std::make_unique<TwoValueSliderAttachment>(
-		*parameters_state, "min_frequency", "max_frequency", *frequency_band.slider));
+	link_sliders_to_parameters(parameters_state);
+	set_parameters_value_to_text();
+
 }
 
 ParametersBox::~ParametersBox()
@@ -90,7 +85,56 @@ void ParametersBox::parameter_gui_component::resized()
 	auto rectangle = getLocalBounds();
 
 	label.setBounds(rectangle.removeFromLeft(150));
-	value_label.setBounds(rectangle.removeFromRight(150));
 	slider->setBounds(rectangle);
-	slider->setTextBoxStyle(Slider::NoTextBox, true, 0, 0);
+	slider->setTextBoxStyle(Slider::TextBoxRight, true, 150, rectangle.getHeight());
+}
+
+//==============================================================================
+void ParametersBox::link_sliders_to_parameters(AudioProcessorValueTreeState* parameters_state)
+{
+	sliders_attachment_.push_back(std::make_unique<AudioProcessorValueTreeState::SliderAttachment>(
+		*parameters_state, "threshold", *threshold.slider));
+	sliders_attachment_.push_back(std::make_unique<AudioProcessorValueTreeState::SliderAttachment>(
+		*parameters_state, "rms_length", *rms_length.slider));
+	sliders_attachment_.push_back(std::make_unique<AudioProcessorValueTreeState::SliderAttachment>(
+		*parameters_state, "fft_speed", *frequency_variation_speed.slider));
+	sliders_attachment_.push_back(std::make_unique<AudioProcessorValueTreeState::SliderAttachment>(
+		*parameters_state, "volume_speed", *volume_variation_speed.slider));
+	two_values_sliders_attachment_.push_back(std::make_unique<TwoValueSliderAttachment>(
+		*parameters_state, "min_frequency", "max_frequency", *frequency_band.slider));
+}
+
+void ParametersBox::set_parameters_value_to_text()
+{
+	threshold.slider->textFromValueFunction = [](double value)-> String
+	{
+		const int value_in_db = Decibels::gainToDecibels(value);
+		return std::to_string(value_in_db) + " dB";
+	};
+
+	rms_length.slider->textFromValueFunction = [this](double value)-> String
+	{
+		const int rms_length_value = (value + 1) * (processor->getBlockSize() / processor->
+			getSampleRate() * 1000.);
+		return std::to_string(rms_length_value) + " ms";
+	};
+
+	// frequency_band.slider->textFromValueFunction = [](double value)-> String
+	// {
+	// 	const int value_in_db = Decibels::gainToDecibels(value);
+	// 	return std::to_string(value_in_db) +  " dB";
+	// };
+	frequency_band.slider->textFromValueFunction = [](double value)-> String
+	{
+		return std::to_string(value) +  " :)";
+	};
+
+	frequency_variation_speed.slider->textFromValueFunction = [](double value)-> String
+	{
+		return std::to_string((int)(value * 100)) + " %";
+	};
+	volume_variation_speed.slider->textFromValueFunction = [](double value)-> String
+	{
+		return std::to_string((int)(value * 100)) + " %";
+	};
 }

@@ -52,5 +52,14 @@ public:
 	parameter_gui_component volume_variation_speed;
 
 
+private:
+	void link_sliders_to_parameters(AudioProcessorValueTreeState* parameters_state);
+	void set_parameters_value_to_text();
+
+	//==========================================================================================================================================
+
+	AudioProcessor* processor;
+
+
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ParametersBox)
 };

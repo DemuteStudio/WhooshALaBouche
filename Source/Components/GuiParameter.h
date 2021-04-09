@@ -14,7 +14,6 @@ struct parameter_gui : public juce::Component
 	//======================================================================================================
 	std::unique_ptr<Slider> slider;
 	Label label;
-	Label value_label;
 	util::parameter_type parameter_type_;
 
 };

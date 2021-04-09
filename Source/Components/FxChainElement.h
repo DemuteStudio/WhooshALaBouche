@@ -8,15 +8,14 @@ public:
 	fx_chain_element() = default;
 	~fx_chain_element() = default;
 
-	virtual void getNextAudioBlock(juce::AudioBuffer<float>& bufferToFill)
-	{
-	}
-
+	virtual void getNextAudioBlock(juce::AudioBuffer<float>& bufferToFill) = 0;
+	
 	virtual void prepareToPlay(double sampleRate, int samplesPerBlock)
 	{
 		sampleRate_ = sampleRate;
 		samplesPerBlock = samplesPerBlock;
 	}
+
 
 protected:
 	double sampleRate_;

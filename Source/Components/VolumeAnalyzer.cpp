@@ -1,6 +1,6 @@
 #include "VolumeAnalyzer.h"
 
-VolumeAnalyzer::VolumeAnalyzer()
+VolumeAnalyzer::VolumeAnalyzer(AudioParameterFloat* parameter): Analyzer(parameter, util::VOLUME)
 {
 }
 
@@ -85,7 +85,12 @@ float VolumeAnalyzer::get_last_rms_value_in_db() const
 	return Decibels::gainToDecibels(last_rms_value);
 }
 
-float VolumeAnalyzer::get_last_rms_value() const
+float VolumeAnalyzer::get_last_value() const
 {
 	return last_rms_value;
+}
+
+String VolumeAnalyzer::get_osc_address() const
+{
+	return "/volume";
 }

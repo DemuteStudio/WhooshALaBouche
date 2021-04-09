@@ -2,20 +2,19 @@
 
 #include <JuceHeader.h>
 
-#include "../FxChainElement.h"
-#include "../SpectrumAnalyzer.h"
+#include "FxChainElement.h"
+#include "SpectrumAnalyzer.h"
 
 //==============================================================================
-class SpectrumAnalyserComponent : public juce::Component,
-                                  private juce::Timer,
-                                  public SpectrumAnalyzer
+class SpectrumComponent : public juce::Component,
+                                  private juce::Timer
 
 {
 public:
 	//! [constructor]
-	SpectrumAnalyserComponent();
+	SpectrumComponent(SpectrumAnalyzer* analyzer);
 
-	~SpectrumAnalyserComponent() override
+	~SpectrumComponent() override
 	{
 	}
 
@@ -29,6 +28,6 @@ public:
 	//==============================================================================
 private:
 
-
-	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(SpectrumAnalyserComponent)
+	SpectrumAnalyzer* analyzer;
+	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(SpectrumComponent)
 };

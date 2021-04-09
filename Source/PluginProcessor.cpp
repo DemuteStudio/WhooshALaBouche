@@ -10,24 +10,56 @@
 #include "PluginEditor.h"
 
 //==============================================================================
-WhooshGeneratorAudioProcessor::WhooshGeneratorAudioProcessor(): out_parameters(this),
-                                                                in_parameters(
-	                                                                this, SpectrumAnalyserComponent::fft_size),
+WhooshGeneratorAudioProcessor::WhooshGeneratorAudioProcessor() : out_parameters(this),
+                                                                 in_parameters(
+	                                                                 this, SpectrumAnalyzer::fft_size),
+                                                                 volume_analyzer_(
+	                                                                 std::make_unique<VolumeAnalyzer>(
+		                                                                 (AudioParameterFloat*)out_parameters.
+		                                                                 get_state()->getParameter("volume"))),
+                                                                 spectrum_analyzer(
+	                                                                 std::make_unique<SpectrumAnalyzer>(
+		                                                                 (AudioParameterFloat*)out_parameters.
+		                                                                 get_state()->getParameter("frequency"))),
+                                                                 OutputTimer(&out_parameters, analyzers),
 #ifndef JucePlugin_PreferredChannelConfigurations
-                                                                AudioProcessor(BusesProperties()
+                                                                 AudioProcessor(BusesProperties()
 #if ! JucePlugin_IsMidiEffect
 #if ! JucePlugin_IsSynth
-	                                                                .withInput("Input", juce::AudioChannelSet::stereo(),
-	                                                                           true)
+	                                                                 .
+	                                                                 withInput(
+
+
+		                                                                 "Input"
+		                                                                 ,
+		                                                                 juce::AudioChannelSet::stereo(),
+
+
+		                                                                 true
+	                                                                 )
 #endif
-	                                                                .withOutput(
-		                                                                "Output", juce::AudioChannelSet::stereo(), true)
-	                                                                // .withInput("Sidechain",
-	                                                                //            juce::AudioChannelSet::stereo())
+	                                                                 .
+	                                                                 withOutput(
+
+
+		                                                                 "Output"
+		                                                                 ,
+		                                                                 juce::AudioChannelSet::stereo(),
+
+
+		                                                                 true
+	                                                                 )
+	                                                                 // .withInput("Sidechain",
+	                                                                 //            juce::AudioChannelSet::stereo())
 #endif
-                                                                )
+                                                                 )
 #endif
 {
+	// add_element_to_fx_chain(volume_analyzer_.get());
+	// add_element_to_fx_chain(spectrum_analyzer.get());
+
+	fx_chain = {volume_analyzer_.get(), spectrum_analyzer.get()};
+	analyzers = {volume_analyzer_.get(), spectrum_analyzer.get()};
 }
 
 WhooshGeneratorAudioProcessor::~WhooshGeneratorAudioProcessor()
@@ -51,8 +83,7 @@ bool WhooshGeneratorAudioProcessor::acceptsMidi() const
 
 bool WhooshGeneratorAudioProcessor::producesMidi() const
 {
-#if JucePlugin_ProducesMidiOutput
-    return true;
+#if JucePlugin_ProducesMidiOutput return true;
 #else
 	return false;
 #endif
@@ -155,7 +186,7 @@ void WhooshGeneratorAudioProcessor::processBlock(juce::AudioBuffer<float>& buffe
 
 	const int input_buses_count = getBusCount(true);
 
-	AudioBuffer<float> mainInputOutput = getBusBuffer(buffer, true, 0); 
+	AudioBuffer<float> mainInputOutput = getBusBuffer(buffer, true, 0);
 	// AudioBuffer<float> sideChainInput = getBusBuffer(buffer, true, 1);
 
 	auto selectedBuffer = mainInputOutput;
@@ -210,7 +241,10 @@ my_audio_source& WhooshGeneratorAudioProcessor::getAudioSource()
 	return audioSource;
 }
 
-
+SpectrumAnalyzer* WhooshGeneratorAudioProcessor::get_spectrum_analyzer()
+{
+	return spectrum_analyzer.get();
+}
 
 
 //==============================================================================
@@ -219,5 +253,3 @@ juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 {
 	return new WhooshGeneratorAudioProcessor();
 }
-
-

@@ -1,7 +1,9 @@
 #include "SpectrumAnalyzer.h"
 
-SpectrumAnalyzer::SpectrumAnalyzer(): forwardFFT(fft_order),
-                                      window(fft_size, juce::dsp::WindowingFunction<float>::hann)
+SpectrumAnalyzer::SpectrumAnalyzer(AudioParameterFloat* parameter): forwardFFT(fft_order),
+                                                                    window(fft_size,
+                                                                           juce::dsp::WindowingFunction<float>::hann),
+                                                                    Analyzer(parameter, util::FREQUENCY_PEAK)
 
 {
 }
@@ -197,7 +199,12 @@ void SpectrumAnalyzer::set_speed(const float speed)
 	this->variation_speed = speed;
 }
 
-int SpectrumAnalyzer::get_last_fft_peak() const
+float SpectrumAnalyzer::get_last_value() const
 {
 	return last_fft_peak;
+}
+
+String SpectrumAnalyzer::get_osc_address() const
+{
+	return "/frequency";
 }

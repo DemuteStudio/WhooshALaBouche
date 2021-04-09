@@ -15,6 +15,9 @@
 #include "Components/Util.h"
 #include "Components/OutParametersState.h"
 #include "Components/InParametersState.h"
+#include "Components/VolumeAnalyzer.h"
+#include "Components/SpectrumAnalyzer.h"
+#include "Components/OutputTimer.h"
 
 
 using namespace juce;
@@ -23,7 +26,7 @@ using namespace juce;
 //==============================================================================
 /**
 */
-class WhooshGeneratorAudioProcessor : public juce::AudioProcessor
+class WhooshGeneratorAudioProcessor : public juce::AudioProcessor, private OutputTimer
 {
 public:
 	//==============================================================================
@@ -78,10 +81,18 @@ public:
 	OutParametersState out_parameters;
 	InParametersState in_parameters;
 
+	//==============================================================================
+	SpectrumAnalyzer* get_spectrum_analyzer();
+
 private:
 	my_audio_source audioSource;
 
+	std::unique_ptr<VolumeAnalyzer> volume_analyzer_;
+	std::unique_ptr<SpectrumAnalyzer> spectrum_analyzer;
+
 	std::list<fx_chain_element*> fx_chain;
+	std::vector<Analyzer*> analyzers;
+
 
 	//==============================================================================
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(WhooshGeneratorAudioProcessor)

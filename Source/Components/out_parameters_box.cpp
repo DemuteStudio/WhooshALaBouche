@@ -105,7 +105,7 @@ void out_parameters_box::parameter_gui_component::resized()
 	slider->setBounds(rectangle.reduced(delta));
 	if (show_values)
 	{
-		slider->setTextBoxStyle(Slider::TextBoxBelow, true, rectangle.getWidth(), 30);
+		slider->setTextBoxStyle(Slider::TextBoxBelow, true, rectangle.getWidth(), 20);
 	}
 	else
 	{

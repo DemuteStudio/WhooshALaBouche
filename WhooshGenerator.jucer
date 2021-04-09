@@ -25,6 +25,8 @@
         <FILE id="RmY2e7" name="Util.h" compile="0" resource="0" file="Source/Components/Util.h"/>
       </GROUP>
       <GROUP id="{D19AE344-B3E1-CD7B-15BE-280F3E1512FD}" name="BackEnd">
+        <FILE id="ZIW2Z4" name="OutputTimer.cpp" compile="1" resource="0" file="Source/Components/OutputTimer.cpp"/>
+        <FILE id="UzjErD" name="OutputTimer.h" compile="0" resource="0" file="Source/Components/OutputTimer.h"/>
         <FILE id="uqFl3Z" name="InParametersState.cpp" compile="1" resource="0"
               file="Source/Components/InParametersState.cpp"/>
         <FILE id="bGM446" name="InParametersState.h" compile="0" resource="0"
@@ -50,6 +52,8 @@
               file="Source/Components/SpectrumAnalyzer.h"/>
       </GROUP>
       <GROUP id="{545FF096-DE0F-0736-B733-685C852460AB}" name="Abstract Classes">
+        <FILE id="ICoEsR" name="Analyzer.cpp" compile="1" resource="0" file="Source/Components/Analyzer.cpp"/>
+        <FILE id="HSrngo" name="Analyzer.h" compile="0" resource="0" file="Source/Components/Analyzer.h"/>
         <FILE id="iq5Ctb" name="ParametersState.cpp" compile="1" resource="0"
               file="Source/Components/ParametersState.cpp"/>
         <FILE id="WWQuBR" name="ParametersState.h" compile="0" resource="0"
@@ -67,10 +71,10 @@
         <FILE id="OZTRgq" name="Parameter.h" compile="0" resource="0" file="Source/Components/Parameter.h"/>
       </GROUP>
       <GROUP id="{5432A927-7F5C-12C5-3DE5-D3A25A65DD70}" name="Components">
-        <FILE id="OI2qvm" name="SpectrumAnalyserComponent.cpp" compile="1"
-              resource="0" file="Source/Components/FFT/SpectrumAnalyserComponent.cpp"/>
-        <FILE id="nIEKaQ" name="SpectrumAnalyserComponent.h" compile="0" resource="0"
-              file="Source/Components/FFT/SpectrumAnalyserComponent.h"/>
+        <FILE id="iVbJH3" name="SpectrumComponent.cpp" compile="1" resource="0"
+              file="Source/Components/SpectrumComponent.cpp"/>
+        <FILE id="N2uY5V" name="SpectrumComponent.h" compile="0" resource="0"
+              file="Source/Components/SpectrumComponent.h"/>
         <FILE id="kPKNJj" name="out_parameters_box.cpp" compile="1" resource="0"
               file="Source/Components/out_parameters_box.cpp"/>
         <FILE id="couOTp" name="out_parameters_box.h" compile="0" resource="0"
