@@ -31,6 +31,8 @@ public:
 			parameter_gui(
 				id, text, type, Slider::LinearVertical)
 		{
+			label.setFont(Font(10));
+			label.setJustificationType(Justification::centred);
 		}
 
 		void resized() override;

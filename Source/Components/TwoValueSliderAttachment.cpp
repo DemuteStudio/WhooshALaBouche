@@ -78,7 +78,7 @@ void MultiValueAttachedControlBase::endParameterChange(const String& paramID)
 
 void MultiValueAttachedControlBase::handleAsyncUpdate()
 {
-	for (int i = 0; i < paramIDs.size(); ++i)
+for (int i = 0; i < paramIDs.size(); ++i)
 	{
 		const String paramID = paramIDs[i];
 		setValue(paramID, lastValues[paramID]);

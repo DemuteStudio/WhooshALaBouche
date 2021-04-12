@@ -53,12 +53,14 @@ public:
 
 
 private:
-	void link_sliders_to_parameters(AudioProcessorValueTreeState* parameters_state);
+	void link_sliders_to_parameters();
 	void set_parameters_value_to_text();
 
 	//==========================================================================================================================================
 
 	AudioProcessor* processor;
+protected:
+	AudioProcessorValueTreeState* parameters_state;
 
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ParametersBox)

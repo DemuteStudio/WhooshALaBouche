@@ -8,10 +8,11 @@ out_parameters_box::out_parameters_box(AudioProcessorValueTreeState* processor_s
 	volume_out("volume_out", "VOLUME", util::parameter_type::VOLUME),
 	frequency_out("frequency_peak", "FREQUENCY PEAK", util::parameter_type::FREQUENCY_PEAK)
 {
-	addAndMakeVisible(volume_out);
-	addAndMakeVisible(frequency_out);
-
 	parameters_components = {&volume_out, &frequency_out};
+	for (std::vector<parameter_gui_component*>::value_type parameters_component : parameters_components)
+	{
+		addAndMakeVisible(parameters_component);
+	}
 
 	volume_out_attachment_ = std::make_unique<AudioProcessorValueTreeState::SliderAttachment>(
 		*processor_state, "volume", *volume_out.slider);
@@ -21,13 +22,14 @@ out_parameters_box::out_parameters_box(AudioProcessorValueTreeState* processor_s
 	volume_out.slider->textFromValueFunction = [](double value)-> String
 	{
 		const int value_in_db = Decibels::gainToDecibels(value);
-		return std::to_string(value_in_db) +  " dB";
+		return std::to_string(value_in_db) + " dB";
 	};
 
 	frequency_out.slider->textFromValueFunction = [](double value)-> String
 	{
-		return std::to_string((int)value) +  " Hz";
+		return std::to_string((int)value) + " Hz";
 	};
+
 	addAndMakeVisible(show_values_button);
 	show_values_button.setButtonText("SHOW VALUES");
 	show_values_button.addListener(this);
@@ -101,7 +103,8 @@ void out_parameters_box::parameter_gui_component::resized()
 
 	const int delta = 5;
 
-	label.setBounds(rectangle.removeFromTop(50).reduced(delta));
+	rectangle.removeFromTop(delta);
+	label.setBounds(rectangle.removeFromTop(11).reduced(delta / 2));
 	slider->setBounds(rectangle.reduced(delta));
 	if (show_values)
 	{

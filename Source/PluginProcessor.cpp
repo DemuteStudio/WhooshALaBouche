@@ -16,11 +16,11 @@ WhooshGeneratorAudioProcessor::WhooshGeneratorAudioProcessor() : out_parameters(
                                                                  volume_analyzer_(
 	                                                                 std::make_unique<VolumeAnalyzer>(
 		                                                                 (AudioParameterFloat*)out_parameters.
-		                                                                 get_state()->getParameter("volume"))),
+		                                                                 get_state()->getParameter("volume"),in_parameters.get_state() )),
                                                                  spectrum_analyzer(
 	                                                                 std::make_unique<SpectrumAnalyzer>(
 		                                                                 (AudioParameterFloat*)out_parameters.
-		                                                                 get_state()->getParameter("frequency"))),
+		                                                                 get_state()->getParameter("frequency"),in_parameters.get_state())),
                                                                  OutputTimer(&out_parameters, analyzers),
 #ifndef JucePlugin_PreferredChannelConfigurations
                                                                  AudioProcessor(BusesProperties()

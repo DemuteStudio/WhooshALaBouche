@@ -15,7 +15,7 @@ class SpectrumAnalyzer : public ISpectrumAnalyzer,
 {
 public:
 
-	SpectrumAnalyzer(AudioParameterFloat* parameter);
+	SpectrumAnalyzer(AudioParameterFloat* parameter, AudioProcessorValueTreeState* in_state);
 
 	//==============================================================================
 	void getNextAudioBlock(juce::AudioBuffer<float>& bufferToFill) override;
@@ -28,18 +28,13 @@ public:
 	void calculate_next_frame_of_spectrum() override;
 	int get_fft_mean_value() override;
 	void calculate_fft() override;
+	float calculate_variation(int new_frequency_peak);
 	int get_fft_peak() override;
 
 	//===============================================================================
 	//Accessors
 	double get_frequency_interval() const;
-	int get_min_frequency_fft_index() const;
-	void set_min_frequency_fft_index(int min_frequency_fft_index);
-	int get_max_frequency_fft_index() const;
-	void set_max_frequency_fft_index(int _max_frequency_fft_index);
 	float get_fft_index_upper_limit() const;
-	float get_speed() const;
-	void set_speed(const float speed);
 
 	//===============================================================================
 	float get_last_value() const override;
@@ -53,7 +48,6 @@ public:
 		scope_size = 512
 	};
 
-	float threshold = 0.;
 public:
 	double sample_rate;
 	double frequency_interval;
@@ -75,18 +69,15 @@ private:
 	bool nextFFTBlockReady = false;
 
 
-	int min_frequency_fft_index = 0;
-	int max_frequency_fft_index = 1000;
-
 	int block_index = 0;
 
 	int fft_sum_ = 0;
 	int fft_index_ = 0;
 
-	float variation_speed = 1.; // between 0 and 1
 	int last_fft_peak = 0;
 
-	float rms_blocks_length = 1;
+	int min_frequency_fft_index = 0;
+	int max_frequency_fft_index= 1000;
 
 	juce::dsp::WindowingFunction<float> window;
 };

@@ -1,9 +1,10 @@
 #include "SpectrumAnalyzer.h"
 
-SpectrumAnalyzer::SpectrumAnalyzer(AudioParameterFloat* parameter): forwardFFT(fft_order),
-                                                                    window(fft_size,
-                                                                           juce::dsp::WindowingFunction<float>::hann),
-                                                                    Analyzer(parameter, util::FREQUENCY_PEAK)
+SpectrumAnalyzer::SpectrumAnalyzer(AudioParameterFloat* parameter, AudioProcessorValueTreeState* in_state):
+	forwardFFT(fft_order),
+	window(fft_size,
+	       juce::dsp::WindowingFunction<float>::hann),
+	Analyzer(parameter, in_state, util::FREQUENCY_PEAK)
 
 {
 }
@@ -127,11 +128,28 @@ void SpectrumAnalyzer::calculate_fft()
 	}
 }
 
+float SpectrumAnalyzer::calculate_variation(const int new_frequency_peak)
+{
+	const float variation_speed = in_parameters_state->getParameter("fft_speed")->getValue();
+	return (new_frequency_peak - last_fft_peak) * variation_speed;
+}
+
 int SpectrumAnalyzer::get_fft_peak()
 {
+	const float min_frequency_fft_index_0to1 = in_parameters_state->getParameter("min_frequency")->getValue();
+	min_frequency_fft_index = in_parameters_state->getParameterRange("min_frequency")
+	                                             .convertFrom0to1(
+		                                             min_frequency_fft_index_0to1);
+
+	const float max_frequency_fft_index_0to1 = in_parameters_state->getParameter("max_frequency")->getValue();
+	max_frequency_fft_index = in_parameters_state->getParameterRange("max_frequency")
+	                                             .convertFrom0to1(
+		                                             max_frequency_fft_index_0to1);
+
 	jassert(
 		min_frequency_fft_index >= 0 && max_frequency_fft_index <= fft_size && min_frequency_fft_index <=
 		max_frequency_fft_index);
+
 
 	const auto max_iterator = std::max_element(fftData.begin() + min_frequency_fft_index,
 	                                           fftData.begin() + max_frequency_fft_index);
@@ -141,13 +159,13 @@ int SpectrumAnalyzer::get_fft_peak()
 	if (max_iterator != max_index_iterator)
 	{
 		const float peak_amplitude = *max_iterator;
-		if (peak_amplitude >= threshold)
+		if (peak_amplitude >= in_parameters_state->getParameter("threshold")->getValue())
 		{
 			const auto index = std::distance(fftData.begin(), max_iterator);
 
 			const int new_frequency_peak = index * frequency_interval;
 
-			const int variation = (new_frequency_peak - last_fft_peak) * variation_speed;
+			const int variation = calculate_variation(new_frequency_peak);
 
 			const int out_fft_peak = last_fft_peak + variation;
 			last_fft_peak = out_fft_peak;
@@ -164,39 +182,9 @@ double SpectrumAnalyzer::get_frequency_interval() const
 	return frequency_interval;
 }
 
-int SpectrumAnalyzer::get_min_frequency_fft_index() const
-{
-	return min_frequency_fft_index;
-}
-
-void SpectrumAnalyzer::set_min_frequency_fft_index(int min_frequency_fft_index)
-{
-	this->min_frequency_fft_index = min_frequency_fft_index;
-}
-
-int SpectrumAnalyzer::get_max_frequency_fft_index() const
-{
-	return max_frequency_fft_index;
-}
-
-void SpectrumAnalyzer::set_max_frequency_fft_index(int _max_frequency_fft_index)
-{
-	max_frequency_fft_index = _max_frequency_fft_index;
-}
-
 float SpectrumAnalyzer::get_fft_index_upper_limit() const
 {
 	return fft_upper_limit;
-}
-
-float SpectrumAnalyzer::get_speed() const
-{
-	return variation_speed;
-}
-
-void SpectrumAnalyzer::set_speed(const float speed)
-{
-	this->variation_speed = speed;
 }
 
 float SpectrumAnalyzer::get_last_value() const

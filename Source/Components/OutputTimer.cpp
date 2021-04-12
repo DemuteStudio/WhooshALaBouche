@@ -12,6 +12,7 @@ OutputTimer::OutputTimer(ParametersState* parameter, std::vector<Analyzer*>& ana
 	{
 		DBG("Not Connected");
 	}
+	startTimerHz(60);
 }
 
 OutputTimer::~OutputTimer()
@@ -23,8 +24,9 @@ void OutputTimer::timerCallback()
 	for (std::vector<Analyzer*>::value_type analyzer : analyzers)
 	{
 		float value = analyzer->get_last_value();
+		const float normalized_value = analyzer->out_parameter->convertTo0to1(value);
 
-		analyzer->parameter->setValueNotifyingHost(value);
+		analyzer->out_parameter->setValueNotifyingHost(normalized_value);
 
 		osc_sender_.send<float>(analyzer->get_osc_address(), std::move(value));
 	}

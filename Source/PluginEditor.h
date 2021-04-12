@@ -34,7 +34,7 @@ private:
 	// access the processor object that created it.
 	WhooshGeneratorAudioProcessor& audioProcessor;
 
-	ParametersBox parameters_box_;
+	ParametersBox in_parameters_box_;
 
 	void enableRecording();
 

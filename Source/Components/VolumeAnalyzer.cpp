@@ -1,12 +1,15 @@
 #include "VolumeAnalyzer.h"
 
-VolumeAnalyzer::VolumeAnalyzer(AudioParameterFloat* parameter): Analyzer(parameter, util::VOLUME)
+VolumeAnalyzer::VolumeAnalyzer(AudioParameterFloat* out_parameter, AudioProcessorValueTreeState* in_state): Analyzer(
+	out_parameter, in_state, util::VOLUME)
 {
 }
 
 
 void VolumeAnalyzer::getNextAudioBlock(AudioBuffer<float>& bufferToFill)
 {
+	threshold_value = in_parameters_state->getParameter("threshold")->getValue();
+
 	for (int channel = 0; channel < bufferToFill.getNumChannels(); ++channel)
 	{
 		const auto* inputBuffer = bufferToFill.getReadPointer(
@@ -72,11 +75,13 @@ void VolumeAnalyzer::calculate_rms()
 
 float VolumeAnalyzer::calculate_variation() const
 {
+	const float variation_speed = in_parameters_state->getParameter("volume_speed")->getValue();
 	return (new_rms_value - last_rms_value) * variation_speed;
 }
 
 bool VolumeAnalyzer::end_of_integration_period() const
 {
+	const int rms_blocks_length = in_parameters_state->getParameter("rms_length")->getValue();
 	return block_index >= rms_blocks_length;
 }
 

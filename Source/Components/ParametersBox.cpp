@@ -12,7 +12,7 @@ ParametersBox::ParametersBox(AudioProcessor* processor, AudioProcessorValueTreeS
 	frequency_variation_speed("frequency_variation_speed", "FREQUENCY SPEED",
 	                          util::parameter_type::FREQUENCY_VARIATION_SPEED),
 	volume_variation_speed("volume_variation_speed", "VOLUME SPEED", util::parameter_type::VOLUME_VARIATION_SPEED),
-	processor(processor)
+	processor(processor), parameters_state(parameters_state)
 
 {
 	const double samples_per_block = processor->getBlockSize();
@@ -29,9 +29,8 @@ ParametersBox::ParametersBox(AudioProcessor* processor, AudioProcessorValueTreeS
 	addAndMakeVisible(volume_variation_speed);
 
 
-	link_sliders_to_parameters(parameters_state);
+	link_sliders_to_parameters();
 	set_parameters_value_to_text();
-
 }
 
 ParametersBox::~ParametersBox()
@@ -90,7 +89,7 @@ void ParametersBox::parameter_gui_component::resized()
 }
 
 //==============================================================================
-void ParametersBox::link_sliders_to_parameters(AudioProcessorValueTreeState* parameters_state)
+void ParametersBox::link_sliders_to_parameters()
 {
 	sliders_attachment_.push_back(std::make_unique<AudioProcessorValueTreeState::SliderAttachment>(
 		*parameters_state, "threshold", *threshold.slider));
@@ -119,14 +118,18 @@ void ParametersBox::set_parameters_value_to_text()
 		return std::to_string(rms_length_value) + " ms";
 	};
 
-	// frequency_band.slider->textFromValueFunction = [](double value)-> String
-	// {
-	// 	const int value_in_db = Decibels::gainToDecibels(value);
-	// 	return std::to_string(value_in_db) +  " dB";
-	// };
-	frequency_band.slider->textFromValueFunction = [](double value)-> String
+	frequency_band.slider->textFromValueFunction = [this](double value)-> String
 	{
-		return std::to_string(value) +  " :)";
+		RangedAudioParameter* min_frequency_parameter = parameters_state->getParameter("min_frequency");
+		const int min_frequency = min_frequency_parameter->convertFrom0to1(
+			min_frequency_parameter->getValue());
+
+		RangedAudioParameter* max_frequency_parameter = parameters_state->getParameter("max_frequency");
+		const int max_frequency = min_frequency_parameter->convertFrom0to1(
+			max_frequency_parameter->getValue());
+
+
+		return std::to_string(min_frequency) + " / " + std::to_string(max_frequency)+ " Hz";
 	};
 
 	frequency_variation_speed.slider->textFromValueFunction = [](double value)-> String

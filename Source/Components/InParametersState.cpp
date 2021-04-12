@@ -8,6 +8,10 @@ InParametersState::InParametersState(AudioProcessor* processor, int fft_size): f
 			create_parameters());
 }
 
+InParametersState::~InParametersState()
+{
+}
+
 AudioProcessorValueTreeState::ParameterLayout InParametersState::create_parameters()
 {
 	std::vector<std::unique_ptr<RangedAudioParameter>> parameters;
@@ -18,7 +22,7 @@ AudioProcessorValueTreeState::ParameterLayout InParametersState::create_paramete
 	parameters.push_back(std::make_unique<AudioParameterFloat>("rms_length", "RMS LENGTH", 0.0f, 10.0f, 0.f));
 	parameters.push_back(std::make_unique<AudioParameterFloat>("min_frequency", "MIN FREQUENCY", frequency_range, 0.,
 	                                                           "MIN FREQUENCY", AudioProcessorParameter::genericParameter));
-	parameters.push_back(std::make_unique<AudioParameterFloat>("max_frequency", "MAX FREQUENCY", frequency_range, fft_size_,
+	parameters.push_back(std::make_unique<AudioParameterFloat>("max_frequency", "MAX FREQUENCY", frequency_range, fft_size_/2,
 	                                                           "MAX FREQUENCY", AudioProcessorParameter::genericParameter));
 	parameters.push_back(std::make_unique<AudioParameterFloat>("fft_speed", "FFT SPEED", 0.0f, 1.0f, 1.f));
 	parameters.push_back(std::make_unique<AudioParameterFloat>("volume_speed", "VOLUME SPEED", 0.0f, 1.0f, 1.f));
