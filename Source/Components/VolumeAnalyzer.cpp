@@ -81,7 +81,7 @@ float VolumeAnalyzer::calculate_variation() const
 
 bool VolumeAnalyzer::end_of_integration_period() const
 {
-	const int rms_blocks_length = in_parameters_state->getParameter("rms_length")->getValue();
+	const int rms_blocks_length = 2/sample_rate;
 	return block_index >= rms_blocks_length;
 }
 

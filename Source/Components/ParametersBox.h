@@ -21,7 +21,7 @@ public:
 	void paint(juce::Graphics&) override;
 	void resized() override;
 
-	void add_listener(Slider::Listener* listener) const;
+	void add_sliders_listener(Slider::Listener* listener) const;
 
 
 	std::vector<std::unique_ptr<AudioProcessorValueTreeState::SliderAttachment>> sliders_attachment_;
@@ -45,11 +45,11 @@ public:
 
 
 	parameter_gui_component threshold;
-	parameter_gui_component rms_length;
-	parameter_gui_component fft_order;
 	parameter_gui_component frequency_band;
 	parameter_gui_component frequency_variation_speed;
 	parameter_gui_component volume_variation_speed;
+
+	ToggleButton osc_button;
 
 
 private:

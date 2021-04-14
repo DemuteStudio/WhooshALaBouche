@@ -11,8 +11,8 @@ void GainProcess::getNextAudioBlock(juce::AudioBuffer<float>& bufferToFill)
 
 	for (int channel = 0; channel < bufferToFill.getNumChannels(); ++channel)
 	{
-		auto* input_buffer = bufferToFill.getReadPointer(channel);
-		auto* output_buffer = bufferToFill.getWritePointer(channel);
+		const float* input_buffer = bufferToFill.getReadPointer(channel);
+		float* output_buffer = bufferToFill.getWritePointer(channel);
 
 		for (int sample = 0; sample < bufferToFill.getNumSamples(); ++sample)
 		{
@@ -20,6 +20,7 @@ void GainProcess::getNextAudioBlock(juce::AudioBuffer<float>& bufferToFill)
 		}
 	}
 	previous_parameter_value = parameter_->getValue();
+	DBG("previous_parameter_value:  " << previous_parameter_value);
 }
 
 void GainProcess::prepareToPlay(double sampleRate, int samplesPerBlock)

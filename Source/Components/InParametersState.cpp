@@ -19,7 +19,6 @@ AudioProcessorValueTreeState::ParameterLayout InParametersState::create_paramete
 	NormalisableRange<float> frequency_range = util::log_range<float>(1.,(float)fft_size_/2);
 
 	parameters.push_back(std::make_unique<AudioParameterFloat>("threshold", "THRESHOLD", 0.0f, .5f, 0.f));
-	parameters.push_back(std::make_unique<AudioParameterFloat>("rms_length", "RMS LENGTH", 0.0f, 10.0f, 0.f));
 	parameters.push_back(std::make_unique<AudioParameterFloat>("min_frequency", "MIN FREQUENCY", frequency_range, 0.,
 	                                                           "MIN FREQUENCY", AudioProcessorParameter::genericParameter));
 	parameters.push_back(std::make_unique<AudioParameterFloat>("max_frequency", "MAX FREQUENCY", frequency_range, fft_size_/2,

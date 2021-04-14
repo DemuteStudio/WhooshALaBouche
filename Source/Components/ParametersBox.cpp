@@ -5,8 +5,6 @@
 
 ParametersBox::ParametersBox(AudioProcessor* processor, AudioProcessorValueTreeState* parameters_state, int fft_size):
 	threshold("threshold", "THRESHOLD", util::parameter_type::THRESHOLD),
-	rms_length("rms_length", "RMS LENGTH", util::parameter_type::RMS_LENGTH),
-	fft_order("fft_order", "FFT ORDER", util::parameter_type::FFT_ORDER),
 	frequency_band("frequency_band", "FREQUENCY BAND", util::parameter_type::FREQUENCY_BAND,
 	               Slider::TwoValueHorizontal),
 	frequency_variation_speed("frequency_variation_speed", "FREQUENCY SPEED",
@@ -20,14 +18,13 @@ ParametersBox::ParametersBox(AudioProcessor* processor, AudioProcessorValueTreeS
 
 	double time_per_block = (samples_per_block / sample_rate);
 
-
 	addAndMakeVisible(threshold);
-	addAndMakeVisible(rms_length);
-	addAndMakeVisible(fft_order);
 	addAndMakeVisible(frequency_band);
 	addAndMakeVisible(frequency_variation_speed);
 	addAndMakeVisible(volume_variation_speed);
 
+	addAndMakeVisible(osc_button);
+	osc_button.setButtonText("OSC");
 
 	link_sliders_to_parameters();
 	set_parameters_value_to_text();
@@ -63,16 +60,15 @@ void ParametersBox::resized()
 	const int slider_height = height / 5;
 
 	threshold.setBounds(rectangle.removeFromTop(slider_height));
-	rms_length.setBounds(rectangle.removeFromTop(slider_height));
 	frequency_band.setBounds(rectangle.removeFromTop(slider_height));
 	frequency_variation_speed.setBounds(rectangle.removeFromTop(slider_height));
 	volume_variation_speed.setBounds(rectangle.removeFromTop(slider_height));
+	osc_button.setBounds(rectangle.removeFromTop(slider_height));
 }
 
-void ParametersBox::add_listener(Slider::Listener* listener) const
+void ParametersBox::add_sliders_listener(Slider::Listener* listener) const
 {
 	threshold.slider->addListener(listener);
-	rms_length.slider->addListener(listener);
 	frequency_band.slider->addListener(listener);
 	frequency_variation_speed.slider->addListener(listener);
 	volume_variation_speed.slider->addListener(listener);
@@ -94,8 +90,6 @@ void ParametersBox::link_sliders_to_parameters()
 	sliders_attachment_.push_back(std::make_unique<AudioProcessorValueTreeState::SliderAttachment>(
 		*parameters_state, "threshold", *threshold.slider));
 	sliders_attachment_.push_back(std::make_unique<AudioProcessorValueTreeState::SliderAttachment>(
-		*parameters_state, "rms_length", *rms_length.slider));
-	sliders_attachment_.push_back(std::make_unique<AudioProcessorValueTreeState::SliderAttachment>(
 		*parameters_state, "fft_speed", *frequency_variation_speed.slider));
 	sliders_attachment_.push_back(std::make_unique<AudioProcessorValueTreeState::SliderAttachment>(
 		*parameters_state, "volume_speed", *volume_variation_speed.slider));
@@ -109,13 +103,6 @@ void ParametersBox::set_parameters_value_to_text()
 	{
 		const int value_in_db = Decibels::gainToDecibels(value);
 		return std::to_string(value_in_db) + " dB";
-	};
-
-	rms_length.slider->textFromValueFunction = [this](double value)-> String
-	{
-		const int rms_length_value = (value + 1) * (processor->getBlockSize() / processor->
-			getSampleRate() * 1000.);
-		return std::to_string(rms_length_value) + " ms";
 	};
 
 	frequency_band.slider->textFromValueFunction = [this](double value)-> String

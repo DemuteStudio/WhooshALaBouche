@@ -19,6 +19,16 @@ OutputTimer::~OutputTimer()
 {
 }
 
+void OutputTimer::start_sending_osc()
+{
+	sending_osc_ = true;
+}
+
+void OutputTimer::stop_sending_osc()
+{
+	sending_osc_ = false;
+}
+
 void OutputTimer::timerCallback()
 {
 	for (std::vector<Analyzer*>::value_type analyzer : analyzers)
@@ -28,6 +38,9 @@ void OutputTimer::timerCallback()
 
 		analyzer->out_parameter->setValueNotifyingHost(normalized_value);
 
-		osc_sender_.send<float>(analyzer->get_osc_address(), std::move(value));
+		if (sending_osc_)
+		{
+			osc_sender_.send<float>(analyzer->get_osc_address(), std::move(value));
+		}
 	}
 }
