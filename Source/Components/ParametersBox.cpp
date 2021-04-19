@@ -22,9 +22,6 @@ ParametersBox::ParametersBox(AudioProcessor* processor, AudioProcessorValueTreeS
 	addAndMakeVisible(frequency_variation_speed);
 	addAndMakeVisible(volume_variation_speed);
 
-	addAndMakeVisible(osc_button);
-	osc_button.setButtonText("OSC");
-
 	link_sliders_to_parameters();
 	set_parameters_value_to_text();
 }
@@ -62,7 +59,6 @@ void ParametersBox::resized()
 	frequency_band.setBounds(rectangle.removeFromTop(slider_height));
 	frequency_variation_speed.setBounds(rectangle.removeFromTop(slider_height));
 	volume_variation_speed.setBounds(rectangle.removeFromTop(slider_height));
-	osc_button.setBounds(rectangle.removeFromTop(slider_height));
 }
 
 void ParametersBox::add_sliders_listener(Slider::Listener* listener) const

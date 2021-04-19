@@ -14,8 +14,6 @@ public:
 
 	//==============================k========================================================================
 
-	void start_sending_osc();
-	void stop_sending_osc();
 private:
 	void timerCallback() override;
 	//===================================================================
@@ -24,5 +22,4 @@ private:
 
 	OSCSender osc_sender_;
 
-	bool sending_osc_ = true;
 };

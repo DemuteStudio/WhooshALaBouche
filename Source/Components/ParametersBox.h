@@ -49,7 +49,6 @@ public:
 	parameter_gui_component frequency_variation_speed;
 	parameter_gui_component volume_variation_speed;
 
-	ToggleButton osc_button;
 
 
 private:

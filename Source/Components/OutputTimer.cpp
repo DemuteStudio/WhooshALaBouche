@@ -19,15 +19,6 @@ OutputTimer::~OutputTimer()
 {
 }
 
-void OutputTimer::start_sending_osc()
-{
-	sending_osc_ = true;
-}
-
-void OutputTimer::stop_sending_osc()
-{
-	sending_osc_ = false;
-}
 
 void OutputTimer::timerCallback()
 {
@@ -37,10 +28,5 @@ void OutputTimer::timerCallback()
 		const float normalized_value = analyzer->out_parameter->convertTo0to1(value);
 
 		analyzer->out_parameter->setValueNotifyingHost(normalized_value);
-
-		if (sending_osc_)
-		{
-			osc_sender_.send<float>(analyzer->get_osc_address(), std::move(value));
-		}
 	}
 }
