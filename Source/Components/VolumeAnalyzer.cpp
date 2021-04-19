@@ -18,7 +18,7 @@ void VolumeAnalyzer::getNextAudioBlock(AudioBuffer<float>& bufferToFill)
 		auto* outputBuffer = bufferToFill.getWritePointer(channel);
 
 
-		accumulate_samples(inputBuffer);
+		accumulate_samples_squares(inputBuffer);
 		apply_threshold_to_buffer(inputBuffer, outputBuffer);
 
 		if (end_of_integration_period())
@@ -47,15 +47,13 @@ void VolumeAnalyzer::apply_threshold_to_buffer(const float* inputBuffer, float* 
 {
 	for (auto sample = 0; sample < samples_per_block; ++sample)
 	{
-		samples_squares_sum += inputBuffer[sample] * inputBuffer[sample];
-
 		(last_rms_value >= threshold_value)
 			? outputBuffer[sample] = inputBuffer[sample]
 			: outputBuffer[sample] = 0;
 	}
 }
 
-void VolumeAnalyzer::accumulate_samples(const float* inputBuffer)
+void VolumeAnalyzer::accumulate_samples_squares(const float* inputBuffer)
 {
 	for (auto sample = 0; sample < samples_per_block; ++sample)
 	{

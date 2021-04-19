@@ -16,11 +16,17 @@ WhooshGeneratorAudioProcessor::WhooshGeneratorAudioProcessor() : out_parameters(
                                                                  volume_analyzer_(
 	                                                                 std::make_unique<VolumeAnalyzer>(
 		                                                                 (AudioParameterFloat*)out_parameters.
-		                                                                 get_state()->getParameter("volume"),in_parameters.get_state() )),
+		                                                                 get_state()->getParameter("volume"),
+		                                                                 in_parameters.get_state())),
                                                                  spectrum_analyzer(
 	                                                                 std::make_unique<SpectrumAnalyzer>(
 		                                                                 (AudioParameterFloat*)out_parameters.
-		                                                                 get_state()->getParameter("frequency"),in_parameters.get_state())),
+		                                                                 get_state()->getParameter("frequency"),
+		                                                                 in_parameters.get_state())),
+                                                                 gain_process_(
+	                                                                 std::make_unique<GainProcess>(
+		                                                                 out_parameters.get_state()->getParameter(
+			                                                                 "volume"))),
                                                                  OutputTimer(&out_parameters, analyzers),
 #ifndef JucePlugin_PreferredChannelConfigurations
                                                                  AudioProcessor(BusesProperties()
@@ -49,16 +55,16 @@ WhooshGeneratorAudioProcessor::WhooshGeneratorAudioProcessor() : out_parameters(
 
 		                                                                 true
 	                                                                 )
-	                                                                 // .withInput("Sidechain",
-	                                                                 //            juce::AudioChannelSet::stereo())
+	                                                                 .withInput("Sidechain",
+		                                                                 juce::AudioChannelSet::stereo())
 #endif
                                                                  )
 #endif
 {
-	// add_element_to_fx_chain(volume_analyzer_.get());
-	// add_element_to_fx_chain(spectrum_analyzer.get());
+	sidechain_input_processing_chain = {volume_analyzer_.get(), spectrum_analyzer.get()};
 
-	fx_chain = {volume_analyzer_.get(), spectrum_analyzer.get()};
+	input_processing_chain = {gain_process_.get()};
+
 	analyzers = {volume_analyzer_.get(), spectrum_analyzer.get()};
 }
 
@@ -131,7 +137,7 @@ void WhooshGeneratorAudioProcessor::changeProgramName(int index, const juce::Str
 void WhooshGeneratorAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock)
 {
 	audioSource.prepareToPlay(samplesPerBlock, sampleRate);
-	for (std::list<fx_chain_element*>::value_type element : fx_chain)
+	for (std::list<fx_chain_element*>::value_type element : sidechain_input_processing_chain)
 	{
 		element->prepareToPlay(sampleRate, samplesPerBlock);
 	}
@@ -186,18 +192,22 @@ void WhooshGeneratorAudioProcessor::processBlock(juce::AudioBuffer<float>& buffe
 
 	const int input_buses_count = getBusCount(true);
 
-	AudioBuffer<float> mainInputOutput = getBusBuffer(buffer, true, 0);
-	// AudioBuffer<float> sideChainInput = getBusBuffer(buffer, true, 1);
+	AudioBuffer<float> mainInput = getBusBuffer(buffer, true, 0);
+	AudioBuffer<float> sideChainInput = getBusBuffer(buffer, true, 1);
 
-	auto selectedBuffer = mainInputOutput;
-	auto bufferToFill = AudioSourceChannelInfo(selectedBuffer);
+	auto selectedBuffer = sideChainInput;
 
-
-	for (std::list<fx_chain_element>::value_type* element : fx_chain)
+	for (std::list<fx_chain_element>::value_type* element : sidechain_input_processing_chain)
 	{
-		element->getNextAudioBlock(buffer);
+		element->getNextAudioBlock(sideChainInput);
 	}
-	audioSource.getNextAudioBlock(bufferToFill);
+
+	for (std::list<fx_chain_element>::value_type* element : input_processing_chain)
+	{
+		element->getNextAudioBlock(mainInput);
+	}
+
+	audioSource.getNextAudioBlock(AudioSourceChannelInfo(mainInput));
 }
 
 //==============================================================================
@@ -208,16 +218,17 @@ bool WhooshGeneratorAudioProcessor::hasEditor() const
 
 void WhooshGeneratorAudioProcessor::add_element_to_fx_chain(fx_chain_element* element)
 {
-	fx_chain.push_back(element);
+	sidechain_input_processing_chain.push_back(element);
 	element->prepareToPlay(getSampleRate(), getBlockSize());
 }
 
 void WhooshGeneratorAudioProcessor::remove_element_to_fx_chain(fx_chain_element* element)
 {
-	fx_chain.erase(std::find(fx_chain.begin(), fx_chain.end(), element));
+	sidechain_input_processing_chain.erase(std::find(sidechain_input_processing_chain.begin(),
+	                                                 sidechain_input_processing_chain.end(), element));
 }
 
-juce::AudioProcessorEditor* WhooshGeneratorAudioProcessor::createEditor()
+AudioProcessorEditor* WhooshGeneratorAudioProcessor::createEditor()
 {
 	return new WhooshGeneratorAudioProcessorEditor(*this);
 }

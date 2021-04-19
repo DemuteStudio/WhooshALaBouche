@@ -25,6 +25,8 @@
         <FILE id="RmY2e7" name="Util.h" compile="0" resource="0" file="Source/Components/Util.h"/>
       </GROUP>
       <GROUP id="{D19AE344-B3E1-CD7B-15BE-280F3E1512FD}" name="BackEnd">
+        <FILE id="cAJjtB" name="GainProcess.cpp" compile="1" resource="0" file="Source/Components/GainProcess.cpp"/>
+        <FILE id="XKR2mU" name="GainProcess.h" compile="0" resource="0" file="Source/Components/GainProcess.h"/>
         <FILE id="ZIW2Z4" name="OutputTimer.cpp" compile="1" resource="0" file="Source/Components/OutputTimer.cpp"/>
         <FILE id="UzjErD" name="OutputTimer.h" compile="0" resource="0" file="Source/Components/OutputTimer.h"/>
         <FILE id="uqFl3Z" name="InParametersState.cpp" compile="1" resource="0"

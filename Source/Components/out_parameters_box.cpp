@@ -21,7 +21,7 @@ out_parameters_box::out_parameters_box(AudioProcessorValueTreeState* processor_s
 
 	volume_out.slider->textFromValueFunction = [](double value)-> String
 	{
-		const int value_in_db = Decibels::gainToDecibels(value);
+		const int value_in_db = util::gain_to_decibels(value);
 		return std::to_string(value_in_db) + " dB";
 	};
 

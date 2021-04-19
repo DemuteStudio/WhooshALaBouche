@@ -11,7 +11,6 @@ ParametersBox::ParametersBox(AudioProcessor* processor, AudioProcessorValueTreeS
 	                          util::parameter_type::FREQUENCY_VARIATION_SPEED),
 	volume_variation_speed("volume_variation_speed", "VOLUME SPEED", util::parameter_type::VOLUME_VARIATION_SPEED),
 	processor(processor), parameters_state(parameters_state)
-
 {
 	const double samples_per_block = processor->getBlockSize();
 	const double sample_rate = processor->getSampleRate();

@@ -20,7 +20,7 @@ void GainProcess::getNextAudioBlock(juce::AudioBuffer<float>& bufferToFill)
 		}
 	}
 	previous_parameter_value = parameter_->getValue();
-	DBG("previous_parameter_value:  " << previous_parameter_value);
+	// DBG("previous_parameter_value:  " << previous_parameter_value);
 }
 
 void GainProcess::prepareToPlay(double sampleRate, int samplesPerBlock)

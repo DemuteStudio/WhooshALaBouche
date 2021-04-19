@@ -18,6 +18,7 @@
 #include "Components/VolumeAnalyzer.h"
 #include "Components/SpectrumAnalyzer.h"
 #include "Components/OutputTimer.h"
+#include "Components/GainProcess.h"
 
 
 using namespace juce;
@@ -90,7 +91,11 @@ private:
 	std::unique_ptr<VolumeAnalyzer> volume_analyzer_;
 	std::unique_ptr<SpectrumAnalyzer> spectrum_analyzer;
 
-	std::list<fx_chain_element*> fx_chain;
+	std::unique_ptr<GainProcess> gain_process_;
+
+	std::list<fx_chain_element*> sidechain_input_processing_chain;
+	std::list<fx_chain_element*> input_processing_chain;
+
 	std::vector<Analyzer*> analyzers;
 
 

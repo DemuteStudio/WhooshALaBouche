@@ -14,18 +14,11 @@ public:
 	void prepareToPlay(double sampleRate, int samplesPerBlock) override;
 	//=================================================================================================
 	void apply_threshold_to_buffer(const float* inputBuffer, float* outputBuffer);
-	void accumulate_samples(const float* inputBuffer);
+	void accumulate_samples_squares(const float* inputBuffer);
 	void calculate_rms();
 	float calculate_variation() const;
 	bool end_of_integration_period() const;
 	//=================================================================================================
-
-	//=================================================================================================
-	struct zero_crossing_detector
-	{
-		zero_crossing_detector() = default;
-		bool soundEnabled = false;
-	};
 
 	//=================================================================================================
 	float get_last_rms_value_in_db() const;

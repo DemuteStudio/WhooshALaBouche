@@ -95,8 +95,8 @@ void SpectrumAnalyzer::calculate_next_frame_of_spectrum()
 		float level = 0;
 		if (fft_data_index >= min_frequency_fft_index && fft_data_index <= max_frequency_fft_index)
 		{
-			level = juce::jmap(juce::jlimit(mindB, maxdB, juce::Decibels::gainToDecibels(fftData[fft_data_index])
-			                                - juce::Decibels::gainToDecibels((float)fft_size)),
+			level = juce::jmap(juce::jlimit(mindB, maxdB, Decibels::gainToDecibels(fftData[fft_data_index])
+			                                - Decibels::gainToDecibels((float)fft_size)),
 			                   mindB, maxdB, 0.0f, 1.0f);
 		}
 

@@ -196,6 +196,7 @@ void AudioWaveformOpenGLComponent::calculateVertices(unsigned int channel)
 
 	const ScopedNullableLock lock(bufferUpdateLock_);
 
+
 	const float* samples = buffer->getReadPointer(channel);
 	int vertice = 0;
 
