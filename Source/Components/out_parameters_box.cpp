@@ -15,12 +15,12 @@ out_parameters_box::out_parameters_box(AudioProcessorValueTreeState* output_para
 	}
 
 	volume_out_attachment_ = std::make_unique<AudioProcessorValueTreeState::SliderAttachment>(
-		*output_parameters, util::volume_out_strings.id, *volume_out.slider);
+		*output_parameters, parameters::volume_out.id, *volume_out.slider);
 	frequency_out_attachment_ = std::make_unique<AudioProcessorValueTreeState::SliderAttachment>(
-		*output_parameters, util::frequency_out_strings.id, *frequency_out.slider);
+		*output_parameters, parameters::frequency_out.id, *frequency_out.slider);
 
 	analyze_on_pause_attachment = std::make_unique<AudioProcessorValueTreeState::ButtonAttachment>(
-		*internal_parameters, util::analyze_on_pause_strings.id, analyze_on_pause_button);
+		*internal_parameters, parameters::analyze_on_pause.id, analyze_on_pause_button);
 
 	volume_out.slider->textFromValueFunction = [](double value)-> String
 	{

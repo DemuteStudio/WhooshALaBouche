@@ -130,19 +130,19 @@ void SpectrumAnalyzer::calculate_fft()
 
 float SpectrumAnalyzer::calculate_variation(const int new_frequency_peak)
 {
-	const float variation_speed = in_parameters_state->getParameter(util::frequency_speed_strings.id)->getValue();
+	const float variation_speed = in_parameters_state->getParameter(parameters::frequency_speed.id)->getValue();
 	return (new_frequency_peak - last_fft_peak) * variation_speed;
 }
 
 int SpectrumAnalyzer::get_fft_peak()
 {
-	const float min_frequency_fft_index_0to1 = in_parameters_state->getParameter(util::min_frequency_strings.id)->getValue();
-	min_frequency_fft_index = in_parameters_state->getParameterRange(util::min_frequency_strings.id)
+	const float min_frequency_fft_index_0to1 = in_parameters_state->getParameter(parameters::min_frequency.id)->getValue();
+	min_frequency_fft_index = in_parameters_state->getParameterRange(parameters::min_frequency.id)
 	                                             .convertFrom0to1(
 		                                             min_frequency_fft_index_0to1);
 
-	const float max_frequency_fft_index_0to1 = in_parameters_state->getParameter(util::max_frequency_strings.id)->getValue();
-	max_frequency_fft_index = in_parameters_state->getParameterRange(util::max_frequency_strings.id)
+	const float max_frequency_fft_index_0to1 = in_parameters_state->getParameter(parameters::max_frequency.id)->getValue();
+	max_frequency_fft_index = in_parameters_state->getParameterRange(parameters::max_frequency.id)
 	                                             .convertFrom0to1(
 		                                             max_frequency_fft_index_0to1);
 
@@ -159,7 +159,7 @@ int SpectrumAnalyzer::get_fft_peak()
 	if (max_iterator != max_index_iterator)
 	{
 		const float peak_amplitude = *max_iterator;
-		if (peak_amplitude >= in_parameters_state->getParameter(util::threshold_strings.id)->getValue())
+		if (peak_amplitude >= in_parameters_state->getParameter(parameters::threshold.id)->getValue())
 		{
 			const auto index = std::distance(fftData.begin(), max_iterator);
 

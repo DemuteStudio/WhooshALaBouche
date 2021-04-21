@@ -64,6 +64,10 @@ namespace util
 		return s;
 	}
 
+}
+
+namespace parameters
+{
 	AudioParameterString::AudioParameterString(std::string id, std::string name): id(id), name(name)
 	{
 	}

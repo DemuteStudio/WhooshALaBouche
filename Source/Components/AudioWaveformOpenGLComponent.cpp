@@ -44,23 +44,23 @@ void AudioWaveformOpenGLComponent::initialise(
 
 		shaderProgram->use();
 
-		const Colour waveformColour = getLookAndFeel().findColour(
+		const Colour waveform_colour = getLookAndFeel().findColour(
 			ColourIds::waveformColour
 		);
 		uniform.reset(
 			new OpenGLShaderProgram::Uniform(*shaderProgram, "colour")
 		);
-		uniform->set(waveformColour.getFloatRed(),
-		             waveformColour.getFloatGreen(),
-		             waveformColour.getFloatBlue(),
-		             waveformColour.getFloatAlpha()
+		uniform->set(waveform_colour.getFloatRed(),
+		             waveform_colour.getFloatGreen(),
+		             waveform_colour.getFloatBlue(),
+		             waveform_colour.getFloatAlpha()
 		);
 
 		position.reset(
 			new OpenGLShaderProgram::Attribute(*shaderProgram, "position")
 		);
 
-		vertexBuffer.reset(new VertexBuffer(openGLContext));
+		vertexBuffer.reset(new vertex_buffer(openGLContext));
 
 		statusText = "GLSL: v" +
 			String(OpenGLShaderProgram::getLanguageVersion(), 2);
@@ -133,7 +133,7 @@ void AudioWaveformOpenGLComponent::draw_channel(OpenGLContext& openGLContext, in
 
 	if (calculateVerticesTrigger)
 	{
-		calculateVertices(channel);
+		calculate_vertices(channel);
 	}
 
 	draw_vertices(openGLContext, channel);
@@ -200,7 +200,7 @@ void AudioWaveformOpenGLComponent::refresh()
 
 // ==============================================================================
 
-void AudioWaveformOpenGLComponent::calculateVertices(unsigned int channel)
+void AudioWaveformOpenGLComponent::calculate_vertices(unsigned int channel)
 {
 	// More accurate because we depend on the count of the samples 
 	// of the current file. The larger the file the less samples 
@@ -216,7 +216,7 @@ void AudioWaveformOpenGLComponent::calculateVertices(unsigned int channel)
 
 	vertices[channel].resize(number_of_vertices + 1);
 
-	const ScopedNullableLock lock(bufferUpdateLock_);
+	const scoped_nullable_lock lock(bufferUpdateLock_);
 
 
 	const float* samples = buffer->getReadPointer(channel);
@@ -314,7 +314,7 @@ GLfloat AudioWaveformOpenGLComponent::get_peak_sample_value(
 
 // ==============================================================================
 
-AudioWaveformOpenGLComponent::VertexBuffer::VertexBuffer(
+AudioWaveformOpenGLComponent::vertex_buffer::vertex_buffer(
 	OpenGLContext& open_gl_context
 ) :
 	openGLContext(open_gl_context)
@@ -322,12 +322,12 @@ AudioWaveformOpenGLComponent::VertexBuffer::VertexBuffer(
 	open_gl_context.extensions.glGenBuffers(1, &id);
 };
 
-AudioWaveformOpenGLComponent::VertexBuffer::~VertexBuffer()
+AudioWaveformOpenGLComponent::vertex_buffer::~vertex_buffer()
 {
 	openGLContext.extensions.glDeleteBuffers(1, &id);
 }
 
-void AudioWaveformOpenGLComponent::VertexBuffer::bind(
+void AudioWaveformOpenGLComponent::vertex_buffer::bind(
 	Vertex* vertices, int64 verticesCount) const
 {
 	openGLContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, id);
@@ -338,7 +338,7 @@ void AudioWaveformOpenGLComponent::VertexBuffer::bind(
 	);
 }
 
-void AudioWaveformOpenGLComponent::VertexBuffer::unbind()
+void AudioWaveformOpenGLComponent::vertex_buffer::unbind()
 {
 	openGLContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, 0);
 }

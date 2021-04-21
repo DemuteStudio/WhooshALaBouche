@@ -19,17 +19,17 @@ AudioProcessorValueTreeState::ParameterLayout InParametersState::create_paramete
 	NormalisableRange<float> frequency_range = util::log_range<float>(1., (float)fft_size_ / 2);
 
 	parameters.push_back(
-		std::make_unique<AudioParameterFloat>(util::threshold_strings.id, util::threshold_strings.name, 0.0f, .5f, 0.f));
-	parameters.push_back(std::make_unique<AudioParameterFloat>(util::min_frequency_strings.id, util::min_frequency_strings.name,
+		std::make_unique<AudioParameterFloat>(parameters::threshold.id, parameters::threshold.name, 0.0f, .5f, 0.f));
+	parameters.push_back(std::make_unique<AudioParameterFloat>(parameters::min_frequency.id, parameters::min_frequency.name,
 	                                                           frequency_range, 0.,
-	                                                           util::min_frequency_strings.name,
+	                                                           parameters::min_frequency.name,
 	                                                           AudioProcessorParameter::genericParameter));
-	parameters.push_back(std::make_unique<AudioParameterFloat>(util::max_frequency_strings.id, util::max_frequency_strings.name, frequency_range,
+	parameters.push_back(std::make_unique<AudioParameterFloat>(parameters::max_frequency.id, parameters::max_frequency.name, frequency_range,
 	                                                           fft_size_ / 2,
-	                                                           util::max_frequency_strings.name,
+	                                                           parameters::max_frequency.name,
 	                                                           AudioProcessorParameter::genericParameter));
-	parameters.push_back(std::make_unique<AudioParameterFloat>(util::frequency_speed_strings.id, util::frequency_speed_strings.name, 0.0f, 1.0f, 1.f));
-	parameters.push_back(std::make_unique<AudioParameterFloat>(util::volume_speed.id, util::volume_speed.name, 0.0f, 1.0f, 1.f));
+	parameters.push_back(std::make_unique<AudioParameterFloat>(parameters::frequency_speed.id, parameters::frequency_speed.name, 0.0f, 1.0f, 1.f));
+	parameters.push_back(std::make_unique<AudioParameterFloat>(parameters::volume_speed.id, parameters::volume_speed.name, 0.0f, 1.0f, 1.f));
 
 
 	return {parameters.begin(), parameters.end()};

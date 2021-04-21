@@ -15,9 +15,11 @@ public:
 		waveformBackgroundColour = 1
 	};
 
+private:
 	struct rectangle
 	{
-		rectangle(const GLint x, const GLint y, const GLsizei width, const GLsizei height): x(x), y(y), width(width), height(height)
+		rectangle(const GLint x, const GLint y, const GLsizei width, const GLsizei height): x(x), y(y), width(width),
+			height(height)
 		{
 		}
 
@@ -36,10 +38,6 @@ public:
 	void initialise(OpenGLContext& openGLContext) override;
 
 	void shutdown(OpenGLContext& openGLContext) override;
-	void initialize_drawing() const;
-	void draw_vertices(OpenGLContext& openGLContext, int channel);
-	rectangle get_rectangle(OpenGLContext& openGLContext, int channel) const;
-	void draw_channel(OpenGLContext& openGLContext, int channel);
 
 	void render(OpenGLContext& openGLContext) override;
 
@@ -49,26 +47,28 @@ public:
 
 	void refresh();
 
+	//===============================================================================================
+	void initialize_drawing() const;
+	void draw_vertices(OpenGLContext& openGLContext, int channel);
+	rectangle get_rectangle(OpenGLContext& openGLContext, int channel) const;
+	void draw_channel(OpenGLContext& openGLContext, int channel);
+
 private:
-	void calculateVertices(unsigned int channel);
+	void calculate_vertices(unsigned int channel);
 	void set_vertice(const float* samples, int64 sample, int64 skipSample, int64 endSample, int vertice,
 	                 int numVertices,
 	                 int channel);
 
-
-	GLfloat get_peak_sample_value(
-		const float* samples, int64 startSample, int64 numSamples
-	) const;
+	GLfloat get_peak_sample_value(const float* samples, int64 startSample, int64 numSamples) const;
 
 private:
 	struct Vertex;
-	class VertexBuffer;
+	class vertex_buffer;
 
-private:
 	std::unique_ptr<OpenGLShaderProgram> shaderProgram;
 	std::unique_ptr<OpenGLShaderProgram::Attribute> position;
 	std::unique_ptr<OpenGLShaderProgram::Uniform> uniform;
-	std::unique_ptr<VertexBuffer> vertexBuffer;
+	std::unique_ptr<vertex_buffer> vertexBuffer;
 
 	AudioSampleBuffer* buffer = nullptr;
 	int bufferNumChannels = 0;
@@ -88,12 +88,12 @@ private:
 		GLfloat x, y;
 	};
 
-	class VertexBuffer
+	class vertex_buffer
 	{
 	public:
-		VertexBuffer(OpenGLContext& open_gl_context);
+		vertex_buffer(OpenGLContext& open_gl_context);
 
-		~VertexBuffer();
+		~vertex_buffer();
 
 		void bind(Vertex* vertices, int64 verticesCount) const;
 
@@ -104,10 +104,10 @@ private:
 		GLuint id;
 	};
 
-	class ScopedNullableLock
+	class scoped_nullable_lock
 	{
 	public:
-		inline explicit ScopedNullableLock(const CriticalSection* lock) noexcept
+		inline explicit scoped_nullable_lock(const CriticalSection* lock) noexcept
 			: lock_(lock)
 		{
 			if (lock_ != nullptr)
@@ -116,7 +116,7 @@ private:
 			}
 		}
 
-		inline ~ScopedNullableLock() noexcept
+		inline ~scoped_nullable_lock() noexcept
 		{
 			if (lock_ != nullptr)
 			{
