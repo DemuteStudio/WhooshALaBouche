@@ -16,7 +16,7 @@ class out_parameters_box : public juce::Component, private Button::Listener
 {
 public:
 
-	out_parameters_box(AudioProcessorValueTreeState* processor_state);
+	out_parameters_box(AudioProcessorValueTreeState* output_parameters,AudioProcessorValueTreeState* internal_parameters);
 	~out_parameters_box() override;
 
 	void paint(juce::Graphics&) override;
@@ -49,8 +49,10 @@ private:
 
 	std::unique_ptr<AudioProcessorValueTreeState::SliderAttachment> volume_out_attachment_;
 	std::unique_ptr<AudioProcessorValueTreeState::SliderAttachment> frequency_out_attachment_;
+	std::unique_ptr<AudioProcessorValueTreeState::ButtonAttachment> analyze_on_pause_attachment;
 
 	ToggleButton show_values_button;
+	ToggleButton analyze_on_pause_button;
 
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(out_parameters_box)

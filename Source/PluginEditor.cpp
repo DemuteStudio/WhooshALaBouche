@@ -5,7 +5,7 @@
 WhooshGeneratorAudioProcessorEditor::WhooshGeneratorAudioProcessorEditor(WhooshGeneratorAudioProcessor& p)
 	: AudioProcessorEditor(&p), audioProcessor(p),
 	  in_parameters_box_(&p, p.in_parameters.get_state(), SpectrumAnalyzer::fft_size),
-	  out_parameters_box_(p.out_parameters.get_state()),
+	  out_parameters_box_(p.out_parameters.get_state(), p.intern_parameters.get_state()),
 	  fft_visualizer_(p.get_spectrum_analyzer())
 {
 	setLookAndFeel(&my_look_and_feel_);

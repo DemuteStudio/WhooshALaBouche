@@ -13,14 +13,14 @@ AudioWaveformOpenGLComponent::~AudioWaveformOpenGLComponent()
 void AudioWaveformOpenGLComponent::initialise(
 	OpenGLContext& openGLContext)
 {
-	String vertexShader =
+	const String vertexShader =
 		"attribute vec2 position;\n"
 		"\n"
 		"void main()\n"
 		"{\n"
 		"    gl_Position = vec4(position.x, position.y, 1.0, 1.0);\n"
 		"};";
-	String fragmentShader =
+	const String fragmentShader =
 		"uniform vec4 colour;\n"
 		"\n"
 		"void main()\n"
@@ -44,7 +44,7 @@ void AudioWaveformOpenGLComponent::initialise(
 
 		shaderProgram->use();
 
-		Colour waveformColour = getLookAndFeel().findColour(
+		const Colour waveformColour = getLookAndFeel().findColour(
 			ColourIds::waveformColour
 		);
 		uniform.reset(
@@ -80,6 +80,65 @@ void AudioWaveformOpenGLComponent::shutdown(OpenGLContext&)
 	shaderProgram.reset();
 }
 
+void AudioWaveformOpenGLComponent::initialize_drawing() const
+{
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glEnable(GL_LINE_SMOOTH);
+
+
+	shaderProgram->use();
+}
+
+void AudioWaveformOpenGLComponent::draw_vertices(OpenGLContext& openGLContext, int channel)
+{
+	vertexBuffer->bind(vertices[channel].data(), vertices[channel].size());
+
+	openGLContext.extensions.glVertexAttribPointer(position->attributeID, 2,
+	                                               GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), 0);
+	openGLContext.extensions.glEnableVertexAttribArray(position->attributeID);
+
+	glDrawArrays(GL_LINE_STRIP, 0, (GLsizei)vertices[channel].size());
+
+	openGLContext.extensions.glDisableVertexAttribArray(position->attributeID);
+
+	vertexBuffer->unbind();
+}
+
+AudioWaveformOpenGLComponent::rectangle AudioWaveformOpenGLComponent::get_rectangle(
+	OpenGLContext& openGLContext, const int channel) const
+{
+	const auto scale = openGLContext.getRenderingScale();
+
+	Component* parent = getParentComponent();
+	const auto parent_bounds = parent->getBounds();
+
+	const auto global_bounds = parent->getLocalArea(this, getLocalBounds());
+
+	const auto x = static_cast<GLint>(scale * global_bounds.getX());
+	const auto y = static_cast<GLint>(scale * (parent_bounds.getHeight() - global_bounds.getBottom() + channel * (
+		global_bounds.getHeight() / bufferNumChannels)));
+
+	const GLint width = static_cast<GLsizei>(scale * global_bounds.getWidth());
+	const GLint height = static_cast<GLsizei>(scale * (global_bounds.getHeight() / bufferNumChannels));
+
+	return rectangle(x, y, width, height);
+}
+
+void AudioWaveformOpenGLComponent::draw_channel(OpenGLContext& openGLContext, int channel)
+{
+	const auto rectangle = get_rectangle(openGLContext, channel);
+
+	glViewport(rectangle.x, rectangle.y, rectangle.width, rectangle.height);
+
+	if (calculateVerticesTrigger)
+	{
+		calculateVertices(channel);
+	}
+
+	draw_vertices(openGLContext, channel);
+}
+
 void AudioWaveformOpenGLComponent::render(OpenGLContext& openGLContext)
 {
 	jassert(OpenGLHelpers::isContextActive ());
@@ -93,45 +152,11 @@ void AudioWaveformOpenGLComponent::render(OpenGLContext& openGLContext)
 		getLookAndFeel().findColour(ColourIds::waveformBackgroundColour)
 	);
 
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glEnable(GL_LINE_SMOOTH);
-
-	shaderProgram->use();
-
-	double scale = openGLContext.getRenderingScale();
-	Component* parent = getParentComponent();
-	Rectangle<int> parentBounds = parent->getBounds(),
-	               globalBounds = parent->getLocalArea(this, getLocalBounds());
-	GLint x = (GLint)(scale * globalBounds.getX());
-	GLsizei width = (GLsizei)(scale * globalBounds.getWidth());
-	GLsizei height = (GLsizei)(scale * (globalBounds.getHeight() / bufferNumChannels));
+	initialize_drawing();
 
 	for (int channel = 0; channel < 1; channel++)
 	{
-		GLint y = (GLint)(scale * (
-			parentBounds.getHeight() - globalBounds.getBottom() +
-			channel * (globalBounds.getHeight() / bufferNumChannels)
-		));
-
-		glViewport(x, y, width, height);
-
-		if (calculateVerticesTrigger)
-		{
-			calculateVertices(channel);
-		}
-
-		vertexBuffer->bind(vertices[channel].data(), vertices[channel].size());
-
-		openGLContext.extensions.glVertexAttribPointer(position->attributeID, 2,
-		                                               GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), 0);
-		openGLContext.extensions.glEnableVertexAttribArray(position->attributeID);
-
-		glDrawArrays(GL_LINE_STRIP, 0, (GLsizei)vertices[channel].size());
-
-		openGLContext.extensions.glDisableVertexAttribArray(position->attributeID);
-
-		vertexBuffer->unbind();
+		draw_channel(openGLContext, channel);
 	}
 
 	if (calculateVerticesTrigger)
@@ -156,7 +181,7 @@ void AudioWaveformOpenGLComponent::load(AudioSampleBuffer* newBuffer,
 	vertices.reserve(bufferNumChannels);
 	for (int i = 0; i < bufferNumChannels; i++)
 	{
-		vertices.push_back(std::vector<Vertex>());
+		vertices.emplace_back(std::vector<Vertex>());
 		vertices.back().reserve(buffer->getNumSamples());
 	}
 }
@@ -184,15 +209,12 @@ void AudioWaveformOpenGLComponent::calculateVertices(unsigned int channel)
 		visibleRegionNumSamples / (buffer->getNumSamples() * 0.04)
 	);
 	skipSamples = (skipSamples > 0) ? skipSamples : 1;
-	// Alternative approach:
-	// skipSamples = numSamples / (sampleRate * 12);
-	// More of a constant UI speed but not very accurate
 
-	int64 numVertices = visibleRegionNumSamples % skipSamples
-		                    ? visibleRegionNumSamples / skipSamples + 1
-		                    : visibleRegionNumSamples / skipSamples;
+	const int64 number_of_vertices= visibleRegionNumSamples % skipSamples
+		                          ? visibleRegionNumSamples / skipSamples + 1
+		                          : visibleRegionNumSamples / skipSamples;
 
-	vertices[channel].resize(numVertices + 1);
+	vertices[channel].resize(number_of_vertices + 1);
 
 	const ScopedNullableLock lock(bufferUpdateLock_);
 
@@ -202,38 +224,37 @@ void AudioWaveformOpenGLComponent::calculateVertices(unsigned int channel)
 
 	if (visibleRegionEndSample - visibleRegionNumSamples < 0)
 	{
-		int64 number_of_samples = visibleRegionNumSamples - visibleRegionEndSample;
-		int64 startSample = buffer->getNumSamples() - number_of_samples;
-		int64 endSample = buffer->getNumSamples();
+		const int64 number_of_samples = visibleRegionNumSamples - visibleRegionEndSample;
+		int64 start_sample = buffer->getNumSamples() - number_of_samples;
+		int64 end_sample = buffer->getNumSamples();
 
-		for (int64 sample = startSample;
-		     sample < endSample;
+		for (int64 sample = start_sample;
+		     sample < end_sample;
 		     sample += skipSamples, vertice++)
 		{
-			set_vertice(samples, sample, skipSamples, endSample, vertice, numVertices, channel);
+			set_vertice(samples, sample, skipSamples, end_sample, vertice, number_of_vertices, channel);
 		}
 
+		start_sample = 0;
+		end_sample = visibleRegionEndSample;
 
-		startSample = 0;
-		endSample = visibleRegionEndSample;
-
-		for (int64 sample = startSample;
-		     sample < endSample;
+		for (int64 sample = start_sample;
+		     sample < end_sample;
 		     sample += skipSamples, vertice++)
 		{
-			set_vertice(samples, sample, skipSamples, endSample, vertice, numVertices, channel);
+			set_vertice(samples, sample, skipSamples, end_sample, vertice, number_of_vertices, channel);
 		}
 	}
 	else
 	{
-		int64 startSample = visibleRegionEndSample - visibleRegionNumSamples;
-		int64 endSample = visibleRegionEndSample;
+		const int64 startSample = visibleRegionEndSample - visibleRegionNumSamples;
+		const int64 endSample = visibleRegionEndSample;
 
 		for (int64 sample = startSample, vertice = 0;
 		     sample < endSample;
 		     sample += skipSamples, vertice++)
 		{
-			set_vertice(samples, sample, skipSamples, endSample, vertice, numVertices, channel);
+			set_vertice(samples, sample, skipSamples, endSample, vertice, number_of_vertices, channel);
 		}
 	}
 }
@@ -242,27 +263,27 @@ void AudioWaveformOpenGLComponent::set_vertice(const float* samples, int64 sampl
                                                int vertice, int numVertices,
                                                int channel)
 {
-	int64 next_sample_interval = jmin((int64)skipSamples, endSample - sample);
-	GLfloat sampleValue = getPeakSampleValue(samples, sample, next_sample_interval);
+	const int64 next_sample_interval = jmin((int64)skipSamples, endSample - sample);
+	const GLfloat sampleValue = get_peak_sample_value(samples, sample, next_sample_interval);
 
 	Vertex vertex;
 	// should be in the [-1,+1] range
-	vertex.x = (((GLfloat)vertice / (GLfloat)numVertices) * 2) - 1;
+	vertex.x = ((static_cast<GLfloat>(vertice) / static_cast<GLfloat>(numVertices)) * 2) - 1;
 	vertex.y = sampleValue;
 
 	vertices[channel][vertice] = vertex;
 }
 
-GLfloat AudioWaveformOpenGLComponent::getAverageSampleValue(
+GLfloat getAverageSampleValue(
 	const float* samples,
 	int64 currentStartSample,
 	int64 currentNumSamples)
 {
 	GLfloat samplesSum = 0;
 	unsigned int samplesCount = 0;
-	int64 endSample = currentStartSample + currentNumSamples;
+	const int64 end_sample = currentStartSample + currentNumSamples;
 
-	for (int64 sample = currentStartSample; sample < endSample; sample++)
+	for (int64 sample = currentStartSample; sample < end_sample; sample++)
 	{
 		samplesSum += samples[sample];
 		samplesCount++;
@@ -271,34 +292,34 @@ GLfloat AudioWaveformOpenGLComponent::getAverageSampleValue(
 	return samplesSum / samplesCount;
 }
 
-GLfloat AudioWaveformOpenGLComponent::getPeakSampleValue(
+GLfloat AudioWaveformOpenGLComponent::get_peak_sample_value(
 	const float* samples,
 	int64 currentStartSample,
-	int64 currentNumSamples)
+	int64 currentNumSamples) const 
 {
-	GLfloat peakValue = 0.0f;
-	int64 endSample = currentStartSample + currentNumSamples;
+	GLfloat peak_value = 0.0f;
+	const int64 end_sample = currentStartSample + currentNumSamples;
 
-	for (int64 sample = currentStartSample; sample < endSample; sample++)
+	for (int64 sample = currentStartSample; sample < end_sample; sample++)
 	{
-		float sampleValue = samples[sample];
-		if (std::abs(peakValue) < std::abs(sampleValue))
+		const float sample_value = samples[sample];
+		if (std::abs(peak_value) < std::abs(sample_value))
 		{
-			peakValue = sampleValue;
+			peak_value = sample_value;
 		}
 	}
 
-	return peakValue;
+	return peak_value;
 }
 
 // ==============================================================================
 
 AudioWaveformOpenGLComponent::VertexBuffer::VertexBuffer(
-	OpenGLContext& openGLContext
+	OpenGLContext& open_gl_context
 ) :
-	openGLContext(openGLContext)
+	openGLContext(open_gl_context)
 {
-	openGLContext.extensions.glGenBuffers(1, &id);
+	open_gl_context.extensions.glGenBuffers(1, &id);
 };
 
 AudioWaveformOpenGLComponent::VertexBuffer::~VertexBuffer()
@@ -307,7 +328,7 @@ AudioWaveformOpenGLComponent::VertexBuffer::~VertexBuffer()
 }
 
 void AudioWaveformOpenGLComponent::VertexBuffer::bind(
-	Vertex* vertices, int64 verticesCount)
+	Vertex* vertices, int64 verticesCount) const
 {
 	openGLContext.extensions.glBindBuffer(GL_ARRAY_BUFFER, id);
 	openGLContext.extensions.glBufferData(GL_ARRAY_BUFFER,

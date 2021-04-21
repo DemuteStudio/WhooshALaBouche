@@ -83,13 +83,13 @@ void ParametersBox::parameter_gui_component::resized()
 void ParametersBox::link_sliders_to_parameters()
 {
 	sliders_attachment_.push_back(std::make_unique<AudioProcessorValueTreeState::SliderAttachment>(
-		*parameters_state, "threshold", *threshold.slider));
+		*parameters_state, util::threshold_strings.id, *threshold.slider));
 	sliders_attachment_.push_back(std::make_unique<AudioProcessorValueTreeState::SliderAttachment>(
-		*parameters_state, "fft_speed", *frequency_variation_speed.slider));
+		*parameters_state, util::frequency_speed_strings.id, *frequency_variation_speed.slider));
 	sliders_attachment_.push_back(std::make_unique<AudioProcessorValueTreeState::SliderAttachment>(
-		*parameters_state, "volume_speed", *volume_variation_speed.slider));
+		*parameters_state, util::volume_speed.id, *volume_variation_speed.slider));
 	two_values_sliders_attachment_.push_back(std::make_unique<TwoValueSliderAttachment>(
-		*parameters_state, "min_frequency", "max_frequency", *frequency_band.slider));
+		*parameters_state, util::min_frequency_strings.id, util::max_frequency_strings.id, *frequency_band.slider));
 }
 
 void ParametersBox::set_parameters_value_to_text()

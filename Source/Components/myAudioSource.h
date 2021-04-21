@@ -48,22 +48,6 @@ public:
 
 	std::shared_ptr<AudioSampleBuffer> loadRecordingBuffer(int number_of_samples_to_display);
 
-	// void stopRecording();
-	//
-	// void playAudio();
-	//
-	// void stopAudio();
-	//
-	// void pauseAudio();
-
-	// void muteAudio();
-	//
-	// void fadeInAudio();
-	//
-	// void fadeOutAudio();
-	//
-	// void normalizeAudio();
-
 	double getCurrentPosition() const;
 
 	double getLengthInSeconds() const;
@@ -83,9 +67,6 @@ public:
 	int get_sample_index();
 
 private:
-	// void selectedRegionCreated(AudioWaveformComponent* waveform) override;
-	//
-	// void selectedRegionCleared(AudioWaveformComponent* waveform) override;
 
 	void timerCallback() override;
 

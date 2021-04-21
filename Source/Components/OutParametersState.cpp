@@ -13,11 +13,11 @@ AudioProcessorValueTreeState::ParameterLayout OutParametersState::create_paramet
 	NormalisableRange<float> frequency_range = util::log_range<float>(50., 20000.);
 	NormalisableRange<float> gain_range = util::gain_range(0., 1.);
 
-	parameters.push_back(std::make_unique<AudioParameterFloat>("volume", "VOLUME", gain_range, 0.,
-	                                                           "VOLUME", AudioProcessorParameter::genericParameter));
+	parameters.push_back(std::make_unique<AudioParameterFloat>(util::volume_out_strings.id, util::volume_out_strings.name, gain_range, 0.,
+	                                                           util::volume_out_strings.name, AudioProcessorParameter::genericParameter));
 
-	parameters.push_back(std::make_unique<AudioParameterFloat>("frequency", "FREQUENCY", frequency_range, 0.,
-	                                                           "FREQUENCY", AudioProcessorParameter::genericParameter));
+	parameters.push_back(std::make_unique<AudioParameterFloat>(util::frequency_out_strings.id, util::frequency_out_strings.name, frequency_range, 0.,
+	                                                           util::frequency_out_strings.name, AudioProcessorParameter::genericParameter));
 
 	return {parameters.begin(), parameters.end()};
 }

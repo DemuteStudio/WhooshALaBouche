@@ -31,7 +31,7 @@ void my_audio_source::releaseResources()
 		recording_buffer_preallocation_thread_->stopThread(1000);
 	}
 
-		masterSource.releaseResources();
+	masterSource.releaseResources();
 }
 
 void my_audio_source::getNextAudioBlock(
@@ -105,6 +105,10 @@ std::shared_ptr<AudioSampleBuffer> my_audio_source::loadRecordingBuffer(int numb
 		1,
 		(int)(buffer_size)
 	);
+	for (int sample = 0; sample < number_of_samples_to_display; ++sample)
+	{
+		preallocated_recording_buffer_.setSample(0, sample, 0);
+	}
 
 	recording_buffer_preallocation_thread_.reset(
 		new BufferPreallocationThread(

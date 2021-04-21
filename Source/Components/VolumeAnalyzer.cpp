@@ -18,21 +18,22 @@ void VolumeAnalyzer::getNextAudioBlock(AudioBuffer<float>& bufferToFill)
 		auto* outputBuffer = bufferToFill.getWritePointer(channel);
 
 
-		accumulate_samples_squares(inputBuffer);
 		apply_threshold_to_buffer(inputBuffer, outputBuffer);
+		accumulate_samples_squares(inputBuffer);
 
 		if (end_of_integration_period())
 		{
 			calculate_rms();
 			const float variation = calculate_variation();
 			last_rms_value = last_rms_value + variation;
+
+			samples_squares_sum = 0.0;
+			block_index = 0;
 		}
 		else
 		{
 			block_index++;
 		}
-
-		sample_index += bufferToFill.getNumSamples();
 	}
 }
 
@@ -43,7 +44,7 @@ void VolumeAnalyzer::prepareToPlay(double sampleRate, int samplesPerBlock)
 }
 
 
-void VolumeAnalyzer::apply_threshold_to_buffer(const float* inputBuffer, float* outputBuffer)
+void VolumeAnalyzer::apply_threshold_to_buffer(const float* inputBuffer, float* outputBuffer) const
 {
 	for (auto sample = 0; sample < samples_per_block; ++sample)
 	{
@@ -66,20 +67,17 @@ void VolumeAnalyzer::calculate_rms()
 	new_rms_value = sqrt(samples_squares_sum / samples_per_block);
 
 	new_rms_value = (new_rms_value < threshold_value) ? 0. : new_rms_value;
-
-	samples_squares_sum = 0.0;
-	block_index = 0;
 }
 
 float VolumeAnalyzer::calculate_variation() const
 {
-	const float variation_speed = in_parameters_state->getParameter("volume_speed")->getValue();
+	const float variation_speed = in_parameters_state->getParameter(parameters::volume_speed.id)->getValue();
 	return (new_rms_value - last_rms_value) * variation_speed;
 }
 
 bool VolumeAnalyzer::end_of_integration_period() const
 {
-	const int rms_blocks_length = 2/sample_rate;
+	const int rms_blocks_length = 2 / sample_rate;
 	return block_index >= rms_blocks_length;
 }
 

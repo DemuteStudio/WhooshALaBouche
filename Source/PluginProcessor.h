@@ -19,6 +19,7 @@
 #include "Components/SpectrumAnalyzer.h"
 #include "Components/OutputTimer.h"
 #include "Components/GainProcess.h"
+#include "Components/InternParametersState.h"
 
 
 using namespace juce;
@@ -81,6 +82,7 @@ public:
 	//==============================================================================
 	OutParametersState out_parameters;
 	InParametersState in_parameters;
+	InternParametersState intern_parameters;
 
 	//==============================================================================
 	SpectrumAnalyzer* get_spectrum_analyzer();

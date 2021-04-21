@@ -13,21 +13,23 @@
 WhooshGeneratorAudioProcessor::WhooshGeneratorAudioProcessor() : out_parameters(this),
                                                                  in_parameters(
 	                                                                 this, SpectrumAnalyzer::fft_size),
+                                                                 intern_parameters(this),
                                                                  volume_analyzer_(
 	                                                                 std::make_unique<VolumeAnalyzer>(
 		                                                                 (AudioParameterFloat*)out_parameters.
-		                                                                 get_state()->getParameter("volume"),
+		                                                                 get_state()->getParameter(util::volume_out_strings.id),
 		                                                                 in_parameters.get_state())),
                                                                  spectrum_analyzer(
 	                                                                 std::make_unique<SpectrumAnalyzer>(
 		                                                                 (AudioParameterFloat*)out_parameters.
-		                                                                 get_state()->getParameter("frequency"),
+		                                                                 get_state()->getParameter(
+			                                                                 util::frequency_out_strings.id),
 		                                                                 in_parameters.get_state())),
                                                                  gain_process_(
 	                                                                 std::make_unique<GainProcess>(
 		                                                                 out_parameters.get_state()->getParameter(
-			                                                                 "volume"))),
-                                                                 OutputTimer(&out_parameters, analyzers),
+			                                                                 util::volume_out_strings.id))),
+                                                                 OutputTimer(&intern_parameters, analyzers),
 #ifndef JucePlugin_PreferredChannelConfigurations
                                                                  AudioProcessor(BusesProperties()
 #if ! JucePlugin_IsMidiEffect
@@ -188,6 +190,15 @@ void WhooshGeneratorAudioProcessor::processBlock(juce::AudioBuffer<float>& buffe
 	     ++channel)
 	{
 		buffer.clear(channel, 0, buffer.getNumSamples());
+	}
+	AudioPlayHead* playHead = getPlayHead();
+	AudioPlayHead::CurrentPositionInfo positionInfo{};
+	is_playing_ = false;
+
+	if (playHead != nullptr)
+	{
+		playHead->getCurrentPosition(positionInfo);
+		is_playing_ = positionInfo.isPlaying;
 	}
 
 	const int input_buses_count = getBusCount(true);

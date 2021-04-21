@@ -9,7 +9,7 @@ using namespace juce;
 class OutputTimer : juce::Timer
 {
 public:
-	OutputTimer(ParametersState* parameter, std::vector<Analyzer*>& analyzers);
+	OutputTimer(ParametersState* internal_parameter, std::vector<Analyzer*>& analyzers);
 	~OutputTimer();
 
 	//==============================k========================================================================
@@ -19,7 +19,10 @@ private:
 	//===================================================================
 	ParametersState* parameter_;
 	std::vector<Analyzer*>& analyzers;
+	ParametersState* internal_parameters;
 
-	OSCSender osc_sender_;
+protected:
+	bool is_playing_ = false;
+	bool is_outputted_on_pause_ = false;
 
 };

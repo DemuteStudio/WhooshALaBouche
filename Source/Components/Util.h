@@ -2,6 +2,8 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include <algorithm>
+#include <string>
+#include <cctype>
 
 
 namespace util
@@ -51,7 +53,7 @@ namespace util
 		return {
 			min, max,
 			[=](float min, float, float v) { return v; },
-			[=](float min, float, float v) { return v/max; },
+			[=](float min, float, float v) { return v / max; },
 			[](float _min, float _max, float v) { return juce::jlimit<float>(_min, _max, v); }
 		};
 	}
@@ -62,7 +64,7 @@ namespace util
 		float log;
 		if (gain < 0.01)
 		{
-			log = std::log10(gain*10)-1;
+			log = std::log10(gain * 10) - 1;
 		}
 		else
 		{
@@ -84,4 +86,27 @@ namespace util
 		VOLUME,
 		FREQUENCY_PEAK
 	};
+}
+
+namespace parameters
+{
+	struct AudioParameterString
+	{
+		AudioParameterString(std::string id, std::string name);
+
+		AudioParameterString(std::string id);
+
+		std::string id;
+		std::string name;
+	};
+
+	static AudioParameterString volume_out = AudioParameterString("volume"),
+	                            frequency_out = AudioParameterString("frequency"),
+	                            threshold = AudioParameterString("threshold"),
+	                            min_frequency = AudioParameterString("min_frequency"),
+	                            max_frequency = AudioParameterString("max_frequency"),
+	                            frequency_speed = AudioParameterString("frequency_speed"),
+	                            volume_speed = AudioParameterString("volume_speed"),
+
+	                            analyze_on_pause = AudioParameterString("analyze_on_pause");
 }

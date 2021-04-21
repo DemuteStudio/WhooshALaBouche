@@ -4,7 +4,7 @@
 #include "Util.h"
 
 //==============================================================================
-out_parameters_box::out_parameters_box(AudioProcessorValueTreeState* processor_state):
+out_parameters_box::out_parameters_box(AudioProcessorValueTreeState* output_parameters, AudioProcessorValueTreeState* internal_parameters):
 	volume_out("volume_out", "VOLUME", util::parameter_type::VOLUME),
 	frequency_out("frequency_peak", "FREQUENCY PEAK", util::parameter_type::FREQUENCY_PEAK)
 {
@@ -15,9 +15,12 @@ out_parameters_box::out_parameters_box(AudioProcessorValueTreeState* processor_s
 	}
 
 	volume_out_attachment_ = std::make_unique<AudioProcessorValueTreeState::SliderAttachment>(
-		*processor_state, "volume", *volume_out.slider);
+		*output_parameters, util::volume_out_strings.id, *volume_out.slider);
 	frequency_out_attachment_ = std::make_unique<AudioProcessorValueTreeState::SliderAttachment>(
-		*processor_state, "frequency", *frequency_out.slider);
+		*output_parameters, util::frequency_out_strings.id, *frequency_out.slider);
+
+	analyze_on_pause_attachment = std::make_unique<AudioProcessorValueTreeState::ButtonAttachment>(
+		*internal_parameters, util::analyze_on_pause_strings.id, analyze_on_pause_button);
 
 	volume_out.slider->textFromValueFunction = [](double value)-> String
 	{
@@ -30,9 +33,14 @@ out_parameters_box::out_parameters_box(AudioProcessorValueTreeState* processor_s
 		return std::to_string((int)value) + " Hz";
 	};
 
+	//TODO: Clean This
 	addAndMakeVisible(show_values_button);
 	show_values_button.setButtonText("SHOW VALUES");
 	show_values_button.addListener(this);
+
+	addAndMakeVisible(analyze_on_pause_button);
+	analyze_on_pause_button.setButtonText("ANALYZE ON PAUSE");
+	analyze_on_pause_button.addListener(this);
 }
 
 out_parameters_box::~out_parameters_box()
@@ -53,8 +61,6 @@ void out_parameters_box::paint(juce::Graphics& g)
 	g.setColour(juce::Colours::grey);
 	g.drawRect(getLocalBounds(), 1); // draw an outline around the component
 
-	// g.setColour(juce::Colours::white);
-	// g.setFont(14.0f);
 }
 
 void out_parameters_box::resized()
@@ -71,7 +77,8 @@ void out_parameters_box::resized()
 	frequency_out.setBounds(sliders_rectangle.removeFromLeft(slot_width));
 
 	const int delta = 5;
-	show_values_button.setBounds(buttons_rectangle.removeFromBottom(50).reduced(delta));
+	show_values_button.setBounds(buttons_rectangle.removeFromBottom(30).reduced(delta));
+	analyze_on_pause_button.setBounds(buttons_rectangle.removeFromBottom(30).reduced(delta));
 }
 
 void out_parameters_box::set_slider_value(util::parameter_type parameter, float value) const
@@ -88,12 +95,19 @@ void out_parameters_box::set_slider_value(util::parameter_type parameter, float 
 	}
 }
 
-void out_parameters_box::buttonClicked(Button*)
+void out_parameters_box::buttonClicked(Button* button)
 {
-	for (std::vector<parameter_gui_component*>::value_type parameter_component : parameters_components)
+	if (button == &show_values_button)
 	{
-		parameter_component->show_values = (parameter_component->show_values) ? false : true;
-		parameter_component->resized();
+		for (std::vector<parameter_gui_component*>::value_type parameter_component : parameters_components)
+		{
+			parameter_component->show_values = (parameter_component->show_values) ? false : true;
+			parameter_component->resized();
+		}
+	}
+	else if(button == &analyze_on_pause_button)
+	{
+		
 	}
 }
 
