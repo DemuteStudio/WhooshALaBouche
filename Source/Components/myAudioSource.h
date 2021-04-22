@@ -6,26 +6,9 @@
 #include "AudioWaveformComponent.h"
 
 
-class my_audio_source : public AudioSource,
-                         public AudioWaveformComponent::Listener,
-                         private Timer
+class my_audio_source : public AudioSource
 {
 public:
-	class Listener
-	{
-	public:
-		virtual ~Listener()
-		{
-		}
-
-		virtual void currentPositionChanged(my_audio_source*)
-		{
-		}
-
-		virtual void stateChanged(my_audio_source*)
-		{
-		}
-	};
 
 
 public:
@@ -40,43 +23,18 @@ public:
 
 	void releaseResources() override;
 
-	void getNextAudioBlock(
-		const AudioSourceChannelInfo& bufferToFill
-	) override;
-
-	void unloadAudio();
+	void getNextAudioBlock(const AudioSourceChannelInfo& bufferToFill) override;
 
 	std::shared_ptr<AudioSampleBuffer> loadRecordingBuffer(int number_of_samples_to_display);
-
-	double getCurrentPosition() const;
 
 	double getLengthInSeconds() const;
 
 	double getSampleRate() const;
 
-	void setPosition(double newPosition);
-
-	void setLooping(bool shouldLoop);
-
-	void addListener(Listener* newListener);
-
-	void removeListener(Listener* listener);
-
 	const CriticalSection* getBufferUpdateLock() const noexcept;
 
-	int get_sample_index();
+	int get_sample_index() const;
 
-private:
-
-	void timerCallback() override;
-
-
-	void loadAudioSubregion(
-		double startTime,
-		double endTime,
-		bool subregionSelected,
-		bool shouldLoop
-	);
 
 private:
 	class BufferPreallocationThread;
@@ -85,9 +43,8 @@ private:
 	AudioTransportSource masterSource;
 	std::unique_ptr<AudioBufferSource> bufferSource;
 
-	// AudioSampleBuffer* buffer = nullptr;
-	std::shared_ptr<AudioSampleBuffer> buffer;
-	std::unique_ptr<AudioSampleBuffer> subregionBuffer;
+	std::shared_ptr<AudioSampleBuffer> buffer_;
+	std::unique_ptr<AudioSampleBuffer> subregion_buffer_;
 
 	AudioSampleBuffer preallocated_recording_buffer_;
 	std::unique_ptr<BufferPreallocationThread> recording_buffer_preallocation_thread_;
@@ -100,11 +57,7 @@ private:
 	bool hasSubregion = false;
 	double subregionStartTime = 0.0;
 	double subregionEndTime = 0.0;
-	
-	ListenerList<Listener> listeners;
 
-
-private:
 	class BufferPreallocationThread : public Thread
 	{
 	public:
@@ -122,9 +75,9 @@ private:
 
 	private:
 		AudioSampleBuffer& preallocatedRecordingBuffer;
-		int& numSamplesRecorded;
-		int numSamplesBuffer;
-		int numSamplesToAllocate;
+		int& num_samples_recorded_;
+		int num_samples_buffer_;
+		int num_samples_to_allocate_;
 		AudioSampleBuffer& buffer;
 		const CriticalSection bufferUpdateLock;
 	};

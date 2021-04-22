@@ -77,6 +77,25 @@ void SpectrumAnalyzer::push_next_sample_into_fifo(float sample) noexcept
 	fifo[fifoIndex++] = sample;
 }
 
+float SpectrumAnalyzer::get_level(const float mindB, const float maxdB, const int point)
+{
+	const auto skewed_proportion_x = 1.0f - std::exp(
+		std::log(1.0f - static_cast<float>(point) / static_cast<float>(scope_size)) * 0.2f);
+
+	const auto fft_data_index = juce::jlimit<int>(0, fft_upper_limit,
+	                                              static_cast<int>(skewed_proportion_x * fft_upper_limit));
+
+	float level = 0;
+
+	if (fft_data_index >= min_frequency_fft_index && fft_data_index <= max_frequency_fft_index)
+	{
+		level = juce::jmap(juce::jlimit(mindB, maxdB, Decibels::gainToDecibels(fftData[fft_data_index])
+		                                - Decibels::gainToDecibels(static_cast<float>(fft_size))),
+		                   mindB, maxdB, 0.0f, 1.0f);
+	}
+	return level;
+}
+
 void SpectrumAnalyzer::calculate_next_frame_of_spectrum()
 {
 	window.multiplyWithWindowingTable(&fftData[0], fft_size);
@@ -87,29 +106,17 @@ void SpectrumAnalyzer::calculate_next_frame_of_spectrum()
 	const auto maxdB = 0.0f;
 
 
-	for (int i = 0; i < scope_size; ++i)
+	for (int point = 0; point < scope_size; ++point)
 	{
-		const auto skewed_proportion_x = 1.0f - std::exp(std::log(1.0f - (float)i / (float)scope_size) * 0.2f);
-		const auto fft_data_index = juce::jlimit<int>(0, fft_upper_limit, (int)(skewed_proportion_x * fft_upper_limit));
-
-		float level = 0;
-		if (fft_data_index >= min_frequency_fft_index && fft_data_index <= max_frequency_fft_index)
-		{
-			level = juce::jmap(juce::jlimit(mindB, maxdB, Decibels::gainToDecibels(fftData[fft_data_index])
-			                                - Decibels::gainToDecibels((float)fft_size)),
-			                   mindB, maxdB, 0.0f, 1.0f);
-		}
-
-		scopeData[i] = level;
+		scopeData[point] = get_level(mindB, maxdB, point);
 	}
 }
 
 int SpectrumAnalyzer::get_fft_mean_value()
 {
-	if (fft_index_ = ! 0)
+	if (fft_index_ =! 0)
 	{
 		const int mean_value = fft_sum_ / fft_index_;
-		DBG("FREQUENCY PEAK: " <<mean_value<<"  fft_index = "<<fft_index_<< "  fft_sum = " << fft_sum_);
 		fft_sum_ = 0;
 		fft_index_ = 0;
 
@@ -128,27 +135,44 @@ void SpectrumAnalyzer::calculate_fft()
 	}
 }
 
-float SpectrumAnalyzer::calculate_variation(const int new_frequency_peak)
+float SpectrumAnalyzer::calculate_variation(const int new_frequency_peak) const
 {
 	const float variation_speed = in_parameters_state->getParameter(parameters::frequency_speed.id)->getValue();
 	return (new_frequency_peak - last_fft_peak) * variation_speed;
 }
 
+int SpectrumAnalyzer::get_min_frequency_fft_index() const
+{
+	const float min_frequency_fft_index_0to1 = in_parameters_state->getParameter(parameters::min_frequency.id)->
+	                                                                getValue();
+	return in_parameters_state->getParameterRange(parameters::min_frequency.id)
+	                          .convertFrom0to1(
+		                          min_frequency_fft_index_0to1);
+}
+
+int SpectrumAnalyzer::get_max_frequency_fft_index()
+{
+	const float max_frequency_fft_index_0to1 = in_parameters_state->getParameter(parameters::max_frequency.id)->
+	                                                                getValue();
+	return in_parameters_state->getParameterRange(parameters::max_frequency.id)
+	                          .convertFrom0to1(
+		                          max_frequency_fft_index_0to1);
+}
+
+bool SpectrumAnalyzer::min_and_max_in_bounds() const
+{
+	return min_frequency_fft_index >= 0 && max_frequency_fft_index <= fft_size && min_frequency_fft_index <=
+		max_frequency_fft_index;
+}
+
 int SpectrumAnalyzer::get_fft_peak()
 {
-	const float min_frequency_fft_index_0to1 = in_parameters_state->getParameter(parameters::min_frequency.id)->getValue();
-	min_frequency_fft_index = in_parameters_state->getParameterRange(parameters::min_frequency.id)
-	                                             .convertFrom0to1(
-		                                             min_frequency_fft_index_0to1);
+	min_frequency_fft_index = get_min_frequency_fft_index();
 
-	const float max_frequency_fft_index_0to1 = in_parameters_state->getParameter(parameters::max_frequency.id)->getValue();
-	max_frequency_fft_index = in_parameters_state->getParameterRange(parameters::max_frequency.id)
-	                                             .convertFrom0to1(
-		                                             max_frequency_fft_index_0to1);
+	max_frequency_fft_index = get_max_frequency_fft_index();
 
 	jassert(
-		min_frequency_fft_index >= 0 && max_frequency_fft_index <= fft_size && min_frequency_fft_index <=
-		max_frequency_fft_index);
+		min_and_max_in_bounds());
 
 
 	const auto max_iterator = std::max_element(fftData.begin() + min_frequency_fft_index,
@@ -159,6 +183,7 @@ int SpectrumAnalyzer::get_fft_peak()
 	if (max_iterator != max_index_iterator)
 	{
 		const float peak_amplitude = *max_iterator;
+
 		if (peak_amplitude >= in_parameters_state->getParameter(parameters::threshold.id)->getValue())
 		{
 			const auto index = std::distance(fftData.begin(), max_iterator);
@@ -168,9 +193,9 @@ int SpectrumAnalyzer::get_fft_peak()
 			const int variation = calculate_variation(new_frequency_peak);
 
 			const int out_fft_peak = last_fft_peak + variation;
+
 			last_fft_peak = out_fft_peak;
 
-			// DBG("FFT PEAK VOLUME  "<<*max_iterator <<"   out:  "<<out_fft_peak);
 			return out_fft_peak;
 		}
 	}

@@ -6,7 +6,7 @@
 
 using namespace juce;
 
-class VolumeAnalyzer : public fx_chain_element, public Analyzer
+class VolumeAnalyzer :  public Analyzer
 {
 public:
 	VolumeAnalyzer(AudioParameterFloat* out_parameter, AudioProcessorValueTreeState* in_state);

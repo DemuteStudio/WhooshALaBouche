@@ -75,31 +75,34 @@ public:
 
 	//==============================================================================
 	my_audio_source& getAudioSource();
-
-
-	// std::unique_ptr<envelope> rms_envelope;
-	// std::unique_ptr<envelope> rms_envelope_clean;
 	//==============================================================================
-	OutParametersState out_parameters;
-	InParametersState in_parameters;
-	InternParametersState intern_parameters;
 
 	//==============================================================================
 	SpectrumAnalyzer* get_spectrum_analyzer();
 
-private:
-	my_audio_source audioSource;
+	[[nodiscard]] ParametersState* get_in_parameters() const;
+	[[nodiscard]] ParametersState* get_intern_parameters() const;
+	[[nodiscard]] ParametersState* get_out_parameters() const;
 
+private:
+	std::unique_ptr<OutParametersState> out_parameters;
+	std::unique_ptr<InParametersState> in_parameters;
+	std::unique_ptr<InternParametersState> intern_parameters;
+
+private:
+	//==============================================================================
+	my_audio_source audioSource;
+	//==============================================================================
 	std::unique_ptr<VolumeAnalyzer> volume_analyzer_;
 	std::unique_ptr<SpectrumAnalyzer> spectrum_analyzer;
 
 	std::unique_ptr<GainProcess> gain_process_;
 
+	//==============================================================================
 	std::list<fx_chain_element*> sidechain_input_processing_chain;
 	std::list<fx_chain_element*> input_processing_chain;
 
 	std::vector<Analyzer*> analyzers;
-
 
 	//==============================================================================
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(WhooshGeneratorAudioProcessor)

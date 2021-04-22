@@ -13,14 +13,17 @@ OutputTimer::~OutputTimer()
 
 void OutputTimer::timerCallback()
 {
-	if (is_playing_ || internal_parameters->get_state()->getParameter(parameters::analyze_on_pause.id)->getValue())
+	if (internal_parameters != nullptr)
 	{
-		for (std::vector<Analyzer*>::value_type analyzer : analyzers)
+		if (is_playing_ || internal_parameters->get_state()->getParameter(parameters::analyze_on_pause.id)->getValue())
 		{
-			const float value = analyzer->get_last_value();
-			const float normalized_value = analyzer->out_parameter->convertTo0to1(value);
+			for (std::vector<Analyzer*>::value_type analyzer : analyzers)
+			{
+				const float value = analyzer->get_last_value();
+				const float normalized_value = analyzer->out_parameter->convertTo0to1(value);
 
-			analyzer->out_parameter->setValueNotifyingHost(normalized_value);
+				analyzer->out_parameter->setValueNotifyingHost(normalized_value);
+			}
 		}
 	}
 }

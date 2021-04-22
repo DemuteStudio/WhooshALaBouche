@@ -1,15 +1,17 @@
 #pragma once
 #include <JuceHeader.h>
 
+
+#include "FxChainElement.h"
 #include "ParametersState.h"
 #include "Util.h"
 using namespace juce;
 
-class Analyzer
+class Analyzer : public fx_chain_element
 {
 public:
 
-	Analyzer(AudioParameterFloat* out_parameter,AudioProcessorValueTreeState* in_state, util::parameter_type type);
+	Analyzer(AudioParameterFloat* out_parameter, AudioProcessorValueTreeState* in_state, util::parameter_type type);
 	~Analyzer() = default;
 
 	virtual float get_last_value() const = 0;

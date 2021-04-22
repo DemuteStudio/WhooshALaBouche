@@ -4,30 +4,24 @@
 //==============================================================================
 WhooshGeneratorAudioProcessorEditor::WhooshGeneratorAudioProcessorEditor(WhooshGeneratorAudioProcessor& p)
 	: AudioProcessorEditor(&p), audioProcessor(p),
-	  in_parameters_box_(&p, p.in_parameters.get_state(), SpectrumAnalyzer::fft_size),
-	  out_parameters_box_(p.out_parameters.get_state(), p.intern_parameters.get_state()),
+	  in_parameters_box_(&p, p.get_in_parameters()->get_state(), SpectrumAnalyzer::fft_size),
+	  out_parameters_box_(p.get_out_parameters()->get_state(), p.get_intern_parameters()->get_state()),
 	  fft_visualizer_(p.get_spectrum_analyzer())
 {
 	setLookAndFeel(&my_look_and_feel_);
-	const double time_to_display = 3.;
-	number_of_samples_to_display = time_to_display * p.getSampleRate();
+
+	const double time_to_display_in_seconds = 3.;
+
+	number_of_samples_to_display = time_to_display_in_seconds * p.getSampleRate();
 
 	audio_source = &audioProcessor.getAudioSource();
-	addAndMakeVisible(in_parameters_box_);
 
-	addAndMakeVisible(&waveform);
+	std::vector<Component*> components = {&in_parameters_box_, &waveform, &out_parameters_box_, &fft_visualizer_};
 
-	addAndMakeVisible(&out_parameters_box_);
-
-	addAndMakeVisible(&fft_visualizer_);
-
-
-	waveform.addListener(audio_source);
-	waveform.onPositionChange = [this](double newPosition)
+	for (std::vector<Component*>::value_type component : components)
 	{
-		audio_source->setPosition(newPosition);
-	};
-
+		addAndMakeVisible(component);
+	}
 
 	enableRecording();
 
@@ -43,11 +37,9 @@ WhooshGeneratorAudioProcessorEditor::~WhooshGeneratorAudioProcessorEditor()
 //==============================================================================
 void WhooshGeneratorAudioProcessorEditor::paint(juce::Graphics& g)
 {
-	// (Our component is opaque, so we must completely fill the background with a solid colour)
 	g.fillAll(getLookAndFeel().findColour(juce::ResizableWindow::backgroundColourId));
 
 	g.setColour(juce::Colours::white);
-	// g.setFont(15.0f);
 }
 
 void WhooshGeneratorAudioProcessorEditor::resized()
@@ -89,8 +81,6 @@ void WhooshGeneratorAudioProcessorEditor::timerCallback()
 void WhooshGeneratorAudioProcessorEditor::enableRecording()
 {
 	waveform.clearWaveform();
-
-	audio_source->unloadAudio();
 
 	const std::shared_ptr<AudioSampleBuffer> temp_audio_buffer = audio_source->
 		loadRecordingBuffer(number_of_samples_to_display);

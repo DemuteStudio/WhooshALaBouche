@@ -10,26 +10,26 @@
 #include "PluginEditor.h"
 
 //==============================================================================
-WhooshGeneratorAudioProcessor::WhooshGeneratorAudioProcessor() : out_parameters(this),
-                                                                 in_parameters(
-	                                                                 this, SpectrumAnalyzer::fft_size),
-                                                                 intern_parameters(this),
+WhooshGeneratorAudioProcessor::WhooshGeneratorAudioProcessor() : out_parameters(std::make_unique<OutParametersState>(this)),
+                                                                 in_parameters(std::make_unique<InParametersState>(
+	                                                                 this, SpectrumAnalyzer::fft_size)),
+                                                                 intern_parameters(std::make_unique<InternParametersState>(this)),
                                                                  volume_analyzer_(
 	                                                                 std::make_unique<VolumeAnalyzer>(
-		                                                                 (AudioParameterFloat*)out_parameters.
-		                                                                 get_state()->getParameter(parameters::volume_out.id),
-		                                                                 in_parameters.get_state())),
+		                                                                 static_cast<AudioParameterFloat*>(out_parameters->
+			                                                                 get_state()->getParameter(parameters::volume_out.id)),
+		                                                                 in_parameters->get_state())),
                                                                  spectrum_analyzer(
 	                                                                 std::make_unique<SpectrumAnalyzer>(
-		                                                                 (AudioParameterFloat*)out_parameters.
-		                                                                 get_state()->getParameter(
-			                                                                 parameters::frequency_out.id),
-		                                                                 in_parameters.get_state())),
+		                                                                 static_cast<AudioParameterFloat*>(out_parameters->
+			                                                                 get_state()->getParameter(
+				                                                                 parameters::frequency_out.id)),
+		                                                                 in_parameters->get_state())),
                                                                  gain_process_(
 	                                                                 std::make_unique<GainProcess>(
-		                                                                 out_parameters.get_state()->getParameter(
+		                                                                 out_parameters->get_state()->getParameter(
 			                                                                 parameters::volume_out.id))),
-                                                                 OutputTimer(&intern_parameters, analyzers),
+                                                                 OutputTimer(intern_parameters.get(), analyzers),
 #ifndef JucePlugin_PreferredChannelConfigurations
                                                                  AudioProcessor(BusesProperties()
 #if ! JucePlugin_IsMidiEffect
@@ -266,6 +266,21 @@ my_audio_source& WhooshGeneratorAudioProcessor::getAudioSource()
 SpectrumAnalyzer* WhooshGeneratorAudioProcessor::get_spectrum_analyzer()
 {
 	return spectrum_analyzer.get();
+}
+
+ParametersState* WhooshGeneratorAudioProcessor::get_in_parameters() const
+{
+	return in_parameters.get();
+}
+
+ParametersState* WhooshGeneratorAudioProcessor::get_intern_parameters() const
+{
+	return intern_parameters.get();
+}
+
+ParametersState* WhooshGeneratorAudioProcessor::get_out_parameters() const
+{
+	return out_parameters.get();
 }
 
 
