@@ -7,7 +7,7 @@
 #include "Util.h"
 using namespace juce;
 
-class Analyzer : public fx_chain_element
+class Analyzer : public FxChainElement
 {
 public:
 

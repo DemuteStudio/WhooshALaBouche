@@ -12,12 +12,12 @@ using namespace juce;
 /*
 */
 
-class out_parameters_box : public juce::Component, private Button::Listener
+class OutParametersBox : public juce::Component, private Button::Listener
 {
 public:
 
-	out_parameters_box(AudioProcessorValueTreeState* output_parameters,AudioProcessorValueTreeState* internal_parameters);
-	~out_parameters_box() override;
+	OutParametersBox(AudioProcessorValueTreeState* output_parameters,AudioProcessorValueTreeState* internal_parameters);
+	~OutParametersBox() override;
 
 	void paint(juce::Graphics&) override;
 	void resized() override;
@@ -55,5 +55,5 @@ private:
 	ToggleButton analyze_on_pause_button;
 
 
-	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(out_parameters_box)
+	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(OutParametersBox)
 };

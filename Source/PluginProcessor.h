@@ -28,7 +28,7 @@ using namespace juce;
 //==============================================================================
 /**
 */
-class WhooshGeneratorAudioProcessor : public juce::AudioProcessor, private OutputTimer
+class WhooshGeneratorAudioProcessor : public AudioProcessor, private OutputTimer
 {
 public:
 	//==============================================================================
@@ -70,11 +70,11 @@ public:
 
 	bool hasEditor() const override;
 	//==============================================================================
-	void add_element_to_fx_chain(fx_chain_element* element);
-	void remove_element_to_fx_chain(fx_chain_element* element);
+	void add_element_to_fx_chain(FxChainElement* element);
+	void remove_element_to_fx_chain(FxChainElement* element);
 
 	//==============================================================================
-	my_audio_source& getAudioSource();
+	MyAudioSource& getAudioSource();
 	//==============================================================================
 
 	//==============================================================================
@@ -85,24 +85,24 @@ public:
 	[[nodiscard]] ParametersState* get_out_parameters() const;
 
 private:
-	std::unique_ptr<OutParametersState> out_parameters;
-	std::unique_ptr<InParametersState> in_parameters;
-	std::unique_ptr<InternParametersState> intern_parameters;
+	std::unique_ptr<OutParametersState> out_parameters_;
+	std::unique_ptr<InParametersState> in_parameters_;
+	std::unique_ptr<InternParametersState> intern_parameters_;
 
 private:
 	//==============================================================================
-	my_audio_source audioSource;
+	MyAudioSource audioSource;
 	//==============================================================================
 	std::unique_ptr<VolumeAnalyzer> volume_analyzer_;
-	std::unique_ptr<SpectrumAnalyzer> spectrum_analyzer;
+	std::unique_ptr<SpectrumAnalyzer> spectrum_analyzer_;
 
-	std::unique_ptr<GainProcess> gain_process_;
+	std::unique_ptr<GainProcess> gain_processor_;
 
 	//==============================================================================
-	std::list<fx_chain_element*> sidechain_input_processing_chain;
-	std::list<fx_chain_element*> input_processing_chain;
+	std::list<FxChainElement*> sidechain_input_processing_chain_;
+	std::list<FxChainElement*> input_processing_chain_;
 
-	std::vector<Analyzer*> analyzers;
+	std::vector<Analyzer*> analyzers_;
 
 	//==============================================================================
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(WhooshGeneratorAudioProcessor)

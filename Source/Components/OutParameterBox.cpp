@@ -1,10 +1,9 @@
-#include <JuceHeader.h>
-#include "out_parameters_box.h"
+#include "OutParameterBox.h"
 
 #include "Util.h"
 
 //==============================================================================
-out_parameters_box::out_parameters_box(AudioProcessorValueTreeState* output_parameters, AudioProcessorValueTreeState* internal_parameters):
+OutParametersBox::OutParametersBox(AudioProcessorValueTreeState* output_parameters, AudioProcessorValueTreeState* internal_parameters):
 	volume_out("volume_out", "VOLUME", util::parameter_type::VOLUME),
 	frequency_out("frequency_peak", "FREQUENCY PEAK", util::parameter_type::FREQUENCY_PEAK)
 {
@@ -30,7 +29,7 @@ out_parameters_box::out_parameters_box(AudioProcessorValueTreeState* output_para
 
 	frequency_out.slider->textFromValueFunction = [](double value)-> String
 	{
-		return std::to_string((int)value) + " Hz";
+		return std::to_string(static_cast<int>(value)) + " Hz";
 	};
 
 	//TODO: Clean This
@@ -43,11 +42,11 @@ out_parameters_box::out_parameters_box(AudioProcessorValueTreeState* output_para
 	analyze_on_pause_button.addListener(this);
 }
 
-out_parameters_box::~out_parameters_box()
+OutParametersBox::~OutParametersBox()
 {
 }
 
-void out_parameters_box::paint(juce::Graphics& g)
+void OutParametersBox::paint(juce::Graphics& g)
 {
 	/* This demo code just fills the component's background and
 	   draws some placeholder text to get you started.
@@ -63,7 +62,7 @@ void out_parameters_box::paint(juce::Graphics& g)
 
 }
 
-void out_parameters_box::resized()
+void OutParametersBox::resized()
 {
 	auto sliders_rectangle = getLocalBounds();
 	auto buttons_rectangle = sliders_rectangle.removeFromLeft(100);
@@ -81,7 +80,7 @@ void out_parameters_box::resized()
 	analyze_on_pause_button.setBounds(buttons_rectangle.removeFromBottom(30).reduced(delta));
 }
 
-void out_parameters_box::set_slider_value(util::parameter_type parameter, float value) const
+void OutParametersBox::set_slider_value(util::parameter_type parameter, float value) const
 {
 	switch (parameter)
 	{
@@ -95,7 +94,7 @@ void out_parameters_box::set_slider_value(util::parameter_type parameter, float 
 	}
 }
 
-void out_parameters_box::buttonClicked(Button* button)
+void OutParametersBox::buttonClicked(Button* button)
 {
 	if (button == &show_values_button)
 	{
@@ -111,7 +110,7 @@ void out_parameters_box::buttonClicked(Button* button)
 	}
 }
 
-void out_parameters_box::parameter_gui_component::resized()
+void OutParametersBox::parameter_gui_component::resized()
 {
 	auto rectangle = getLocalBounds();
 

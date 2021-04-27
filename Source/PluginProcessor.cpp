@@ -10,26 +10,31 @@
 #include "PluginEditor.h"
 
 //==============================================================================
-WhooshGeneratorAudioProcessor::WhooshGeneratorAudioProcessor() : out_parameters(std::make_unique<OutParametersState>(this)),
-                                                                 in_parameters(std::make_unique<InParametersState>(
+WhooshGeneratorAudioProcessor::WhooshGeneratorAudioProcessor() : out_parameters_(
+	                                                                 std::make_unique<OutParametersState>(this)),
+                                                                 in_parameters_(std::make_unique<InParametersState>(
 	                                                                 this, SpectrumAnalyzer::fft_size)),
-                                                                 intern_parameters(std::make_unique<InternParametersState>(this)),
+                                                                 intern_parameters_(
+	                                                                 std::make_unique<InternParametersState>(this)),
                                                                  volume_analyzer_(
 	                                                                 std::make_unique<VolumeAnalyzer>(
-		                                                                 static_cast<AudioParameterFloat*>(out_parameters->
-			                                                                 get_state()->getParameter(parameters::volume_out.id)),
-		                                                                 in_parameters->get_state())),
-                                                                 spectrum_analyzer(
+		                                                                 static_cast<AudioParameterFloat*>(
+			                                                                 out_parameters_->
+			                                                                 get_state()->getParameter(
+				                                                                 parameters::volume_out.id)),
+		                                                                 in_parameters_->get_state())),
+                                                                 spectrum_analyzer_(
 	                                                                 std::make_unique<SpectrumAnalyzer>(
-		                                                                 static_cast<AudioParameterFloat*>(out_parameters->
+		                                                                 static_cast<AudioParameterFloat*>(
+			                                                                 out_parameters_->
 			                                                                 get_state()->getParameter(
 				                                                                 parameters::frequency_out.id)),
-		                                                                 in_parameters->get_state())),
-                                                                 gain_process_(
+		                                                                 in_parameters_->get_state())),
+                                                                 gain_processor_(
 	                                                                 std::make_unique<GainProcess>(
-		                                                                 out_parameters->get_state()->getParameter(
+		                                                                 out_parameters_->get_state()->getParameter(
 			                                                                 parameters::volume_out.id))),
-                                                                 OutputTimer(intern_parameters.get(), analyzers),
+                                                                 OutputTimer(analyzers_),
 #ifndef JucePlugin_PreferredChannelConfigurations
                                                                  AudioProcessor(BusesProperties()
 #if ! JucePlugin_IsMidiEffect
@@ -63,11 +68,13 @@ WhooshGeneratorAudioProcessor::WhooshGeneratorAudioProcessor() : out_parameters(
                                                                  )
 #endif
 {
-	sidechain_input_processing_chain = {volume_analyzer_.get(), spectrum_analyzer.get()};
+	sidechain_input_processing_chain_ = {volume_analyzer_.get(), spectrum_analyzer_.get()};
 
-	input_processing_chain = {gain_process_.get()};
+	input_processing_chain_ = {gain_processor_.get()};
 
-	analyzers = {volume_analyzer_.get(), spectrum_analyzer.get()};
+	analyzers_ = {volume_analyzer_.get(), spectrum_analyzer_.get()};
+
+	OutputTimer::set_intern_parameters(intern_parameters_.get());
 }
 
 WhooshGeneratorAudioProcessor::~WhooshGeneratorAudioProcessor()
@@ -139,7 +146,7 @@ void WhooshGeneratorAudioProcessor::changeProgramName(int index, const juce::Str
 void WhooshGeneratorAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock)
 {
 	audioSource.prepareToPlay(samplesPerBlock, sampleRate);
-	for (std::list<fx_chain_element*>::value_type element : sidechain_input_processing_chain)
+	for (std::list<FxChainElement*>::value_type element : sidechain_input_processing_chain_)
 	{
 		element->prepareToPlay(sampleRate, samplesPerBlock);
 	}
@@ -208,12 +215,12 @@ void WhooshGeneratorAudioProcessor::processBlock(juce::AudioBuffer<float>& buffe
 
 	auto selectedBuffer = sideChainInput;
 
-	for (std::list<fx_chain_element>::value_type* element : sidechain_input_processing_chain)
+	for (std::list<FxChainElement>::value_type* element : sidechain_input_processing_chain_)
 	{
 		element->getNextAudioBlock(sideChainInput);
 	}
 
-	for (std::list<fx_chain_element>::value_type* element : input_processing_chain)
+	for (std::list<FxChainElement>::value_type* element : input_processing_chain_)
 	{
 		element->getNextAudioBlock(mainInput);
 	}
@@ -227,16 +234,16 @@ bool WhooshGeneratorAudioProcessor::hasEditor() const
 	return true; // (change this to false if you choose to not supply an editor)
 }
 
-void WhooshGeneratorAudioProcessor::add_element_to_fx_chain(fx_chain_element* element)
+void WhooshGeneratorAudioProcessor::add_element_to_fx_chain(FxChainElement* element)
 {
-	sidechain_input_processing_chain.push_back(element);
+	sidechain_input_processing_chain_.push_back(element);
 	element->prepareToPlay(getSampleRate(), getBlockSize());
 }
 
-void WhooshGeneratorAudioProcessor::remove_element_to_fx_chain(fx_chain_element* element)
+void WhooshGeneratorAudioProcessor::remove_element_to_fx_chain(FxChainElement* element)
 {
-	sidechain_input_processing_chain.erase(std::find(sidechain_input_processing_chain.begin(),
-	                                                 sidechain_input_processing_chain.end(), element));
+	sidechain_input_processing_chain_.erase(std::find(sidechain_input_processing_chain_.begin(),
+	                                                  sidechain_input_processing_chain_.end(), element));
 }
 
 AudioProcessorEditor* WhooshGeneratorAudioProcessor::createEditor()
@@ -258,29 +265,29 @@ void WhooshGeneratorAudioProcessor::setStateInformation(const void* data, int si
 	// whose contents will have been created by the getStateInformation() call.
 }
 
-my_audio_source& WhooshGeneratorAudioProcessor::getAudioSource()
+MyAudioSource& WhooshGeneratorAudioProcessor::getAudioSource()
 {
 	return audioSource;
 }
 
 SpectrumAnalyzer* WhooshGeneratorAudioProcessor::get_spectrum_analyzer()
 {
-	return spectrum_analyzer.get();
+	return spectrum_analyzer_.get();
 }
 
 ParametersState* WhooshGeneratorAudioProcessor::get_in_parameters() const
 {
-	return in_parameters.get();
+	return in_parameters_.get();
 }
 
 ParametersState* WhooshGeneratorAudioProcessor::get_intern_parameters() const
 {
-	return intern_parameters.get();
+	return intern_parameters_.get();
 }
 
 ParametersState* WhooshGeneratorAudioProcessor::get_out_parameters() const
 {
-	return out_parameters.get();
+	return out_parameters_.get();
 }
 
 

@@ -25,6 +25,10 @@
         <FILE id="RmY2e7" name="Util.h" compile="0" resource="0" file="Source/Components/Util.h"/>
       </GROUP>
       <GROUP id="{D19AE344-B3E1-CD7B-15BE-280F3E1512FD}" name="BackEnd">
+        <FILE id="kqbFCk" name="InternalFoleyInput.cpp" compile="1" resource="0"
+              file="Source/Components/InternalFoleyInput.cpp"/>
+        <FILE id="QE7z73" name="InternalFoleyInput.h" compile="0" resource="0"
+              file="Source/Components/InternalFoleyInput.h"/>
         <FILE id="TLNspl" name="InternParametersState.cpp" compile="1" resource="0"
               file="Source/Components/InternParametersState.cpp"/>
         <FILE id="luExaL" name="InternParametersState.h" compile="0" resource="0"
@@ -77,14 +81,22 @@
         <FILE id="OZTRgq" name="Parameter.h" compile="0" resource="0" file="Source/Components/Parameter.h"/>
       </GROUP>
       <GROUP id="{5432A927-7F5C-12C5-3DE5-D3A25A65DD70}" name="Components">
+        <FILE id="tKOv4i" name="SampleComponent.cpp" compile="1" resource="0"
+              file="Source/Components/SampleComponent.cpp"/>
+        <FILE id="oiEf2L" name="SampleComponent.h" compile="0" resource="0"
+              file="Source/Components/SampleComponent.h"/>
+        <FILE id="iqPJvv" name="SampleSelector.cpp" compile="1" resource="0"
+              file="Source/Components/SampleSelector.cpp"/>
+        <FILE id="U6KmX6" name="SampleSelector.h" compile="0" resource="0"
+              file="Source/Components/SampleSelector.h"/>
+        <FILE id="JCbxZh" name="OutParameterBox.cpp" compile="1" resource="0"
+              file="Source/Components/OutParameterBox.cpp"/>
+        <FILE id="Lh1hKs" name="OutParameterBox.h" compile="0" resource="0"
+              file="Source/Components/OutParameterBox.h"/>
         <FILE id="iVbJH3" name="SpectrumComponent.cpp" compile="1" resource="0"
               file="Source/Components/SpectrumComponent.cpp"/>
         <FILE id="N2uY5V" name="SpectrumComponent.h" compile="0" resource="0"
               file="Source/Components/SpectrumComponent.h"/>
-        <FILE id="kPKNJj" name="out_parameters_box.cpp" compile="1" resource="0"
-              file="Source/Components/out_parameters_box.cpp"/>
-        <FILE id="couOTp" name="out_parameters_box.h" compile="0" resource="0"
-              file="Source/Components/out_parameters_box.h"/>
         <FILE id="Dp9Wdv" name="AudioWaveformComponent.cpp" compile="1" resource="0"
               file="Source/Components/AudioWaveformComponent.cpp"/>
         <FILE id="wDMR9b" name="AudioWaveformComponent.h" compile="0" resource="0"

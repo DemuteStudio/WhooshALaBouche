@@ -6,15 +6,15 @@
 #include "AudioWaveformComponent.h"
 
 
-class my_audio_source : public AudioSource
+class MyAudioSource : public AudioSource
 {
 public:
 
 
 public:
-	my_audio_source();
+	MyAudioSource();
 
-	~my_audio_source();
+	~MyAudioSource();
 
 	void prepareToPlay(
 		int samplesPerBlockExpected,

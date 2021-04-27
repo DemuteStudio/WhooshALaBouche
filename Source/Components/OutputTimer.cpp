@@ -1,7 +1,6 @@
 #include "OutputTimer.h"
 
-OutputTimer::OutputTimer(ParametersState* internal_parameter, std::vector<Analyzer*>& analyzers):
-	analyzers(analyzers), internal_parameters(internal_parameter)
+OutputTimer::OutputTimer(std::vector<Analyzer*>& analyzers): analyzers(analyzers)
 {
 	startTimerHz(60);
 }
@@ -13,9 +12,9 @@ OutputTimer::~OutputTimer()
 
 void OutputTimer::timerCallback()
 {
-	if (internal_parameters != nullptr)
+	if (internal_parameters_ != nullptr)
 	{
-		if (is_playing_ || internal_parameters->get_state()->getParameter(parameters::analyze_on_pause.id)->getValue())
+		if (is_playing_ || internal_parameters_->get_state()->getParameter(parameters::analyze_on_pause.id)->getValue())
 		{
 			for (std::vector<Analyzer*>::value_type analyzer : analyzers)
 			{
@@ -26,4 +25,9 @@ void OutputTimer::timerCallback()
 			}
 		}
 	}
+}
+
+void OutputTimer::set_intern_parameters(ParametersState* interns_parameters)
+{
+	internal_parameters_ = interns_parameters;
 }
