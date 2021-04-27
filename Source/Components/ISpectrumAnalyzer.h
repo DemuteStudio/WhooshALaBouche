@@ -3,8 +3,6 @@
 class ISpectrumAnalyzer
 {
 public:
-
-
 	virtual void push_next_sample_into_fifo(float sample) noexcept = 0;
 	virtual void calculate_next_frame_of_spectrum()= 0;
 

@@ -5,7 +5,7 @@
 #include "Components/ParametersBox.h"
 #include "Components/AudioWaveformComponent.h"
 #include "Components/MyLookAndFeel.h"
-#include "Components/out_parameters_box.h"
+#include "Components/OutParameterBox.h"
 #include "Components/VolumeAnalyzer.h"
 #include "Components/SpectrumComponent.h"
 
@@ -44,11 +44,11 @@ private:
 
 	//==================================================
 	AudioWaveformComponent waveform;
-	out_parameters_box out_parameters_box_;
+	OutParametersBox out_parameters_box_;
 	SpectrumComponent fft_visualizer_;
 	//==================================================
 
-	my_audio_source* audio_source;
+	MyAudioSource* audio_source;
 	MyLookAndFeel my_look_and_feel_;
 
 	//==================================================

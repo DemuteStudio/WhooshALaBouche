@@ -4,26 +4,44 @@
 
 
 ParametersBox::ParametersBox(AudioProcessor* processor, AudioProcessorValueTreeState* parameters_state, int fft_size):
-	threshold("threshold", "THRESHOLD", util::parameter_type::THRESHOLD),
-	frequency_band("frequency_band", "FREQUENCY BAND", util::parameter_type::FREQUENCY_BAND,
-	               Slider::TwoValueHorizontal),
-	frequency_variation_speed("frequency_variation_speed", "FREQUENCY SPEED",
+	threshold(parameters::threshold.id, parameters::threshold.name, util::parameter_type::THRESHOLD),
+	frequency_band("frequency_band", "FREQUENCY BAND", util::parameter_type::FREQUENCY_BAND
+	               ),
+	frequency_variation_speed(parameters::frequency_speed.id, parameters::frequency_speed.name,
 	                          util::parameter_type::FREQUENCY_VARIATION_SPEED),
-	volume_variation_speed("volume_variation_speed", "VOLUME SPEED", util::parameter_type::VOLUME_VARIATION_SPEED),
+	volume_variation_speed(parameters::volume_speed.id, parameters::volume_speed.name,
+	                       util::parameter_type::VOLUME_VARIATION_SPEED),
 	processor(processor), parameters_state(parameters_state)
 {
 	const double samples_per_block = processor->getBlockSize();
 	const double sample_rate = processor->getSampleRate();
+	frequency_interval = (1. / fft_size) * sample_rate;
 
 	double time_per_block = (samples_per_block / sample_rate);
 
-	addAndMakeVisible(threshold);
-	addAndMakeVisible(frequency_band);
-	addAndMakeVisible(frequency_variation_speed);
-	addAndMakeVisible(volume_variation_speed);
+	 parameter_guis = {
+		&threshold, &frequency_band, &frequency_variation_speed, &volume_variation_speed
+	};
 
+	for (auto parameter : parameter_guis)
+	{
+		addAndMakeVisible(parameter);
+	}
 	link_sliders_to_parameters();
 	set_parameters_value_to_text();
+
+	frequency_band.slider->onValueChange= [this, parameters_state]()-> void
+	{
+		RangedAudioParameter* min_frequency_parameter = parameters_state->getParameter(parameters::min_frequency.id);
+		const int min_frequency = min_frequency_parameter->convertFrom0to1(
+			min_frequency_parameter->getValue())*frequency_interval;
+	
+		RangedAudioParameter* max_frequency_parameter = parameters_state->getParameter(parameters::max_frequency.id);
+		const int max_frequency = min_frequency_parameter->convertFrom0to1(
+			max_frequency_parameter->getValue())*frequency_interval;
+	
+		frequency_band.value.setText(std::to_string(min_frequency) + " / " + std::to_string(max_frequency) + " Hz", NotificationType::dontSendNotification);
+	};
 }
 
 ParametersBox::~ParametersBox()
@@ -70,13 +88,23 @@ void ParametersBox::add_sliders_listener(Slider::Listener* listener) const
 }
 
 
-void ParametersBox::parameter_gui_component::resized()
+void ParametersBox::ParameterGuiComponent::resized()
 {
 	auto rectangle = getLocalBounds();
 
 	label.setBounds(rectangle.removeFromLeft(150));
 	slider->setBounds(rectangle);
 	slider->setTextBoxStyle(Slider::TextBoxRight, true, 150, rectangle.getHeight());
+}
+
+void ParametersBox::TwoValuesParameterGuiComponent::resized()
+{
+	auto rectangle = getLocalBounds();
+
+	label.setBounds(rectangle.removeFromLeft(150));
+	value.setBounds(rectangle.removeFromRight(150));
+	slider->setBounds(rectangle);
+	slider->setTextBoxStyle(Slider::NoTextBox, true, 0, 0);
 }
 
 //==============================================================================
@@ -92,26 +120,12 @@ void ParametersBox::link_sliders_to_parameters()
 		*parameters_state, parameters::min_frequency.id, parameters::max_frequency.id, *frequency_band.slider));
 }
 
-void ParametersBox::set_parameters_value_to_text()
+void ParametersBox::set_parameters_value_to_text() const
 {
 	threshold.slider->textFromValueFunction = [](double value)-> String
 	{
-		const int value_in_db = Decibels::gainToDecibels(value);
+		const int value_in_db = util::gain_to_decibels(value);
 		return std::to_string(value_in_db) + " dB";
-	};
-
-	frequency_band.slider->textFromValueFunction = [this](double value)-> String
-	{
-		RangedAudioParameter* min_frequency_parameter = parameters_state->getParameter("min_frequency");
-		const int min_frequency = min_frequency_parameter->convertFrom0to1(
-			min_frequency_parameter->getValue());
-
-		RangedAudioParameter* max_frequency_parameter = parameters_state->getParameter("max_frequency");
-		const int max_frequency = min_frequency_parameter->convertFrom0to1(
-			max_frequency_parameter->getValue());
-
-
-		return std::to_string(min_frequency) + " / " + std::to_string(max_frequency)+ " Hz";
 	};
 
 	frequency_variation_speed.slider->textFromValueFunction = [](double value)-> String

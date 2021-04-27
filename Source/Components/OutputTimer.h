@@ -3,13 +3,14 @@
 #include "ParametersState.h"
 #include "Util.h"
 #include "Analyzer.h"
+#include "InParametersState.h"
 
 using namespace juce;
 
 class OutputTimer : juce::Timer
 {
 public:
-	OutputTimer(ParametersState* internal_parameter, std::vector<Analyzer*>& analyzers);
+	OutputTimer( std::vector<Analyzer*>& analyzers);
 	~OutputTimer();
 
 	//==============================k========================================================================
@@ -17,11 +18,11 @@ public:
 private:
 	void timerCallback() override;
 	//===================================================================
-	ParametersState* parameter_;
+	ParametersState* internal_parameters_;
 	std::vector<Analyzer*>& analyzers;
-	ParametersState* internal_parameters;
 
 protected:
+	void set_intern_parameters(ParametersState* internal_parameters);
 	bool is_playing_ = false;
 	bool is_outputted_on_pause_ = false;
 

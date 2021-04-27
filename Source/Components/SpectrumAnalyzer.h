@@ -9,9 +9,7 @@
 using namespace juce;
 
 class SpectrumAnalyzer : public ISpectrumAnalyzer,
-                         public fx_chain_element,
                          public Analyzer
-
 {
 public:
 
@@ -25,10 +23,13 @@ public:
 	void add_current_spectrum_to_accumulator_buffer() override;
 	void calculate_mean_fft_data() override;
 	void push_next_sample_into_fifo(float sample) noexcept override;
+	float get_level(float mindB, float maxdB, int point);
 	void calculate_next_frame_of_spectrum() override;
 	int get_fft_mean_value() override;
 	void calculate_fft() override;
-	float calculate_variation(int new_frequency_peak);
+	float calculate_variation(int new_frequency_peak) const;
+	int get_min_frequency_fft_index() const;
+	int get_max_frequency_fft_index();
 	int get_fft_peak() override;
 
 	//===============================================================================
@@ -48,7 +49,6 @@ public:
 		scope_size = 512
 	};
 
-public:
 	double sample_rate;
 	double frequency_interval;
 	float fft_upper_limit;
@@ -79,5 +79,6 @@ private:
 	int min_frequency_fft_index = 0;
 	int max_frequency_fft_index= 1000;
 
+	bool min_and_max_in_bounds() const;
 	juce::dsp::WindowingFunction<float> window;
 };

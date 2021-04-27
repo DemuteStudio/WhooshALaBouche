@@ -57,6 +57,15 @@ namespace util
 			[](float _min, float _max, float v) { return juce::jlimit<float>(_min, _max, v); }
 		};
 	}
+	inline juce::NormalisableRange<float> precise_range(const float min, const float max)
+	{
+		return {
+			min, max,
+			[=](float min, float, float v) { return v*max; },
+			[=](float min, float, float v) { return v / max; },
+			[](float _min, float _max, float v) { return juce::jlimit<float>(_min, _max, v); }
+		};
+	}
 
 	//===============//===============//===============//===============//===============//===============//===============//===============
 	inline float gain_to_decibels(float gain)

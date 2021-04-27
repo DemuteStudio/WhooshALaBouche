@@ -2,7 +2,7 @@
 #include "FxChainElement.h"
 
 
-class GainProcess : public fx_chain_element
+class GainProcess : public FxChainElement
 {
 public:
 
@@ -12,7 +12,7 @@ public:
 	void prepareToPlay(double sampleRate, int samplesPerBlock) override;
 
 private:
-	struct interpolation
+	struct Interpolation
 	{
 		struct point
 		{
@@ -21,7 +21,7 @@ private:
 			float y;
 		};
 
-		interpolation(::GainProcess::interpolation::point start, ::GainProcess::interpolation::point end);
+		Interpolation(::GainProcess::Interpolation::point start, ::GainProcess::Interpolation::point end);
 		float get_value(int x_position) const;
 
 		float y_range;
