@@ -2,12 +2,12 @@
 #include <JuceHeader.h>
 
 
-#include "FxChainElement.h"
+#include "AudioChainElement.h"
 #include "ParametersState.h"
 #include "Util.h"
 using namespace juce;
 
-class Analyzer : public FxChainElement
+class Analyzer : public AudioChainElement
 {
 public:
 

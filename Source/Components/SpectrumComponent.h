@@ -2,7 +2,7 @@
 
 #include <JuceHeader.h>
 
-#include "FxChainElement.h"
+#include "AudioChainElement.h"
 #include "SpectrumAnalyzer.h"
 
 //==============================================================================

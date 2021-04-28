@@ -146,7 +146,7 @@ void WhooshGeneratorAudioProcessor::changeProgramName(int index, const juce::Str
 void WhooshGeneratorAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock)
 {
 	audioSource.prepareToPlay(samplesPerBlock, sampleRate);
-	for (std::list<FxChainElement*>::value_type element : sidechain_input_processing_chain_)
+	for (std::list<AudioChainElement*>::value_type element : sidechain_input_processing_chain_)
 	{
 		element->prepareToPlay(sampleRate, samplesPerBlock);
 	}
@@ -215,12 +215,12 @@ void WhooshGeneratorAudioProcessor::processBlock(juce::AudioBuffer<float>& buffe
 
 	auto selectedBuffer = sideChainInput;
 
-	for (std::list<FxChainElement>::value_type* element : sidechain_input_processing_chain_)
+	for (std::list<AudioChainElement>::value_type* element : sidechain_input_processing_chain_)
 	{
 		element->getNextAudioBlock(sideChainInput);
 	}
 
-	for (std::list<FxChainElement>::value_type* element : input_processing_chain_)
+	for (std::list<AudioChainElement>::value_type* element : input_processing_chain_)
 	{
 		element->getNextAudioBlock(mainInput);
 	}
@@ -234,13 +234,13 @@ bool WhooshGeneratorAudioProcessor::hasEditor() const
 	return true; // (change this to false if you choose to not supply an editor)
 }
 
-void WhooshGeneratorAudioProcessor::add_element_to_fx_chain(FxChainElement* element)
+void WhooshGeneratorAudioProcessor::add_element_to_fx_chain(AudioChainElement* element)
 {
 	sidechain_input_processing_chain_.push_back(element);
 	element->prepareToPlay(getSampleRate(), getBlockSize());
 }
 
-void WhooshGeneratorAudioProcessor::remove_element_to_fx_chain(FxChainElement* element)
+void WhooshGeneratorAudioProcessor::remove_element_to_fx_chain(AudioChainElement* element)
 {
 	sidechain_input_processing_chain_.erase(std::find(sidechain_input_processing_chain_.begin(),
 	                                                  sidechain_input_processing_chain_.end(), element));

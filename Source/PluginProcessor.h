@@ -11,7 +11,7 @@
 #include <JuceHeader.h>
 
 #include "Components/myAudioSource.h"
-#include "Components/FxChainElement.h"
+#include "Components/AudioChainElement.h"
 #include "Components/Util.h"
 #include "Components/OutParametersState.h"
 #include "Components/InParametersState.h"
@@ -70,8 +70,8 @@ public:
 
 	bool hasEditor() const override;
 	//==============================================================================
-	void add_element_to_fx_chain(FxChainElement* element);
-	void remove_element_to_fx_chain(FxChainElement* element);
+	void add_element_to_fx_chain(AudioChainElement* element);
+	void remove_element_to_fx_chain(AudioChainElement* element);
 
 	//==============================================================================
 	MyAudioSource& getAudioSource();
@@ -99,8 +99,8 @@ private:
 	std::unique_ptr<GainProcess> gain_processor_;
 
 	//==============================================================================
-	std::list<FxChainElement*> sidechain_input_processing_chain_;
-	std::list<FxChainElement*> input_processing_chain_;
+	std::list<AudioChainElement*> sidechain_input_processing_chain_;
+	std::list<AudioChainElement*> input_processing_chain_;
 
 	std::vector<Analyzer*> analyzers_;
 

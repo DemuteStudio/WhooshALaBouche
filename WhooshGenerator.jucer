@@ -25,10 +25,8 @@
         <FILE id="RmY2e7" name="Util.h" compile="0" resource="0" file="Source/Components/Util.h"/>
       </GROUP>
       <GROUP id="{D19AE344-B3E1-CD7B-15BE-280F3E1512FD}" name="BackEnd">
-        <FILE id="kqbFCk" name="InternalFoleyInput.cpp" compile="1" resource="0"
-              file="Source/Components/InternalFoleyInput.cpp"/>
-        <FILE id="QE7z73" name="InternalFoleyInput.h" compile="0" resource="0"
-              file="Source/Components/InternalFoleyInput.h"/>
+        <FILE id="Nr0Bkr" name="FoleyInput.cpp" compile="1" resource="0" file="Source/Components/FoleyInput.cpp"/>
+        <FILE id="N8fZIx" name="FoleyInput.h" compile="0" resource="0" file="Source/Components/FoleyInput.h"/>
         <FILE id="TLNspl" name="InternParametersState.cpp" compile="1" resource="0"
               file="Source/Components/InternParametersState.cpp"/>
         <FILE id="luExaL" name="InternParametersState.h" compile="0" resource="0"
