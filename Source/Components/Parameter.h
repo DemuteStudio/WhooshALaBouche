@@ -1,17 +1,21 @@
 #pragma once
 #include <string>
+#include <utility>
 
 #include "GuiParameter.h"
+#include "AudioParametersString.h"
 
-class parameter
+
+namespace util
 {
-public:
-	parameter(std::string osc_label_ );
-	~parameter() = default;
-	//=========================================================================================================
-	virtual void send_value_by_osc();
+	struct Parameter
+	{
+		Parameter(parameters::AudioParameterString audio_parameter_string,
+		          AudioProcessorValueTreeState* ranged_audio_parameter);
 
-private:
-	std::string osc_label;
-	parameter_gui* gui_component;
-};
+		~Parameter();
+		//=========================================================================================================
+		parameters::AudioParameterString audio_parameter_string;
+		RangedAudioParameter* ranged_parameter = nullptr;
+	};
+}

@@ -3,15 +3,13 @@
 #include <JuceHeader.h>
 
 
-ParametersBox::ParametersBox(AudioProcessor* processor, AudioProcessorValueTreeState* parameters_state, int fft_size):
-	threshold(parameters::threshold.id, parameters::threshold.name, util::parameter_type::THRESHOLD),
-	frequency_band("frequency_band", "FREQUENCY BAND", util::parameter_type::FREQUENCY_BAND
-	               ),
-	frequency_variation_speed(parameters::frequency_speed.id, parameters::frequency_speed.name,
-	                          util::parameter_type::FREQUENCY_VARIATION_SPEED),
-	volume_variation_speed(parameters::volume_speed.id, parameters::volume_speed.name,
-	                       util::parameter_type::VOLUME_VARIATION_SPEED),
-	processor(processor), parameters_state(parameters_state)
+ParametersBox::ParametersBox(AudioProcessor* processor,AudioProcessorValueTreeState* parameters_state, int fft_size):
+	//TODO: check without resharper
+	threshold(util::Parameter{parameters::threshold.id,parameters_state}),
+	frequency_band(util::Parameter{parameters::frequency_band, parameters_state}),
+	frequency_variation_speed(util::Parameter(parameters::frequency_speed, parameters_state)),
+	volume_variation_speed(util::Parameter(parameters::volume_speed, parameters_state)),
+	 parameters_state(parameters_state),processor(processor)
 {
 	const double samples_per_block = processor->getBlockSize();
 	const double sample_rate = processor->getSampleRate();
@@ -19,35 +17,36 @@ ParametersBox::ParametersBox(AudioProcessor* processor, AudioProcessorValueTreeS
 
 	double time_per_block = (samples_per_block / sample_rate);
 
-	 parameter_guis = {
+	parameter_guis = {
 		&threshold, &frequency_band, &frequency_variation_speed, &volume_variation_speed
 	};
 
-	for (auto parameter : parameter_guis)
+	for (auto* parameter : parameter_guis)
 	{
 		addAndMakeVisible(parameter);
 	}
 	link_sliders_to_parameters();
 	set_parameters_value_to_text();
 
-	frequency_band.slider->onValueChange= [this, parameters_state]()-> void
+	frequency_band.slider->onValueChange = [this, parameters_state]()-> void
 	{
 		RangedAudioParameter* min_frequency_parameter = parameters_state->getParameter(parameters::min_frequency.id);
 		const int min_frequency = min_frequency_parameter->convertFrom0to1(
-			min_frequency_parameter->getValue())*frequency_interval;
-	
+			min_frequency_parameter->getValue()) * frequency_interval;
+
 		RangedAudioParameter* max_frequency_parameter = parameters_state->getParameter(parameters::max_frequency.id);
-		const int max_frequency = min_frequency_parameter->convertFrom0to1(
-			max_frequency_parameter->getValue())*frequency_interval;
-	
-		frequency_band.value.setText(std::to_string(min_frequency) + " / " + std::to_string(max_frequency) + " Hz", NotificationType::dontSendNotification);
+		const int max_frequency = max_frequency_parameter->convertFrom0to1(
+			max_frequency_parameter->getValue()) * frequency_interval;
+
+		frequency_band.value.setText(std::to_string(min_frequency) + " / " + std::to_string(max_frequency) + " Hz",
+		                             NotificationType::dontSendNotification);
 	};
 }
 
 ParametersBox::~ParametersBox()
 {
-	sliders_attachment_.clear();
-	two_values_sliders_attachment_.clear();
+	sliders_attachment.clear();
+	two_values_sliders_attachment.clear();
 }
 
 void ParametersBox::paint(juce::Graphics& g)
@@ -110,13 +109,13 @@ void ParametersBox::TwoValuesParameterGuiComponent::resized()
 //==============================================================================
 void ParametersBox::link_sliders_to_parameters()
 {
-	sliders_attachment_.push_back(std::make_unique<AudioProcessorValueTreeState::SliderAttachment>(
+	sliders_attachment.push_back(std::make_unique<AudioProcessorValueTreeState::SliderAttachment>(
 		*parameters_state, parameters::threshold.id, *threshold.slider));
-	sliders_attachment_.push_back(std::make_unique<AudioProcessorValueTreeState::SliderAttachment>(
+	sliders_attachment.push_back(std::make_unique<AudioProcessorValueTreeState::SliderAttachment>(
 		*parameters_state, parameters::frequency_speed.id, *frequency_variation_speed.slider));
-	sliders_attachment_.push_back(std::make_unique<AudioProcessorValueTreeState::SliderAttachment>(
+	sliders_attachment.push_back(std::make_unique<AudioProcessorValueTreeState::SliderAttachment>(
 		*parameters_state, parameters::volume_speed.id, *volume_variation_speed.slider));
-	two_values_sliders_attachment_.push_back(std::make_unique<TwoValueSliderAttachment>(
+	two_values_sliders_attachment.push_back(std::make_unique<TwoValueSliderAttachment>(
 		*parameters_state, parameters::min_frequency.id, parameters::max_frequency.id, *frequency_band.slider));
 }
 

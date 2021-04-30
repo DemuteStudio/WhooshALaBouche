@@ -20,7 +20,17 @@ void SampleComponent::paint (juce::Graphics& g)
        drawing code..
     */
 
+<<<<<<< Updated upstream
     g.fillAll (getLookAndFeel().findColour (juce::ResizableWindow::backgroundColourId));   // clear the background
+=======
+	const auto is_toggle = getToggleState();
+	const juce::Colour text_colour = is_toggle ? juce::Colours::red: juce::Colours::white;
+	g.setColour(text_colour);
+	g.setFont(14.0f);
+	g.drawText(getName(), getLocalBounds(),
+	           juce::Justification::centred, true); // draw some placeholder text
+}
+>>>>>>> Stashed changes
 
     g.setColour (juce::Colours::grey);
     g.drawRect (getLocalBounds(), 1);   // draw an outline around the component

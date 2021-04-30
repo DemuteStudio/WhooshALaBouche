@@ -302,6 +302,7 @@ GLfloat AudioWaveformOpenGLComponent::get_peak_sample_value(
 
 	for (int64 sample = currentStartSample; sample < end_sample; sample++)
 	{
+		//TODO: Change source of samples
 		const float sample_value = samples[sample];
 		if (std::abs(peak_value) < std::abs(sample_value))
 		{

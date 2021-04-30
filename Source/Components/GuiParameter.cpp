@@ -1,24 +1,29 @@
 #include "GuiParameter.h"
 
 
-	parameter_gui::parameter_gui(const String id, const String text, util::parameter_type type)
-	{
+	ParameterGui::ParameterGui(util::Parameter parameter): parameter_(std::move(parameter)) {
 		slider = std::make_unique<Slider>();
 		slider->setSliderStyle(Slider::LinearHorizontal);
 		slider->setTextBoxIsEditable(false);
 		addAndMakeVisible(slider.get());
-		slider->setName(id);
+		slider->setName(parameter.audio_parameter_string.id);
 
 
 		addAndMakeVisible(label);
 
-		label.setText(text, NotificationType::dontSendNotification);
-
-		parameter_type_ = type;
+		label.setText(parameter.audio_parameter_string.name, NotificationType::dontSendNotification);
 	}
 
-	parameter_gui::parameter_gui(const String id, const String text, util::parameter_type type,
-	                                            const Slider::SliderStyle style): parameter_gui(id, text, type)
+ParameterGui::ParameterGui(util::Parameter parameter,
+                           const Slider::SliderStyle style): ParameterGui(parameter)
 	{
 		slider->setSliderStyle(style);
 	}
+
+void ParameterGui::set_parameter_default_value() const
+{
+	auto parameter_default_value = parameter_.ranged_parameter->getDefaultValue();
+	slider->setValue(parameter_default_value);
+}
+
+

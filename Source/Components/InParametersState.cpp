@@ -19,8 +19,6 @@ AudioProcessorValueTreeState::ParameterLayout InParametersState::create_paramete
 	NormalisableRange<float> frequency_range = util::log_range<float>(1., (float)fft_size_ / 2);
 	NormalisableRange<float> threshold_range = util::precise_range(0., 0.2);
 
-	// parameters.push_back(
-	// 	std::make_unique<AudioParameterFloat>(parameters::threshold.id, parameters::threshold.name, 0.0f, .5f, 0.f));
 	parameters.push_back(std::make_unique<AudioParameterFloat>(parameters::threshold.id, parameters::threshold.name,
 	                                                           threshold_range, 0.,
 	                                                           parameters::threshold.name,

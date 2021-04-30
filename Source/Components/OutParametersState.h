@@ -2,6 +2,7 @@
 #pragma once
 #include "ParametersState.h"
 #include "Util.h"
+#include "AudioParametersString.h"
 
 class OutParametersState: public ParametersState
 {

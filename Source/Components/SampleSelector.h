@@ -1,13 +1,3 @@
-/*
-  ==============================================================================
-
-    SampleSelector.h
-    Created: 26 Apr 2021 10:51:33am
-    Author:  arnau
-
-  ==============================================================================
-*/
-
 #pragma once
 
 #include <JuceHeader.h>
@@ -27,6 +17,12 @@ public:
 	void resized() override;
 
 private:
+<<<<<<< Updated upstream
+=======
+	void place_sample_components(Rectangle<int> rectangle, int components_per_row, int delta);
+	void sample_clicked(SampleComponent*) ;
+//==============================================================================
+>>>>>>> Stashed changes
 	std::vector<std::unique_ptr<SampleComponent>> sample_components_;
 	InternalFoleyInput* foley_input_;
 

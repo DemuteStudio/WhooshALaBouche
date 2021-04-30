@@ -1,7 +1,6 @@
 #pragma once
 
 #include "ParametersState.h"
-#include "Util.h"
 
 class InParametersState: public ParametersState
 {
