@@ -6,6 +6,10 @@
   <MAINGROUP id="MGtDsZ" name="WhooshGenerator">
     <GROUP id="{5BEADBA9-EE88-C0EB-E7A8-52E1335C79AC}" name="Source">
       <GROUP id="{F968154D-E84D-0FEE-BEFC-539B690BC763}" name="Utils">
+        <FILE id="iTSVKz" name="AudioParametersString.cpp" compile="1" resource="0"
+              file="Source/Components/AudioParametersString.cpp"/>
+        <FILE id="bwhQL2" name="AudioParametersString.h" compile="0" resource="0"
+              file="Source/Components/AudioParametersString.h"/>
         <FILE id="HQzx07" name="FrequencyPeakParameter.cpp" compile="1" resource="0"
               file="Source/Components/FrequencyPeakParameter.cpp"/>
         <FILE id="eCWvBP" name="FrequencyPeakParameter.h" compile="0" resource="0"
