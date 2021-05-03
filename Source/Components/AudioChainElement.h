@@ -2,11 +2,11 @@
 
 #include <JuceHeader.h>
 
-class FxChainElement
+class AudioChainElement
 {
 public:
-	FxChainElement() = default;
-	~FxChainElement() = default;
+	AudioChainElement() = default;
+	~AudioChainElement() = default;
 
 	virtual void getNextAudioBlock(juce::AudioBuffer<float>& bufferToFill) = 0;
 	

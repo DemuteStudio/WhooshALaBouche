@@ -10,14 +10,6 @@
               file="Source/Components/AudioParametersString.cpp"/>
         <FILE id="LNo63f" name="AudioParametersString.h" compile="0" resource="0"
               file="Source/Components/AudioParametersString.h"/>
-        <FILE id="HQzx07" name="FrequencyPeakParameter.cpp" compile="1" resource="0"
-              file="Source/Components/FrequencyPeakParameter.cpp"/>
-        <FILE id="eCWvBP" name="FrequencyPeakParameter.h" compile="0" resource="0"
-              file="Source/Components/FrequencyPeakParameter.h"/>
-        <FILE id="t4sLK2" name="VolumeParameter.cpp" compile="1" resource="0"
-              file="Source/Components/VolumeParameter.cpp"/>
-        <FILE id="owXAvv" name="VolumeParameter.h" compile="0" resource="0"
-              file="Source/Components/VolumeParameter.h"/>
         <FILE id="rlBl4N" name="TwoValueSliderAttachment.cpp" compile="1" resource="0"
               file="Source/Components/TwoValueSliderAttachment.cpp"/>
         <FILE id="STipRT" name="TwoValueSliderAttachment.h" compile="0" resource="0"
