@@ -25,12 +25,13 @@ public:
 
 	void buttonClicked(Button*) override;
 
-	struct parameter_gui_component : public parameter_gui
+	struct parameter_gui_component : public ParameterGui
 	{
-		parameter_gui_component(const String id, const String text, util::parameter_type type):
-			parameter_gui(
-				id, text, type, Slider::LinearVertical)
+		parameter_gui_component(util::Parameter parameter):
+			ParameterGui(
+				parameter)
 		{
+			slider->setSliderStyle(Slider::LinearVertical);
 			label.setFont(Font(10));
 			label.setJustificationType(Justification::centred);
 		}

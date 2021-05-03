@@ -10,16 +10,17 @@
 
 #include <JuceHeader.h>
 
-#include "Components/myAudioSource.h"
-#include "Components/AudioChainElement.h"
-#include "Components/Util.h"
-#include "Components/OutParametersState.h"
-#include "Components/InParametersState.h"
-#include "Components/VolumeAnalyzer.h"
-#include "Components/SpectrumAnalyzer.h"
-#include "Components/OutputTimer.h"
-#include "Components/GainProcess.h"
-#include "Components/InternParametersState.h"
+#include "../Components/myAudioSource.h"
+#include "../Components/AudioChainElement.h"
+#include "../Components/Util.h"
+#include "../Components/OutParametersState.h"
+#include "../Components/InParametersState.h"
+#include "../Components/VolumeAnalyzer.h"
+#include "../Components/SpectrumAnalyzer.h"
+#include "../Components/OutputTimer.h"
+#include "../Components/GainProcess.h"
+#include "../Components/InternParametersState.h"
+#include "../Components/FoleyInput.h"
 
 
 using namespace juce;
@@ -78,11 +79,10 @@ public:
 	//==============================================================================
 
 	//==============================================================================
-	SpectrumAnalyzer* get_spectrum_analyzer();
-
 	[[nodiscard]] ParametersState* get_in_parameters() const;
 	[[nodiscard]] ParametersState* get_intern_parameters() const;
 	[[nodiscard]] ParametersState* get_out_parameters() const;
+	[[nodiscard]] FoleyInput* get_internal_foley_input() const;
 
 private:
 	std::unique_ptr<OutParametersState> out_parameters_;
@@ -94,10 +94,10 @@ private:
 	MyAudioSource audioSource;
 	//==============================================================================
 	std::unique_ptr<VolumeAnalyzer> volume_analyzer_;
-	std::unique_ptr<SpectrumAnalyzer> spectrum_analyzer_;
 
 	std::unique_ptr<GainProcess> gain_processor_;
 
+	std::unique_ptr<FoleyInput> internal_foley_input_;
 	//==============================================================================
 	std::list<AudioChainElement*> sidechain_input_processing_chain_;
 	std::list<AudioChainElement*> input_processing_chain_;

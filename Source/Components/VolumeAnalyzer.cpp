@@ -8,7 +8,9 @@ VolumeAnalyzer::VolumeAnalyzer(AudioParameterFloat* out_parameter, AudioProcesso
 
 void VolumeAnalyzer::getNextAudioBlock(AudioBuffer<float>& bufferToFill)
 {
-	threshold_value = in_parameters_state->getParameter("threshold")->getValue();
+	auto* threshold_parameter = in_parameters_state->getParameter(parameters::threshold.id);
+	const auto threshold_value_0_to_1 = threshold_parameter->getValue();
+	threshold_value = threshold_parameter->convertFrom0to1(threshold_value_0_to_1);
 
 	for (int channel = 0; channel < bufferToFill.getNumChannels(); ++channel)
 	{

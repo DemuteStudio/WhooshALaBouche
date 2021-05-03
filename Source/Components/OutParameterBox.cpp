@@ -4,8 +4,8 @@
 
 //==============================================================================
 OutParametersBox::OutParametersBox(AudioProcessorValueTreeState* output_parameters, AudioProcessorValueTreeState* internal_parameters):
-	volume_out("volume_out", "VOLUME", util::parameter_type::VOLUME),
-	frequency_out("frequency_peak", "FREQUENCY PEAK", util::parameter_type::FREQUENCY_PEAK)
+	volume_out(util::Parameter(parameters::volume_out, internal_parameters)),
+	frequency_out(util::Parameter(parameters::frequency_out, internal_parameters))
 {
 	parameters_components = {&volume_out, &frequency_out};
 	for (std::vector<parameter_gui_component*>::value_type parameters_component : parameters_components)

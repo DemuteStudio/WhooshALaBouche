@@ -14,7 +14,7 @@ using namespace juce;
 class ParametersBox : public juce::Component
 {
 public:
-	ParametersBox::ParametersBox(AudioProcessor* processor, AudioProcessorValueTreeState* parameters_state,
+	ParametersBox::ParametersBox(AudioProcessor* processor,AudioProcessorValueTreeState* parameters_state,
 	                             int fft_size);
 	~ParametersBox() override;
 
@@ -24,28 +24,23 @@ public:
 	void add_sliders_listener(Slider::Listener* listener) const;
 
 
-	std::vector<std::unique_ptr<AudioProcessorValueTreeState::SliderAttachment>> sliders_attachment_;
-	std::vector<std::unique_ptr<TwoValueSliderAttachment>> two_values_sliders_attachment_;
+	std::vector<std::unique_ptr<AudioProcessorValueTreeState::SliderAttachment>> sliders_attachment;
+	std::vector<std::unique_ptr<TwoValueSliderAttachment>> two_values_sliders_attachment;
 
 
-	struct ParameterGuiComponent : public parameter_gui
+	struct ParameterGuiComponent : public ParameterGui
 	{
-		ParameterGuiComponent(const String id, const String text, util::parameter_type type): parameter_gui(
-			id, text, type)
-		{
-		}
-
-		ParameterGuiComponent(const String id, const String text, util::parameter_type type,
-		                        const Slider::SliderStyle style): parameter_gui(id, text, type, style)
+		ParameterGuiComponent(util::Parameter parameter): ParameterGui(parameter)
 		{
 		}
 
 		void resized() override;
 	};
-	struct TwoValuesParameterGuiComponent : public parameter_gui
+
+	struct TwoValuesParameterGuiComponent : public ParameterGui
 	{
-		TwoValuesParameterGuiComponent(const String id, const String text, util::parameter_type type): parameter_gui(
-			id, text, type, Slider::SliderStyle::TwoValueHorizontal)
+		TwoValuesParameterGuiComponent(util::Parameter parameter): ParameterGui(
+			parameter, Slider::SliderStyle::TwoValueHorizontal)
 		{
 			value.setJustificationType(Justification::centred);
 			addAndMakeVisible(value);
@@ -62,15 +57,16 @@ public:
 	ParameterGuiComponent volume_variation_speed;
 
 
-
 private:
 	void link_sliders_to_parameters();
 	void set_parameters_value_to_text() const;
 
 	//==========================================================================================================================================
-	std::vector<parameter_gui*> parameter_guis;
-	AudioProcessor* processor;
+	//==========================================================================================================================================
+	std::vector<ParameterGui*> parameter_guis;
+	std::vector<ParameterGuiComponent*> one_parameter_guis;
 	double frequency_interval;
+	AudioProcessor* processor;
 protected:
 	AudioProcessorValueTreeState* parameters_state;
 

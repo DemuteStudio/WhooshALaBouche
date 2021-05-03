@@ -1,5 +1,7 @@
 #pragma once
 #include <JuceHeader.h>
+#include "Util.h"
+#include "AudioParametersString.h"
 
 using namespace juce;
 
