@@ -1,8 +1,8 @@
 #pragma once
-#include "FxChainElement.h"
+#include "AudioChainElement.h"
 
 
-class GainProcess : public FxChainElement
+class GainProcess : public AudioChainElement
 {
 public:
 

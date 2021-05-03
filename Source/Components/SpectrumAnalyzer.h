@@ -4,7 +4,7 @@
 
 
 #include "Analyzer.h"
-#include "FxChainElement.h"
+#include "AudioChainElement.h"
 
 using namespace juce;
 

@@ -25,7 +25,7 @@ void GainProcess::getNextAudioBlock(juce::AudioBuffer<float>& bufferToFill)
 
 void GainProcess::prepareToPlay(double sampleRate, int samplesPerBlock)
 {
-	FxChainElement::prepareToPlay(sampleRate, samplesPerBlock);
+	AudioChainElement::prepareToPlay(sampleRate, samplesPerBlock);
 }
 
 GainProcess::Interpolation::Interpolation(const point start, const point end): y_range(end.y - start.y),
