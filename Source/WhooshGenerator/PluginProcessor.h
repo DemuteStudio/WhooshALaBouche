@@ -10,16 +10,16 @@
 
 #include <JuceHeader.h>
 
-#include "Components/myAudioSource.h"
-#include "Components/AudioChainElement.h"
-#include "Components/Util.h"
-#include "Components/OutParametersState.h"
-#include "Components/InParametersState.h"
-#include "Components/VolumeAnalyzer.h"
-#include "Components/SpectrumAnalyzer.h"
-#include "Components/OutputTimer.h"
-#include "Components/GainProcess.h"
-#include "Components/InternParametersState.h"
+#include "../Components/myAudioSource.h"
+#include "../Components/AudioChainElement.h"
+#include "../Components/Util.h"
+#include "../Components/OutParametersState.h"
+#include "../Components/InParametersState.h"
+#include "../Components/VolumeAnalyzer.h"
+#include "../Components/SpectrumAnalyzer.h"
+#include "../Components/OutputTimer.h"
+#include "../Components/GainProcess.h"
+#include "../Components/InternParametersState.h"
 
 
 using namespace juce;

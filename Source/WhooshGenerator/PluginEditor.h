@@ -2,12 +2,12 @@
 
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
-#include "Components/ParametersBox.h"
-#include "Components/AudioWaveformComponent.h"
-#include "Components/MyLookAndFeel.h"
-#include "Components/OutParameterBox.h"
-#include "Components/VolumeAnalyzer.h"
-#include "Components/SpectrumComponent.h"
+#include "../Components/ParametersBox.h"
+#include "../Components/AudioWaveformComponent.h"
+#include "../Components/MyLookAndFeel.h"
+#include "../Components/OutParameterBox.h"
+#include "../Components/VolumeAnalyzer.h"
+#include "../Components/SpectrumComponent.h"
 
 using namespace juce;
 
