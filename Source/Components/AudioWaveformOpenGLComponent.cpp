@@ -271,7 +271,7 @@ void AudioWaveformOpenGLComponent::set_vertice(const float* samples, int64 sampl
 	vertex.x = ((static_cast<GLfloat>(vertice) / static_cast<GLfloat>(numVertices)) * 2) - 1;
 	vertex.y = sampleValue;
 
-	vertices[channel][vertice] = vertex;
+	vertices.at(channel).at(vertice) = vertex;
 }
 
 GLfloat getAverageSampleValue(
