@@ -2,13 +2,13 @@
 
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
-#include "../../WhooshGenerator/Source/Components/ParametersBox.h"
-#include "../../WhooshGenerator/Source/Components/AudioWaveformComponent.h"
-#include "../../WhooshGenerator/Source/Components/MyLookAndFeel.h"
-#include "../../WhooshGenerator/Source/Components/OutParameterBox.h"
-#include "../../WhooshGenerator/Source/Components/VolumeAnalyzer.h"
-#include "../../WhooshGenerator/Source/Components/SpectrumComponent.h"
-#include "../../WhooshGenerator/Source/Components/SampleSelector.h"
+#include "../Components/ParametersBox.h"
+#include "../Components/AudioWaveformComponent.h"
+#include "../Components/MyLookAndFeel.h"
+#include "../Components/OutParameterBox.h"
+#include "../Components/VolumeAnalyzer.h"
+#include "../Components/SpectrumComponent.h"
+#include "../Components/SampleSelector.h"
 
 using namespace juce;
 

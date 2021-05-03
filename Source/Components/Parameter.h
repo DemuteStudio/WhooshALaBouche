@@ -14,7 +14,12 @@ namespace util
 
 		~Parameter();
 		//=========================================================================================================
-		parameters::AudioParameterString audio_parameter_string;
+		parameters::AudioParameterString audio_parameter_string{"empty"};
 		RangedAudioParameter* ranged_parameter = nullptr;
+
+	private:
+		RangedAudioParameter* get_parameter(AudioProcessorValueTreeState* audio_processor_value_tree_state);
+
+
 	};
 }

@@ -1,19 +1,18 @@
 #pragma once
 #include "JuceHeader.h"
 #include "Parameter.h"
+#include "ParameterInterface.h"
 #include "Util.h"
 
 using namespace juce;
 
-struct ParameterGui : public juce::Component
+struct ParameterGui : public juce::Component, public ParameterInterface
 {
-	explicit ParameterGui(util::Parameter parameter);
+	ParameterGui(util::Parameter parameter);
 	ParameterGui(util::Parameter parameter, const Slider::SliderStyle style);
 
-
-	void set_parameter_default_value() const;
+	virtual void set_parameter_default_value() const override;
 	//======================================================================================================
 	std::unique_ptr<Slider> slider;
 	Label label;
-	util::Parameter parameter;
 };

@@ -64,6 +64,7 @@ private:
 	//==========================================================================================================================================
 	//==========================================================================================================================================
 	std::vector<ParameterGui*> parameter_guis;
+	std::vector<ParameterGuiComponent*> one_parameter_guis;
 	double frequency_interval;
 	AudioProcessor* processor;
 protected:

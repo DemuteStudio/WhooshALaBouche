@@ -1,7 +1,7 @@
 #include "GuiParameter.h"
 
 
-ParameterGui::ParameterGui(util::Parameter parameter): parameter(std::move(parameter))
+ParameterGui::ParameterGui(util::Parameter parameter): ParameterInterface(parameter)
 {
 	slider = std::make_unique<Slider>();
 	slider->setSliderStyle(Slider::LinearHorizontal);
@@ -22,6 +22,6 @@ ParameterGui::ParameterGui(const util::Parameter parameter,
 
 void ParameterGui::set_parameter_default_value() const
 {
-	auto parameter_default_value = parameter.ranged_parameter->getDefaultValue();
+	const auto parameter_default_value = parameter.ranged_parameter->getDefaultValue();
 	slider->setValue(parameter_default_value);
 }

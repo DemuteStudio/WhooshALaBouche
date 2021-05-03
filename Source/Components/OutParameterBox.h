@@ -31,6 +31,7 @@ public:
 			ParameterGui(
 				parameter)
 		{
+			slider->setSliderStyle(Slider::LinearVertical);
 			label.setFont(Font(10));
 			label.setJustificationType(Justification::centred);
 		}

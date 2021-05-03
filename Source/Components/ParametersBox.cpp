@@ -4,12 +4,11 @@
 
 
 ParametersBox::ParametersBox(AudioProcessor* processor,AudioProcessorValueTreeState* parameters_state, int fft_size):
-	//TODO: check without resharper
-	threshold(util::Parameter{parameters::threshold.id,parameters_state}),
+	threshold(util::Parameter{parameters::threshold,parameters_state}),
 	frequency_band(util::Parameter{parameters::frequency_band, parameters_state}),
 	frequency_variation_speed(util::Parameter(parameters::frequency_speed, parameters_state)),
 	volume_variation_speed(util::Parameter(parameters::volume_speed, parameters_state)),
-	 parameters_state(parameters_state),processor(processor)
+	 processor(processor),parameters_state(parameters_state)
 {
 	const double samples_per_block = processor->getBlockSize();
 	const double sample_rate = processor->getSampleRate();
@@ -19,6 +18,9 @@ ParametersBox::ParametersBox(AudioProcessor* processor,AudioProcessorValueTreeSt
 
 	parameter_guis = {
 		&threshold, &frequency_band, &frequency_variation_speed, &volume_variation_speed
+	};
+	one_parameter_guis = {
+		&threshold, &frequency_variation_speed, &volume_variation_speed
 	};
 
 	for (auto* parameter : parameter_guis)
@@ -41,6 +43,13 @@ ParametersBox::ParametersBox(AudioProcessor* processor,AudioProcessorValueTreeSt
 		frequency_band.value.setText(std::to_string(min_frequency) + " / " + std::to_string(max_frequency) + " Hz",
 		                             NotificationType::dontSendNotification);
 	};
+
+	for (auto parameter_gui : one_parameter_guis)
+	{
+		parameter_gui->set_parameter_default_value();
+	}
+	threshold.slider->setValue(0);
+	
 }
 
 ParametersBox::~ParametersBox()

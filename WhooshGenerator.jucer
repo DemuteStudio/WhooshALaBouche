@@ -63,6 +63,8 @@
               file="Source/Components/SpectrumAnalyzer.h"/>
       </GROUP>
       <GROUP id="{545FF096-DE0F-0736-B733-685C852460AB}" name="Abstract Classes">
+        <FILE id="zIER9e" name="ParameterInterface.h" compile="0" resource="0"
+              file="Source/Components/ParameterInterface.h"/>
         <FILE id="RttcHN" name="AudioChainElement.h" compile="0" resource="0"
               file="Source/Components/AudioChainElement.h"/>
         <FILE id="ICoEsR" name="Analyzer.cpp" compile="1" resource="0" file="Source/Components/Analyzer.cpp"/>

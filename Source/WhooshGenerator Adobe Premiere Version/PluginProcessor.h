@@ -10,17 +10,17 @@
 
 #include <JuceHeader.h>
 
-#include "../../WhooshGenerator/Source/Components/myAudioSource.h"
-#include "../../WhooshGenerator/Source/Components/AudioChainElement.h"
-#include "../../WhooshGenerator/Source/Components/Util.h"
-#include "../../WhooshGenerator/Source/Components/OutParametersState.h"
-#include "../../WhooshGenerator/Source/Components/InParametersState.h"
-#include "../../WhooshGenerator/Source/Components/VolumeAnalyzer.h"
-#include "../../WhooshGenerator/Source/Components/SpectrumAnalyzer.h"
-#include "../../WhooshGenerator/Source/Components/OutputTimer.h"
-#include "../../WhooshGenerator/Source/Components/GainProcess.h"
-#include "../../WhooshGenerator/Source/Components/InternParametersState.h"
-#include "../../WhooshGenerator/Source/Components/FoleyInput.h"
+#include "../Components/myAudioSource.h"
+#include "../Components/AudioChainElement.h"
+#include "../Components/Util.h"
+#include "../Components/OutParametersState.h"
+#include "../Components/InParametersState.h"
+#include "../Components/VolumeAnalyzer.h"
+#include "../Components/SpectrumAnalyzer.h"
+#include "../Components/OutputTimer.h"
+#include "../Components/GainProcess.h"
+#include "../Components/InternParametersState.h"
+#include "../Components/FoleyInput.h"
 
 
 using namespace juce;
