@@ -1,30 +1,28 @@
 #pragma once
 
 #include <JuceHeader.h>
-#include "InternalFoleyInput.h"
+#include "FoleyInput.h"
 #include "SampleComponent.h"
 
+using namespace  juce;
 //==============================================================================
 /*
 */
 class SampleSelector : public juce::Component
 {
 public:
-	SampleSelector(InternalFoleyInput* foley_input);
+	SampleSelector(FoleyInput* foley_input);
 	~SampleSelector() override;
 
 	void paint(juce::Graphics&) override;
 	void resized() override;
 
 private:
-<<<<<<< Updated upstream
-=======
 	void place_sample_components(Rectangle<int> rectangle, int components_per_row, int delta);
 	void sample_clicked(SampleComponent*) ;
 //==============================================================================
->>>>>>> Stashed changes
 	std::vector<std::unique_ptr<SampleComponent>> sample_components_;
-	InternalFoleyInput* foley_input_;
+	FoleyInput* foley_input_;
 
 	void create_sample_components();
 

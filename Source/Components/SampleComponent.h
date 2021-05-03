@@ -1,32 +1,24 @@
-/*
-  ==============================================================================
-
-    SampleComponent.h
-    Created: 26 Apr 2021 3:42:57pm
-    Author:  arnau
-
-  ==============================================================================
-*/
-
 #pragma once
 
 #include <JuceHeader.h>
+#include "FoleyInput.h"
 
 //==============================================================================
 /*
 */
-class SampleComponent  : public juce::Component
+class SampleComponent : public juce::TextButton
 {
 public:
-    SampleComponent(juce::File sample_file);
-    ~SampleComponent() override;
+	SampleComponent(const FoleyInput::FileAudioSource* sample);
+	~SampleComponent() override;
 
-    void paint (juce::Graphics&) override;
-    void resized() override;
+	void paint(juce::Graphics&) override;
+	void resized() override;
+	void unselect();
+	void select();
 
-    juce::String name;
+	const FoleyInput::FileAudioSource* file_audio_source;
 
 private:
-
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SampleComponent)
+	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(SampleComponent)
 };

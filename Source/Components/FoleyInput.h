@@ -31,15 +31,16 @@ public:
 
 	void load_samples_into_reader();
 
-	// std::vector<std::unique_ptr<FileAudioSource>> get_samples_information() const;
-	std::vector<std::unique_ptr<FileAudioSource>> files_audio_sources_;
+
+	std::vector<std::unique_ptr<FileAudioSource>> files_audio_sources;
+
 	void set_selected_sample(juce::AudioSource*);
 private:
 	void scan_samples_files_alternative();
 	void scan_samples_files();
 //====================================================================================
+	std::vector<juce::File> samples_files;
 	juce::AudioFormatManager audio_format_manager_;
-	std::vector<juce::File> samples_files_;
 //====================================================================================
 	double sample_rate_;
 	int samples_per_block_;

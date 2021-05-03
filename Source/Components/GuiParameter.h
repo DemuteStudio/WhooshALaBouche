@@ -7,7 +7,7 @@ using namespace juce;
 
 struct ParameterGui : public juce::Component
 {
-	ParameterGui(util::Parameter parameter);
+	explicit ParameterGui(util::Parameter parameter);
 	ParameterGui(util::Parameter parameter, const Slider::SliderStyle style);
 
 
@@ -15,5 +15,5 @@ struct ParameterGui : public juce::Component
 	//======================================================================================================
 	std::unique_ptr<Slider> slider;
 	Label label;
-	util::Parameter parameter_;
+	util::Parameter parameter;
 };

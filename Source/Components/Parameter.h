@@ -1,10 +1,9 @@
 #pragma once
 #include <string>
 #include <utility>
-
-#include "GuiParameter.h"
 #include "AudioParametersString.h"
 
+using namespace juce;
 
 namespace util
 {
