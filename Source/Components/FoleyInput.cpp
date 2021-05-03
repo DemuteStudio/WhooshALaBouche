@@ -15,6 +15,7 @@ FoleyInput::~FoleyInput()
 }
 
 void FoleyInput::prepareToPlay(double sampleRate, int samplesPerBlock)
+
 {
 	sample_rate_ = sampleRate;
 	samples_per_block_ = samplesPerBlock;
