@@ -4,10 +4,14 @@
 FoleyInput::FoleyInput()
 {
 	audio_format_manager_.registerBasicFormats();
-	files_audio_sources.reserve(10);
+	files_audio_sources.reserve(max_samples_);
 
-	scan_samples_files();
-	load_samples_into_reader();
+	scan_libraries_files();
+	if (libraries_paths.size() > 0)
+	{
+		scan_samples_files(libraries_paths.at(0));
+		load_samples_into_reader();
+	}
 }
 
 FoleyInput::~FoleyInput()
@@ -41,28 +45,35 @@ void FoleyInput::set_selected_sample(juce::AudioSource* audio_source)
 	selected_sample_->prepareToPlay(samples_per_block_, sample_rate_);
 }
 
-void FoleyInput::scan_samples_files_alternative()
-{
-	//TODO: Uniformize: use std or Juce library
-	const std::string path = "/";
-
-	for (const auto& file : std::filesystem::directory_iterator(path))
-	{
-		samples_files.emplace_back(file.path().string());
-	}
-}
-
-void FoleyInput::scan_samples_files()
+void FoleyInput::scan_libraries_files()
 {
 	const juce::File user_documents = juce::File::getSpecialLocation(juce::File::userDocumentsDirectory);
 	const juce::File application_repertory = user_documents.getChildFile("Whoosh");
 
-	auto directory_entrieses = application_repertory.findChildFiles(juce::File::TypesOfFileToFind::findFiles, false,
-	                                                                "*.wav");
+	auto directory_entrieses = application_repertory.findChildFiles(juce::File::TypesOfFileToFind::findDirectories,
+	                                                                false,
+	                                                                "*");
 
+	for (const auto& directory : directory_entrieses)
+	{
+		libraries_paths.emplace_back(directory);
+	}
+}
+
+
+void FoleyInput::scan_samples_files(const File library_path)
+{
+	auto directory_entrieses = library_path.findChildFiles(juce::File::TypesOfFileToFind::findFiles, false,
+	                                                       "*.wav");
+
+	int sample_index = 0;
 	for (const auto& file : directory_entrieses)
 	{
-		samples_files.emplace_back(file);
+		if (sample_index < max_samples_)
+		{
+			samples_files.emplace_back(file);
+		}
+		sample_index++;
 	}
 }
 

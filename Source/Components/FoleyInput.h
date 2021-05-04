@@ -34,15 +34,17 @@ public:
 
 	void set_selected_sample(juce::AudioSource*);
 private:
-	void scan_samples_files_alternative();
-	void scan_samples_files();
+	void scan_libraries_files();
+	void scan_samples_files(File library_path);
 //====================================================================================
 	std::vector<juce::File> samples_files;
+	std::vector<juce::File> libraries_paths;
 	juce::AudioFormatManager audio_format_manager_;
 //====================================================================================
 	double sample_rate_;
 	int samples_per_block_;
 
+	int max_samples_ = 10;
 
 	juce::AudioSource* selected_sample_ = nullptr;
 };
