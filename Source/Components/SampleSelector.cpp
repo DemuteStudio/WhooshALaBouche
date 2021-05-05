@@ -1,89 +1,62 @@
 #include <JuceHeader.h>
 #include "SampleSelector.h"
 
+
 //==============================================================================
 SampleSelector::SampleSelector(FoleyInput* foley_input): foley_input_(foley_input)
 {
-	create_sample_components();
+	SampleSelector::create_element_components();
+	enable_default_element();
 }
 
 SampleSelector::~SampleSelector()
 {
 }
 
-void SampleSelector::paint(juce::Graphics& g)
+void SampleSelector::enable_default_element()
 {
-	g.fillAll(getLookAndFeel().findColour(juce::ResizableWindow::backgroundColourId)); // clear the background
-
-	g.setColour(juce::Colours::grey);
-	g.drawRect(getLocalBounds(), 1); // draw an outline around the component
-
-	g.setColour(juce::Colours::grey);
-	g.drawRect(getLocalBounds(), 1); // draw an outline around the component
-}
-
-
-void SampleSelector::place_sample_components(Rectangle<int> rectangle, const int components_per_row, const int delta)
-{
-	const int number_of_rows = 1 + (sample_components_.size() / components_per_row);
-
-	const auto row_height = rectangle.getHeight() / number_of_rows;
-	const int component_width = rectangle.getWidth() / components_per_row;
-
-	int component_index = 0;
-	for (int row = 0; row < number_of_rows; ++row)
+	if (!element_components_.empty())
 	{
-		auto row_rectangle = rectangle.removeFromTop(row_height);
-		for (int column_index = 0; column_index < components_per_row; ++column_index)
-		{
-			if (component_index >= sample_components_.size())
-			{
-				break;
-			}
-			sample_components_.at(component_index)->
-			                   setBounds(row_rectangle.removeFromLeft(component_width).reduced(delta));
-			component_index++;
-		}
+		element_clicked(element_components_.at(0).get());
 	}
 }
 
-void SampleSelector::resized()
+void SampleSelector::reload_samples()
 {
-	const auto rectangle = getLocalBounds();
-
-	const int components_per_row = 5;
-	const int delta = 5;
-
-
-	place_sample_components(rectangle, components_per_row, delta);
+	element_components_.clear();
+	SampleSelector::create_element_components();
+	resized();
+	enable_default_element();
 }
 
-void SampleSelector::sample_clicked(SampleComponent* clicked_sample)
+
+void SampleSelector::element_clicked(SelectorElement* clicked_element)
 {
-	for (auto& sample_component : sample_components_)
+	for (auto& sample_component : element_components_)
 	{
-		if (static_cast<Button*>(sample_component.get()) != clicked_sample)
+		if (static_cast<Button*>(sample_component.get()) != clicked_element)
 		{
 			sample_component->unselect();
 		}
 	}
-	clicked_sample->select();
+	clicked_element->select();
 
-	foley_input_->set_selected_sample(clicked_sample->file_audio_source->audio_source.get());
+	foley_input_->set_selected_sample(
+		static_cast<SampleComponent*>(clicked_element)->file_audio_source->audio_source.get());
 }
 
-void SampleSelector::create_sample_components()
+void SampleSelector::create_element_components()
 {
 	for (const auto& sample : foley_input_->files_audio_sources)
 	{
-		sample_components_.emplace_back(std::make_unique<SampleComponent>(sample.get()));
+		element_components_.emplace_back(std::make_unique<SampleComponent>(sample.get()));
 	}
-	for (auto& component : sample_components_)
+	for (auto& component : element_components_)
 	{
 		addAndMakeVisible(component.get());
 		component->onClick = [this, &component]()
 		{
-			sample_clicked(component.get());
+			element_clicked(component.get());
 		};
 	}
 }

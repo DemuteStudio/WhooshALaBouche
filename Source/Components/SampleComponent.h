@@ -2,20 +2,13 @@
 
 #include <JuceHeader.h>
 #include "FoleyInput.h"
+#include "SelectorElement.h"
 
-//==============================================================================
-/*
-*/
-class SampleComponent : public juce::TextButton
+class SampleComponent : public SelectorElement
 {
 public:
 	SampleComponent(const FoleyInput::FileAudioSource* sample);
 	~SampleComponent() override;
-
-	void paint(juce::Graphics&) override;
-	void resized() override;
-	void unselect();
-	void select();
 
 	const FoleyInput::FileAudioSource* file_audio_source;
 

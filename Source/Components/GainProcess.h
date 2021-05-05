@@ -31,7 +31,6 @@ private:
 		point end;
 
 		float step;
-
 	};
 	juce::RangedAudioParameter* parameter_;
 

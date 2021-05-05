@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<JUCERPROJECT id="fNT7pw" name="Whoosh Generator Adobe Premiere" projectType="audioplug"
+              useAppConfig="0" addUsingNamespaceToJuceHeader="0" jucerFormatVersion="1"
+              cppLanguageStandard="latest">
+  <MAINGROUP id="op8KmS" name="Whoosh Generator Adobe Premiere">
+    <GROUP id="{C3DAB625-9BDD-35B3-F574-4391860A8555}" name="Source">
+      <GROUP id="{92541AC0-3602-125D-EFF0-FE98CD878FF8}" name="WhooshGenerator Adobe Premiere Version">
+        <FILE id="moNEuJ" name="PluginEditor.cpp" compile="1" resource="0"
+              file="../Source/WhooshGenerator Adobe Premiere Version/PluginEditor.cpp"/>
+        <FILE id="xZexYH" name="PluginEditor.h" compile="0" resource="0" file="../Source/WhooshGenerator Adobe Premiere Version/PluginEditor.h"/>
+        <FILE id="UpRyZa" name="PluginProcessor.cpp" compile="1" resource="0"
+              file="../Source/WhooshGenerator Adobe Premiere Version/PluginProcessor.cpp"/>
+        <FILE id="nWVopH" name="PluginProcessor.h" compile="0" resource="0"
+              file="../Source/WhooshGenerator Adobe Premiere Version/PluginProcessor.h"/>
+      </GROUP>
+      <GROUP id="{6DB2E39C-CCAB-11F0-BD2C-83EC771A3371}" name="Components">
+        <FILE id="mf6BBs" name="LibrarySelector.cpp" compile="1" resource="0"
+              file="../Source/Components/LibrarySelector.cpp"/>
+        <FILE id="MFqwMF" name="LibrarySelector.h" compile="0" resource="0"
+              file="../Source/Components/LibrarySelector.h"/>
+        <FILE id="NV3vY2" name="SampleManager.cpp" compile="1" resource="0"
+              file="../Source/Components/SampleManager.cpp"/>
+        <FILE id="r7gYI7" name="SampleManager.h" compile="0" resource="0" file="../Source/Components/SampleManager.h"/>
+        <FILE id="xDz5gF" name="SampleComponent.cpp" compile="1" resource="0"
+              file="../Source/Components/SampleComponent.cpp"/>
+        <FILE id="mVgUqC" name="SampleComponent.h" compile="0" resource="0"
+              file="../Source/Components/SampleComponent.h"/>
+        <FILE id="D9w5fI" name="SampleSelector.cpp" compile="1" resource="0"
+              file="../Source/Components/SampleSelector.cpp"/>
+        <FILE id="oTO6KG" name="SampleSelector.h" compile="0" resource="0"
+              file="../Source/Components/SampleSelector.h"/>
+        <FILE id="Lkumij" name="SpectrumComponent.cpp" compile="1" resource="0"
+              file="../Source/Components/SpectrumComponent.cpp"/>
+        <FILE id="ckhTwP" name="SpectrumComponent.h" compile="0" resource="0"
+              file="../Source/Components/SpectrumComponent.h"/>
+        <FILE id="ZVWAcX" name="ParametersBox.cpp" compile="1" resource="0"
+              file="../Source/Components/ParametersBox.cpp"/>
+        <FILE id="g7dxIo" name="ParametersBox.h" compile="0" resource="0" file="../Source/Components/ParametersBox.h"/>
+        <FILE id="v6cpBb" name="OutParameterBox.cpp" compile="1" resource="0"
+              file="../Source/Components/OutParameterBox.cpp"/>
+        <FILE id="gAzzn5" name="OutParameterBox.h" compile="0" resource="0"
+              file="../Source/Components/OutParameterBox.h"/>
+        <FILE id="MWI9iV" name="AudioWaveformOpenGLComponent.cpp" compile="1"
+              resource="0" file="../Source/Components/AudioWaveformOpenGLComponent.cpp"/>
+        <FILE id="tiKz9n" name="AudioWaveformOpenGLComponent.h" compile="0"
+              resource="0" file="../Source/Components/AudioWaveformOpenGLComponent.h"/>
+        <FILE id="jNm2LJ" name="AudioWaveformComponent.cpp" compile="1" resource="0"
+              file="../Source/Components/AudioWaveformComponent.cpp"/>
+        <FILE id="URz1i2" name="AudioWaveformComponent.h" compile="0" resource="0"
+              file="../Source/Components/AudioWaveformComponent.h"/>
+      </GROUP>
+      <GROUP id="{F4AE39DC-57F2-575F-AAF8-C2E8EC0C567D}" name="Abstact Classes">
+        <FILE id="VO5V4a" name="SelectorElement.cpp" compile="1" resource="0"
+              file="../Source/Components/SelectorElement.cpp"/>
+        <FILE id="lor10r" name="SelectorElement.h" compile="0" resource="0"
+              file="../Source/Components/SelectorElement.h"/>
+        <FILE id="sInpQB" name="SelectorComponent.cpp" compile="1" resource="0"
+              file="../Source/Components/SelectorComponent.cpp"/>
+        <FILE id="o8h9Vj" name="SelectorComponent.h" compile="0" resource="0"
+              file="../Source/Components/SelectorComponent.h"/>
+        <FILE id="qWNWut" name="ParameterInterface.h" compile="0" resource="0"
+              file="../Source/Components/ParameterInterface.h"/>
+        <FILE id="BA149H" name="AudioChainElement.h" compile="0" resource="0"
+              file="../Source/Components/AudioChainElement.h"/>
+        <FILE id="o3NnCk" name="OpenGLComponent.h" compile="0" resource="0"
+              file="../Source/Components/OpenGLComponent.h"/>
+        <FILE id="zI1w2n" name="ParametersState.cpp" compile="1" resource="0"
+              file="../Source/Components/ParametersState.cpp"/>
+        <FILE id="fKlgz8" name="ParametersState.h" compile="0" resource="0"
+              file="../Source/Components/ParametersState.h"/>
+        <FILE id="Eybsgt" name="Parameter.cpp" compile="1" resource="0" file="../Source/Components/Parameter.cpp"/>
+        <FILE id="y2INLs" name="Parameter.h" compile="0" resource="0" file="../Source/Components/Parameter.h"/>
+        <FILE id="XaArPL" name="ISpectrumAnalyzer.h" compile="0" resource="0"
+              file="../Source/Components/ISpectrumAnalyzer.h"/>
+        <FILE id="Y9r92F" name="GuiParameter.cpp" compile="1" resource="0"
+              file="../Source/Components/GuiParameter.cpp"/>
+        <FILE id="R0lkFF" name="GuiParameter.h" compile="0" resource="0" file="../Source/Components/GuiParameter.h"/>
+        <FILE id="TdUEi8" name="Analyzer.cpp" compile="1" resource="0" file="../Source/Components/Analyzer.cpp"/>
+        <FILE id="qaOcr8" name="Analyzer.h" compile="0" resource="0" file="../Source/Components/Analyzer.h"/>
+      </GROUP>
+      <GROUP id="{BB4D5B07-0ACB-0C63-9270-99A6194E781B}" name="BackEnd">
+        <FILE id="wKUflp" name="FoleyInput.cpp" compile="1" resource="0" file="../Source/Components/FoleyInput.cpp"/>
+        <FILE id="X7tpvU" name="FoleyInput.h" compile="0" resource="0" file="../Source/Components/FoleyInput.h"/>
+        <FILE id="ai73zV" name="AudioBufferSource.cpp" compile="1" resource="0"
+              file="../Source/Components/AudioBufferSource.cpp"/>
+        <FILE id="Vdy619" name="AudioBufferSource.h" compile="0" resource="0"
+              file="../Source/Components/AudioBufferSource.h"/>
+        <FILE id="Tg3KRt" name="myAudioSource.cpp" compile="1" resource="0"
+              file="../Source/Components/myAudioSource.cpp"/>
+        <FILE id="KNIVgz" name="myAudioSource.h" compile="0" resource="0" file="../Source/Components/myAudioSource.h"/>
+        <FILE id="oNq2Y7" name="OutParametersState.cpp" compile="1" resource="0"
+              file="../Source/Components/OutParametersState.cpp"/>
+        <FILE id="giXBic" name="OutParametersState.h" compile="0" resource="0"
+              file="../Source/Components/OutParametersState.h"/>
+        <FILE id="T4EQPH" name="SpectrumAnalyzer.cpp" compile="1" resource="0"
+              file="../Source/Components/SpectrumAnalyzer.cpp"/>
+        <FILE id="raZDSl" name="SpectrumAnalyzer.h" compile="0" resource="0"
+              file="../Source/Components/SpectrumAnalyzer.h"/>
+        <FILE id="Mro24S" name="VolumeAnalyzer.cpp" compile="1" resource="0"
+              file="../Source/Components/VolumeAnalyzer.cpp"/>
+        <FILE id="v94snZ" name="VolumeAnalyzer.h" compile="0" resource="0"
+              file="../Source/Components/VolumeAnalyzer.h"/>
+        <FILE id="CIAZbG" name="OutputTimer.cpp" compile="1" resource="0" file="../Source/Components/OutputTimer.cpp"/>
+        <FILE id="hucc3D" name="OutputTimer.h" compile="0" resource="0" file="../Source/Components/OutputTimer.h"/>
+        <FILE id="cyZwxL" name="InternParametersState.cpp" compile="1" resource="0"
+              file="../Source/Components/InternParametersState.cpp"/>
+        <FILE id="lcVF0h" name="InternParametersState.h" compile="0" resource="0"
+              file="../Source/Components/InternParametersState.h"/>
+        <FILE id="ffxqJD" name="InParametersState.cpp" compile="1" resource="0"
+              file="../Source/Components/InParametersState.cpp"/>
+        <FILE id="dws1ga" name="InParametersState.h" compile="0" resource="0"
+              file="../Source/Components/InParametersState.h"/>
+        <FILE id="akhVdW" name="GainProcess.cpp" compile="1" resource="0" file="../Source/Components/GainProcess.cpp"/>
+        <FILE id="i6DqVE" name="GainProcess.h" compile="0" resource="0" file="../Source/Components/GainProcess.h"/>
+      </GROUP>
+      <GROUP id="{69F0C408-EAF3-0037-EBF8-2F187659E3FC}" name="Utils">
+        <FILE id="o8h1Ig" name="AudioParametersString.cpp" compile="1" resource="0"
+              file="../Source/Components/AudioParametersString.cpp"/>
+        <FILE id="EcbDZM" name="AudioParametersString.h" compile="0" resource="0"
+              file="../Source/Components/AudioParametersString.h"/>
+        <FILE id="QNcjA4" name="MyLookAndFeel.cpp" compile="1" resource="0"
+              file="../Source/Components/MyLookAndFeel.cpp"/>
+        <FILE id="ItrQR5" name="MyLookAndFeel.h" compile="0" resource="0" file="../Source/Components/MyLookAndFeel.h"/>
+        <FILE id="VwAaDS" name="TwoValueSliderAttachment.cpp" compile="1" resource="0"
+              file="../Source/Components/TwoValueSliderAttachment.cpp"/>
+        <FILE id="fvToPZ" name="TwoValueSliderAttachment.h" compile="0" resource="0"
+              file="../Source/Components/TwoValueSliderAttachment.h"/>
+        <FILE id="HJD06Z" name="Util.cpp" compile="1" resource="0" file="../Source/Components/Util.cpp"/>
+        <FILE id="looknc" name="Util.h" compile="0" resource="0" file="../Source/Components/Util.h"/>
+      </GROUP>
+    </GROUP>
+  </MAINGROUP>
+  <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1" JUCE_VST3_CAN_REPLACE_VST2="0"/>
+  <EXPORTFORMATS>
+    <VS2017 targetFolder="Builds/VisualStudio2017">
+      <CONFIGURATIONS>
+        <CONFIGURATION isDebug="1" name="Debug" targetName="Whoosh Generator Adobe Premiere"/>
+        <CONFIGURATION isDebug="0" name="Release" targetName="Whoosh Generator Adobe Premiere"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_audio_basics" path="C:/Users/arnau/Documents/JUCE/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_devices" path="C:/Users/arnau/Documents/JUCE/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="C:/Users/arnau/Documents/JUCE/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_plugin_client" path="C:/Users/arnau/Documents/JUCE/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_processors" path="C:/Users/arnau/Documents/JUCE/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_utils" path="C:/Users/arnau/Documents/JUCE/JUCE/modules"/>
+        <MODULEPATH id="juce_core" path="C:/Users/arnau/Documents/JUCE/JUCE/modules"/>
+        <MODULEPATH id="juce_data_structures" path="C:/Users/arnau/Documents/JUCE/JUCE/modules"/>
+        <MODULEPATH id="juce_events" path="C:/Users/arnau/Documents/JUCE/JUCE/modules"/>
+        <MODULEPATH id="juce_graphics" path="C:/Users/arnau/Documents/JUCE/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="C:/Users/arnau/Documents/JUCE/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="C:/Users/arnau/Documents/JUCE/JUCE/modules"/>
+        <MODULEPATH id="juce_opengl" path="C:/Users/arnau/Documents/JUCE/JUCE/modules"/>
+        <MODULEPATH id="juce_dsp" path="C:/Users/arnau/Documents/JUCE/JUCE/modules"/>
+      </MODULEPATHS>
+    </VS2017>
+  </EXPORTFORMATS>
+  <MODULES>
+    <MODULE id="juce_audio_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_devices" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_formats" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_plugin_client" showAllCode="1" useLocalCopy="0"
+            useGlobalPath="1"/>
+    <MODULE id="juce_audio_processors" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_utils" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_core" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_data_structures" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_dsp" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_events" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_graphics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_gui_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_gui_extra" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_opengl" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+  </MODULES>
+  <LIVE_SETTINGS>
+    <WINDOWS/>
+  </LIVE_SETTINGS>
+</JUCERPROJECT>

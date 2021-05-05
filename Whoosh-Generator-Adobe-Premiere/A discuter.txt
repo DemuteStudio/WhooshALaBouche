@@ -1,0 +1,3 @@
+fonctionalité de link des sliders est particulière a Reaper
+
+Abandon Frequence ou essai d'autre chose? (OSC ne semble pas supporté)

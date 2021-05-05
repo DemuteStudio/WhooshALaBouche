@@ -7,10 +7,9 @@ FoleyInput::FoleyInput()
 	files_audio_sources.reserve(max_samples_);
 
 	scan_libraries_files();
-	if (libraries_paths.size() > 0)
+	if (!libraries_.empty())
 	{
-		scan_samples_files(libraries_paths.at(0));
-		load_samples_into_reader();
+		set_selected_library(libraries_.at(0).name);
 	}
 }
 
@@ -45,24 +44,56 @@ void FoleyInput::set_selected_sample(juce::AudioSource* audio_source)
 	selected_sample_->prepareToPlay(samples_per_block_, sample_rate_);
 }
 
+void FoleyInput::set_selected_library(const String& library_name)
+{
+	const auto iterator = std::find_if(libraries_.begin(), libraries_.end(), [library_name](const Library library)
+	{
+		return library.name == library_name;
+	});
+	if (iterator != libraries_.end())
+	{
+		current_library = &(*iterator);
+		scan_samples_files(current_library->path);
+		load_samples_into_reader();
+	}
+}
+
+String FoleyInput::get_current_library_name() const
+{
+	return current_library->name;
+}
+
+std::vector<File> FoleyInput::get_libraries_paths() const
+{
+	std::vector<File> paths;
+	for (auto library : libraries_)
+	{
+		paths.emplace_back(library.path);
+	}
+	return paths;
+}
+
 void FoleyInput::scan_libraries_files()
 {
+	libraries_.clear();
+
 	const juce::File user_documents = juce::File::getSpecialLocation(juce::File::userDocumentsDirectory);
 	const juce::File application_repertory = user_documents.getChildFile("Whoosh");
 
 	auto directory_entrieses = application_repertory.findChildFiles(juce::File::TypesOfFileToFind::findDirectories,
 	                                                                false,
 	                                                                "*");
-
 	for (const auto& directory : directory_entrieses)
 	{
-		libraries_paths.emplace_back(directory);
+		libraries_.emplace_back(Library(directory, directory.getFileName()));
 	}
 }
 
 
 void FoleyInput::scan_samples_files(const File library_path)
 {
+	samples_files.clear();
+
 	auto directory_entrieses = library_path.findChildFiles(juce::File::TypesOfFileToFind::findFiles, false,
 	                                                       "*.wav");
 
@@ -77,8 +108,16 @@ void FoleyInput::scan_samples_files(const File library_path)
 	}
 }
 
+void FoleyInput::remove_selected_sample()
+{
+	selected_sample_ = nullptr;
+}
+
 void FoleyInput::load_samples_into_reader()
 {
+	files_audio_sources.clear();
+	remove_selected_sample();
+
 	for (const auto& samples_file : samples_files)
 	{
 		auto* reader = audio_format_manager_.createReaderFor(samples_file);

@@ -1,30 +1,27 @@
 #pragma once
 
 #include <JuceHeader.h>
+#include "SelectorComponent.h"
 #include "FoleyInput.h"
 #include "SampleComponent.h"
 
-using namespace  juce;
 //==============================================================================
 /*
 */
-class SampleSelector : public juce::Component
+class SampleSelector : public SelectorComponent
 {
 public:
 	SampleSelector(FoleyInput* foley_input);
 	~SampleSelector() override;
+	void enable_default_element();
 
-	void paint(juce::Graphics&) override;
-	void resized() override;
-
+	void reload_samples();
 private:
-	void place_sample_components(Rectangle<int> rectangle, int components_per_row, int delta);
-	void sample_clicked(SampleComponent*) ;
-//==============================================================================
-	std::vector<std::unique_ptr<SampleComponent>> sample_components_;
-	FoleyInput* foley_input_;
+	void element_clicked(SelectorElement*) override ;
+	void create_element_components() override;
 
-	void create_sample_components();
+//==============================================================================
+	FoleyInput* foley_input_;
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(SampleSelector)
 };

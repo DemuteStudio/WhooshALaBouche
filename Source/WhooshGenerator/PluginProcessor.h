@@ -75,7 +75,8 @@ public:
 	//==============================================================================
 	MyAudioSource& getAudioSource();
 	//==============================================================================
-
+	void getCurrentProgramStateInformation(juce::MemoryBlock& destData) override;
+	void setCurrentProgramStateInformation(const void* data, int sizeInBytes) override;
 	//==============================================================================
 	SpectrumAnalyzer* get_spectrum_analyzer();
 

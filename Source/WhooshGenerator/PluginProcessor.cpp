@@ -270,6 +270,24 @@ MyAudioSource& WhooshGeneratorAudioProcessor::getAudioSource()
 	return audioSource;
 }
 
+void WhooshGeneratorAudioProcessor::getCurrentProgramStateInformation(juce::MemoryBlock& destData)
+{
+	const auto in_state = in_parameters_->get_state()->copyState();
+
+	std::unique_ptr<juce::XmlElement> xml(in_state.createXml());
+
+	copyXmlToBinary(*xml, destData);
+}
+
+void WhooshGeneratorAudioProcessor::setCurrentProgramStateInformation(const void* data, int sizeInBytes)
+{
+	std::unique_ptr<juce::XmlElement> xmlState(getXmlFromBinary(data, sizeInBytes));
+
+	if (xmlState != nullptr)
+		if (xmlState->hasTagName(in_parameters_->get_state()->state.getType()))
+			in_parameters_->get_state()->replaceState(juce::ValueTree::fromXml(*xmlState));
+}
+
 SpectrumAnalyzer* WhooshGeneratorAudioProcessor::get_spectrum_analyzer()
 {
 	return spectrum_analyzer_.get();

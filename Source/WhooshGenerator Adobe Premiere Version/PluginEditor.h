@@ -8,7 +8,7 @@
 #include "../Components/OutParameterBox.h"
 #include "../Components/VolumeAnalyzer.h"
 #include "../Components/SpectrumComponent.h"
-#include "../Components/SampleSelector.h"
+#include "../Components/SampleManager.h"
 
 using namespace juce;
 
@@ -46,7 +46,7 @@ private:
 	//==================================================
 	AudioWaveformComponent waveform;
 	OutParametersBox out_parameters_box_;
-	SampleSelector sample_selector_;
+	SampleManager sample_manager_;
 
 	//==================================================
 

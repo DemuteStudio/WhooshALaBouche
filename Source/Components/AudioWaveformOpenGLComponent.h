@@ -46,6 +46,7 @@ public:
 	void display(int64 startSample, int64 numSamples);
 
 	void refresh();
+	void calclulate_number_samples_to_skip();
 
 	//===============================================================================================
 	void initialize_drawing() const;
@@ -55,12 +56,14 @@ public:
 
 private:
 	void calculate_vertices(unsigned int channel);
-	int get_samples_interval();
-	void set_vertice(std::vector<float>& samples, int64 sample, int64 skipSample, int vertice,
-	                 int numVertices,
+	int get_samples_interval() const;
+	void set_vertice(const float* samples, int64 sample, int64 skipSample, int64 endSample,
+	                 int vertice, int numVertices,
 	                 int channel);
-
-	GLfloat get_peak_sample_value(std::vector<float> samples, int64 startSample, int64 numSamples) const;
+	GLfloat AudioWaveformOpenGLComponent::get_peak_sample_value(
+		const float* samples,
+		int64 currentStartSample,
+		int64 currentNumSamples) const;
 
 private:
 	struct Vertex;
