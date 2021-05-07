@@ -203,7 +203,7 @@ void WhooshGeneratorAudioProcessor::processBlock(juce::AudioBuffer<float>& buffe
 
 	const int input_buses_count = getBusCount(true);
 
-	AudioBuffer<float> foley_input= AudioBuffer<float>(getTotalNumOutputChannels(), getBlockSize() );
+	AudioBuffer<float> foley_input = AudioBuffer<float>(getTotalNumOutputChannels(), getBlockSize());
 	AudioBuffer<float> side_chain_input = getBusBuffer(buffer, true, 0);
 
 	internal_foley_input_->getNextAudioBlock(foley_input);
@@ -212,7 +212,7 @@ void WhooshGeneratorAudioProcessor::processBlock(juce::AudioBuffer<float>& buffe
 	{
 		element->getNextAudioBlock(side_chain_input);
 	}
-	
+
 	for (std::list<AudioChainElement>::value_type* element : input_processing_chain_)
 	{
 		element->getNextAudioBlock(foley_input);

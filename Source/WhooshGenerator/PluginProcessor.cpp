@@ -40,24 +40,12 @@ WhooshGeneratorAudioProcessor::WhooshGeneratorAudioProcessor() : out_parameters_
 #if ! JucePlugin_IsMidiEffect
 #if ! JucePlugin_IsSynth
 	                                                                 .
-	                                                                 withInput(
-
-
-		                                                                 "Input"
-		                                                                 ,
-		                                                                 juce::AudioChannelSet::stereo(),
-
-
-		                                                                 true
-	                                                                 )
+	                                                                 withInput("Input", juce::AudioChannelSet::stereo(),
+	                                                                           true)
 #endif
 	                                                                 .
 	                                                                 withOutput(
-
-
-		                                                                 "Output"
-		                                                                 ,
-		                                                                 juce::AudioChannelSet::stereo(),
+		                                                                 "Output", juce::AudioChannelSet::stereo(),
 
 
 		                                                                 true
@@ -281,7 +269,7 @@ void WhooshGeneratorAudioProcessor::getCurrentProgramStateInformation(juce::Memo
 
 void WhooshGeneratorAudioProcessor::setCurrentProgramStateInformation(const void* data, int sizeInBytes)
 {
-	std::unique_ptr<juce::XmlElement> xmlState(getXmlFromBinary(data, sizeInBytes));
+	const std::unique_ptr<juce::XmlElement> xmlState(getXmlFromBinary(data, sizeInBytes));
 
 	if (xmlState != nullptr)
 		if (xmlState->hasTagName(in_parameters_->get_state()->state.getType()))

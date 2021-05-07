@@ -30,7 +30,6 @@ public:
 	};
 
 
-
 	std::vector<std::unique_ptr<FileAudioSource>> files_audio_sources;
 
 	void set_selected_sample(juce::AudioSource*);
@@ -40,7 +39,6 @@ public:
 	std::vector<File> get_libraries_paths() const;
 
 private:
-
 	struct Library
 	{
 		Library() = default;
@@ -54,6 +52,7 @@ private:
 		File path;
 		String name;
 	};
+
 	//====================================================================================
 	void scan_libraries_files();
 	void scan_samples_files(File library_path);
