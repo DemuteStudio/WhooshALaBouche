@@ -33,9 +33,9 @@ void SpectrumComponent::draw_frame(juce::Graphics& g)
 
 		g.drawLine({
 			(float)juce::jmap(i - 1, 0, analyzer->scope_size - 1, 0, width),
-			juce::jmap(analyzer->scopeData[i - 1], 0.0f, 1.0f, (float)height, 0.0f),
+			juce::jmap(analyzer->scopeData.at(i - 1), 0.0f, 1.0f, (float)height, 0.0f),
 			(float)juce::jmap(i, 0, analyzer->scope_size - 1, 0, width),
-			juce::jmap(analyzer->scopeData[i], 0.0f, 1.0f, (float)height, 0.0f)
+			juce::jmap(analyzer->scopeData.at(i), 0.0f, 1.0f, (float)height, 0.0f)
 		});
 	}
 }
