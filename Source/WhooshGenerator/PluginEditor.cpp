@@ -25,6 +25,8 @@ WhooshGeneratorAudioProcessorEditor::WhooshGeneratorAudioProcessorEditor(WhooshG
 
 	enableRecording();
 
+	in_parameters_box_.set_paramater_value_to_default();
+
 	//====================================================================
 	setSize(500, 500);
 }
