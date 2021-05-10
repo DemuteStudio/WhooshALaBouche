@@ -6,20 +6,14 @@
 #include "AudioWaveformComponent.h"
 
 
-class MyAudioSource : public AudioSource
+class RecordingBuffer : public AudioSource
 {
 public:
+	RecordingBuffer();
 
+	~RecordingBuffer();
 
-public:
-	MyAudioSource();
-
-	~MyAudioSource();
-
-	void prepareToPlay(
-		int samplesPerBlockExpected,
-		double sampleRate
-	) override;
+	void prepareToPlay(int samplesPerBlockExpected, double sampleRate) override;
 
 	void releaseResources() override;
 

@@ -10,7 +10,7 @@
 
 #include <JuceHeader.h>
 
-#include "../Components/myAudioSource.h"
+#include "../Components/RecordingBuffer.h"
 #include "../Components/AudioChainElement.h"
 #include "../Components/Util.h"
 #include "../Components/OutParametersState.h"
@@ -75,7 +75,7 @@ public:
 	void remove_element_to_fx_chain(AudioChainElement* element);
 
 	//==============================================================================
-	MyAudioSource& getAudioSource();
+	RecordingBuffer& getAudioSource();
 	//==============================================================================
 
 	//==============================================================================
@@ -91,7 +91,7 @@ private:
 
 private:
 	//==============================================================================
-	MyAudioSource audioSource;
+	RecordingBuffer audioSource;
 	//==============================================================================
 	std::unique_ptr<VolumeAnalyzer> volume_analyzer_;
 

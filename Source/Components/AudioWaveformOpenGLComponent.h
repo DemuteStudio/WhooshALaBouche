@@ -60,7 +60,7 @@ private:
 	void set_vertice(const float* samples, int64 sample, int64 skipSample, int64 endSample,
 	                 int vertice, int numVertices,
 	                 int channel);
-	GLfloat AudioWaveformOpenGLComponent::get_peak_sample_value(
+	GLfloat get_peak_sample_value(
 		const float* samples,
 		int64 currentStartSample,
 		int64 currentNumSamples) const;

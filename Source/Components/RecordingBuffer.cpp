@@ -1,17 +1,17 @@
-#include "myAudioSource.h"
+#include "RecordingBuffer.h"
 
 
-MyAudioSource::MyAudioSource()
+RecordingBuffer::RecordingBuffer()
 {
 }
 
-MyAudioSource::~MyAudioSource()
+RecordingBuffer::~RecordingBuffer()
 {
 	masterSource.setSource(nullptr);
 	buffer_ = nullptr;
 }
 
-void MyAudioSource::prepareToPlay(
+void RecordingBuffer::prepareToPlay(
 	int samplesPerBlockExpected,
 	double masterSourceSampleRate
 )
@@ -21,7 +21,7 @@ void MyAudioSource::prepareToPlay(
 		samplesPerBlockExpected, masterSourceSampleRate);
 }
 
-void MyAudioSource::releaseResources()
+void RecordingBuffer::releaseResources()
 {
 	// auto test = recording_buffer_preallocation_thread_.get();
 	if (recording_buffer_preallocation_thread_.get() != nullptr)
@@ -32,7 +32,7 @@ void MyAudioSource::releaseResources()
 	masterSource.releaseResources();
 }
 
-void MyAudioSource::getNextAudioBlock(
+void RecordingBuffer::getNextAudioBlock(
 	const AudioSourceChannelInfo& bufferToFill
 )
 {
@@ -85,7 +85,7 @@ void MyAudioSource::getNextAudioBlock(
 	}
 }
 
-std::shared_ptr<AudioSampleBuffer> MyAudioSource::loadRecordingBuffer(int number_of_samples_to_display)
+std::shared_ptr<AudioSampleBuffer> RecordingBuffer::loadRecordingBuffer(int number_of_samples_to_display)
 {
 	// TODO fix hardcoded number of channels
 
@@ -131,7 +131,7 @@ std::shared_ptr<AudioSampleBuffer> MyAudioSource::loadRecordingBuffer(int number
 	return buffer_;
 }
 
-double MyAudioSource::getLengthInSeconds() const
+double RecordingBuffer::getLengthInSeconds() const
 {
 	if (buffer_ != nullptr)
 	{
@@ -143,13 +143,13 @@ double MyAudioSource::getLengthInSeconds() const
 	}
 }
 
-double MyAudioSource::getSampleRate() const
+double RecordingBuffer::getSampleRate() const
 {
 	return sampleRate;
 }
 
 
-const CriticalSection* MyAudioSource::getBufferUpdateLock() const noexcept
+const CriticalSection* RecordingBuffer::getBufferUpdateLock() const noexcept
 {
 	if (recording_buffer_preallocation_thread_)
 	{
@@ -161,13 +161,13 @@ const CriticalSection* MyAudioSource::getBufferUpdateLock() const noexcept
 	}
 }
 
-int MyAudioSource::get_sample_index() const
+int RecordingBuffer::get_sample_index() const
 {
 	return num_samples_recorded_;
 }
 
 // ==============================================================================
-MyAudioSource::BufferPreallocationThread::BufferPreallocationThread(
+RecordingBuffer::BufferPreallocationThread::BufferPreallocationThread(
 	AudioSampleBuffer& preallocatedRecordingBuffer,
 	int& numSamplesRecorded,
 	int numSamplesBuffer,
@@ -183,7 +183,7 @@ MyAudioSource::BufferPreallocationThread::BufferPreallocationThread(
 {
 }
 
-void MyAudioSource::BufferPreallocationThread::run()
+void RecordingBuffer::BufferPreallocationThread::run()
 {
 	while (!threadShouldExit())
 	{
@@ -207,7 +207,7 @@ void MyAudioSource::BufferPreallocationThread::run()
 	}
 }
 
-const CriticalSection& MyAudioSource::BufferPreallocationThread::getLock() const noexcept
+const CriticalSection& RecordingBuffer::BufferPreallocationThread::getLock() const noexcept
 {
 	return bufferUpdateLock;
 }

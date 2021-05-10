@@ -14,7 +14,7 @@ using namespace juce;
 class ParametersBox : public juce::Component
 {
 public:
-	ParametersBox::ParametersBox(AudioProcessor* processor,AudioProcessorValueTreeState* parameters_state,
+	ParametersBox(AudioProcessor* processor,AudioProcessorValueTreeState* parameters_state,
 	                             int fft_size);
 	~ParametersBox() override;
 

@@ -48,7 +48,7 @@ private:
 	SpectrumComponent fft_visualizer_;
 	//==================================================
 
-	MyAudioSource* audio_source;
+	RecordingBuffer* audio_source;
 	MyLookAndFeel my_look_and_feel_;
 
 	//==================================================

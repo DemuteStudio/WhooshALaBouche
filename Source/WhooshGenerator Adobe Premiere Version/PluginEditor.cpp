@@ -16,7 +16,8 @@ WhooshGeneratorAudioProcessorEditor::WhooshGeneratorAudioProcessorEditor(WhooshG
 
 	audio_source = &audioProcessor.getAudioSource();
 
-	components = {&waveform, &out_parameters_box_, &in_parameters_box_, &sample_manager_};
+	components = {&waveform_, &out_parameters_box_, &in_parameters_box_, &sample_manager_};
+	// components = {&out_parameters_box_, &in_parameters_box_, &sample_manager_};
 
 	for (std::vector<Component*>::value_type component : components)
 	{
@@ -48,8 +49,7 @@ void WhooshGeneratorAudioProcessorEditor::resized()
 	const int height = rectangle.getHeight();
 	int width = rectangle.getWidth();
 
-	const int row_height = height / 15;
-	int delta = 5;
+	const int delta = 5;
 
 	for (auto component : components)
 	{
@@ -67,19 +67,19 @@ void WhooshGeneratorAudioProcessorEditor::timerCallback()
 {
 	const int end_sample = audio_source->get_sample_index();
 
-	waveform.updateVisibleRegion(end_sample, number_of_samples_to_display);
+	// waveform_.updateVisibleRegion(end_sample, number_of_samples_to_display);
 }
 
 
 void WhooshGeneratorAudioProcessorEditor::enableRecording()
 {
-	waveform.clearWaveform();
+	// waveform_.clearWaveform();
 
 	const std::shared_ptr<AudioSampleBuffer> temp_audio_buffer = audio_source->
 		loadRecordingBuffer(number_of_samples_to_display);
-	waveform.loadWaveform(
-		temp_audio_buffer.get(), audio_source->getSampleRate(), audio_source->getBufferUpdateLock()
-	);
+	// waveform_.loadWaveform(
+	// 	temp_audio_buffer.get(), audio_source->getSampleRate(), audio_source->getBufferUpdateLock()
+	// );
 
 
 	audioBuffer = temp_audio_buffer.get();

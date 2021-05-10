@@ -3,7 +3,7 @@
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
 #include "../Components/ParametersBox.h"
-#include "../Components/AudioWaveformComponent.h"
+#include "../Components/WaveFormDisplay.h"
 #include "../Components/MyLookAndFeel.h"
 #include "../Components/OutParameterBox.h"
 #include "../Components/VolumeAnalyzer.h"
@@ -44,13 +44,13 @@ private:
 	AudioSampleBuffer* audioBuffer;
 
 	//==================================================
-	AudioWaveformComponent waveform;
+	WaveFormDisplay waveform_;
 	OutParametersBox out_parameters_box_;
 	SampleManager sample_manager_;
 
 	//==================================================
 
-	MyAudioSource* audio_source;
+	RecordingBuffer* audio_source;
 	MyLookAndFeel my_look_and_feel_;
 
 	//==================================================

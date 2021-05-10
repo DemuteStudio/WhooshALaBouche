@@ -2,7 +2,7 @@
 
 <JUCERPROJECT id="fNT7pw" name="Whoosh Generator Adobe Premiere" projectType="audioplug"
               useAppConfig="0" addUsingNamespaceToJuceHeader="0" jucerFormatVersion="1"
-              cppLanguageStandard="latest">
+              cppLanguageStandard="latest" pluginManufacturer="CoSounders">
   <MAINGROUP id="op8KmS" name="Whoosh Generator Adobe Premiere">
     <GROUP id="{C3DAB625-9BDD-35B3-F574-4391860A8555}" name="Source">
       <GROUP id="{92541AC0-3602-125D-EFF0-FE98CD878FF8}" name="WhooshGenerator Adobe Premiere Version">
@@ -15,6 +15,10 @@
               file="../Source/WhooshGenerator Adobe Premiere Version/PluginProcessor.h"/>
       </GROUP>
       <GROUP id="{6DB2E39C-CCAB-11F0-BD2C-83EC771A3371}" name="Components">
+        <FILE id="yifHRP" name="WaveFormDisplay.cpp" compile="1" resource="0"
+              file="../Source/Components/WaveFormDisplay.cpp"/>
+        <FILE id="U4VVPg" name="WaveFormDisplay.h" compile="0" resource="0"
+              file="../Source/Components/WaveFormDisplay.h"/>
         <FILE id="mf6BBs" name="LibrarySelector.cpp" compile="1" resource="0"
               file="../Source/Components/LibrarySelector.cpp"/>
         <FILE id="MFqwMF" name="LibrarySelector.h" compile="0" resource="0"
@@ -80,15 +84,16 @@
         <FILE id="qaOcr8" name="Analyzer.h" compile="0" resource="0" file="../Source/Components/Analyzer.h"/>
       </GROUP>
       <GROUP id="{BB4D5B07-0ACB-0C63-9270-99A6194E781B}" name="BackEnd">
+        <FILE id="MZNF9Z" name="RecordingBuffer.cpp" compile="1" resource="0"
+              file="../Source/Components/RecordingBuffer.cpp"/>
+        <FILE id="Jz6y8k" name="RecordingBuffer.h" compile="0" resource="0"
+              file="../Source/Components/RecordingBuffer.h"/>
         <FILE id="wKUflp" name="FoleyInput.cpp" compile="1" resource="0" file="../Source/Components/FoleyInput.cpp"/>
         <FILE id="X7tpvU" name="FoleyInput.h" compile="0" resource="0" file="../Source/Components/FoleyInput.h"/>
         <FILE id="ai73zV" name="AudioBufferSource.cpp" compile="1" resource="0"
               file="../Source/Components/AudioBufferSource.cpp"/>
         <FILE id="Vdy619" name="AudioBufferSource.h" compile="0" resource="0"
               file="../Source/Components/AudioBufferSource.h"/>
-        <FILE id="Tg3KRt" name="myAudioSource.cpp" compile="1" resource="0"
-              file="../Source/Components/myAudioSource.cpp"/>
-        <FILE id="KNIVgz" name="myAudioSource.h" compile="0" resource="0" file="../Source/Components/myAudioSource.h"/>
         <FILE id="oNq2Y7" name="OutParametersState.cpp" compile="1" resource="0"
               file="../Source/Components/OutParametersState.cpp"/>
         <FILE id="giXBic" name="OutParametersState.h" compile="0" resource="0"
@@ -133,32 +138,10 @@
   </MAINGROUP>
   <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1" JUCE_VST3_CAN_REPLACE_VST2="0"/>
   <EXPORTFORMATS>
-    <VS2017 targetFolder="Builds/VisualStudio2017">
-      <CONFIGURATIONS>
-        <CONFIGURATION isDebug="1" name="Debug" targetName="Whoosh Generator Adobe Premiere"/>
-        <CONFIGURATION isDebug="0" name="Release" targetName="Whoosh Generator Adobe Premiere"/>
-      </CONFIGURATIONS>
-      <MODULEPATHS>
-        <MODULEPATH id="juce_audio_basics" path="C:/Users/arnau/Documents/JUCE/JUCE/modules"/>
-        <MODULEPATH id="juce_audio_devices" path="C:/Users/arnau/Documents/JUCE/JUCE/modules"/>
-        <MODULEPATH id="juce_audio_formats" path="C:/Users/arnau/Documents/JUCE/JUCE/modules"/>
-        <MODULEPATH id="juce_audio_plugin_client" path="C:/Users/arnau/Documents/JUCE/JUCE/modules"/>
-        <MODULEPATH id="juce_audio_processors" path="C:/Users/arnau/Documents/JUCE/JUCE/modules"/>
-        <MODULEPATH id="juce_audio_utils" path="C:/Users/arnau/Documents/JUCE/JUCE/modules"/>
-        <MODULEPATH id="juce_core" path="C:/Users/arnau/Documents/JUCE/JUCE/modules"/>
-        <MODULEPATH id="juce_data_structures" path="C:/Users/arnau/Documents/JUCE/JUCE/modules"/>
-        <MODULEPATH id="juce_events" path="C:/Users/arnau/Documents/JUCE/JUCE/modules"/>
-        <MODULEPATH id="juce_graphics" path="C:/Users/arnau/Documents/JUCE/JUCE/modules"/>
-        <MODULEPATH id="juce_gui_basics" path="C:/Users/arnau/Documents/JUCE/JUCE/modules"/>
-        <MODULEPATH id="juce_gui_extra" path="C:/Users/arnau/Documents/JUCE/JUCE/modules"/>
-        <MODULEPATH id="juce_opengl" path="C:/Users/arnau/Documents/JUCE/JUCE/modules"/>
-        <MODULEPATH id="juce_dsp" path="C:/Users/arnau/Documents/JUCE/JUCE/modules"/>
-      </MODULEPATHS>
-    </VS2017>
     <VS2019 targetFolder="Builds/VisualStudio2019">
       <CONFIGURATIONS>
-        <CONFIGURATION isDebug="1" name="Debug"/>
-        <CONFIGURATION isDebug="0" name="Release"/>
+        <CONFIGURATION isDebug="1" name="Debug" useRuntimeLibDLL="0"/>
+        <CONFIGURATION isDebug="0" name="Release" useRuntimeLibDLL="0"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_opengl"/>
@@ -177,6 +160,28 @@
         <MODULEPATH id="juce_audio_basics"/>
       </MODULEPATHS>
     </VS2019>
+    <VS2017 targetFolder="Builds/VisualStudio2017">
+      <CONFIGURATIONS>
+        <CONFIGURATION isDebug="1" name="Debug" useRuntimeLibDLL="0"/>
+        <CONFIGURATION isDebug="0" name="Release" useRuntimeLibDLL="0"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_opengl"/>
+        <MODULEPATH id="juce_gui_extra"/>
+        <MODULEPATH id="juce_gui_basics"/>
+        <MODULEPATH id="juce_graphics"/>
+        <MODULEPATH id="juce_events"/>
+        <MODULEPATH id="juce_dsp"/>
+        <MODULEPATH id="juce_data_structures"/>
+        <MODULEPATH id="juce_core"/>
+        <MODULEPATH id="juce_audio_utils"/>
+        <MODULEPATH id="juce_audio_processors"/>
+        <MODULEPATH id="juce_audio_plugin_client"/>
+        <MODULEPATH id="juce_audio_formats"/>
+        <MODULEPATH id="juce_audio_devices"/>
+        <MODULEPATH id="juce_audio_basics"/>
+      </MODULEPATHS>
+    </VS2017>
   </EXPORTFORMATS>
   <MODULES>
     <MODULE id="juce_audio_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>

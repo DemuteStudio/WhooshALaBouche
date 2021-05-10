@@ -30,6 +30,10 @@
         <FILE id="RmY2e7" name="Util.h" compile="0" resource="0" file="Source/Components/Util.h"/>
       </GROUP>
       <GROUP id="{D19AE344-B3E1-CD7B-15BE-280F3E1512FD}" name="BackEnd">
+        <FILE id="H06X90" name="RecordingBuffer.cpp" compile="1" resource="0"
+              file="Source/Components/RecordingBuffer.cpp"/>
+        <FILE id="PLa0S2" name="RecordingBuffer.h" compile="0" resource="0"
+              file="Source/Components/RecordingBuffer.h"/>
         <FILE id="Nr0Bkr" name="FoleyInput.cpp" compile="1" resource="0" file="Source/Components/FoleyInput.cpp"/>
         <FILE id="N8fZIx" name="FoleyInput.h" compile="0" resource="0" file="Source/Components/FoleyInput.h"/>
         <FILE id="TLNspl" name="InternParametersState.cpp" compile="1" resource="0"
@@ -52,9 +56,6 @@
               file="Source/Components/VolumeAnalyzer.cpp"/>
         <FILE id="lh87xP" name="VolumeAnalyzer.h" compile="0" resource="0"
               file="Source/Components/VolumeAnalyzer.h"/>
-        <FILE id="TdXB1N" name="myAudioSource.cpp" compile="1" resource="0"
-              file="Source/Components/myAudioSource.cpp"/>
-        <FILE id="NpZLQz" name="myAudioSource.h" compile="0" resource="0" file="Source/Components/myAudioSource.h"/>
         <FILE id="o5dZpx" name="AudioBufferSource.cpp" compile="1" resource="0"
               file="Source/Components/AudioBufferSource.cpp"/>
         <FILE id="LdZwxI" name="AudioBufferSource.h" compile="0" resource="0"
@@ -121,7 +122,7 @@
     <VS2017 targetFolder="Builds/VisualStudio2017">
       <CONFIGURATIONS>
         <CONFIGURATION isDebug="1" name="Debug" targetName="WhooshGenerator"/>
-        <CONFIGURATION isDebug="0" name="Release" targetName="WhooshGenerator"/>
+        <CONFIGURATION isDebug="0" name="Release" targetName="WhooshGenerator" useRuntimeLibDLL="0"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_audio_basics" path="C:/Users/arnau/Documents/JUCE/JUCE/modules"/>

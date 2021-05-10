@@ -253,7 +253,7 @@ void WhooshGeneratorAudioProcessor::setStateInformation(const void* data, int si
 	// whose contents will have been created by the getStateInformation() call.
 }
 
-MyAudioSource& WhooshGeneratorAudioProcessor::getAudioSource()
+RecordingBuffer& WhooshGeneratorAudioProcessor::getAudioSource()
 {
 	return audioSource;
 }
