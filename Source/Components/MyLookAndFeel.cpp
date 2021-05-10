@@ -1,5 +1,4 @@
 #include "MyLookAndFeel.h"
-#include "AudioWaveformComponent.h"
 
 
 MyLookAndFeel::MyLookAndFeel()
@@ -44,14 +43,6 @@ MyLookAndFeel::MyLookAndFeel()
 	setColour(ToggleButton::ColourIds::tickColourId, text_color);
 
 	setColour(Slider::ColourIds::textBoxOutlineColourId, transparent_color);
-
-	int waveformColourId =
-		    AudioWaveformOpenGLComponent::ColourIds::waveformColour,
-	    waveformBackgroundColourId =
-		    AudioWaveformOpenGLComponent::ColourIds::waveformBackgroundColour;
-
-	setColour(waveformColourId, bright_meter);
-	setColour(waveformBackgroundColourId, main_color);
 }
 
 MyLookAndFeel::~MyLookAndFeel()

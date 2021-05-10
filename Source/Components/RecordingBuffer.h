@@ -3,7 +3,6 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 
 #include "AudioBufferSource.h"
-#include "AudioWaveformComponent.h"
 
 
 class RecordingBuffer : public AudioSource

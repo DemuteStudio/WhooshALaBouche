@@ -81,8 +81,6 @@
         <FILE id="j6GGpM" name="GuiParameter.h" compile="0" resource="0" file="Source/Components/GuiParameter.h"/>
         <FILE id="xmJuvW" name="ISpectrumAnalyzer.h" compile="0" resource="0"
               file="Source/Components/ISpectrumAnalyzer.h"/>
-        <FILE id="eN60mY" name="OpenGLComponent.h" compile="0" resource="0"
-              file="Source/Components/OpenGLComponent.h"/>
         <FILE id="YaqNU1" name="Parameter.cpp" compile="1" resource="0" file="Source/Components/Parameter.cpp"/>
         <FILE id="OZTRgq" name="Parameter.h" compile="0" resource="0" file="Source/Components/Parameter.h"/>
       </GROUP>
@@ -103,14 +101,6 @@
               file="Source/Components/SpectrumComponent.cpp"/>
         <FILE id="N2uY5V" name="SpectrumComponent.h" compile="0" resource="0"
               file="Source/Components/SpectrumComponent.h"/>
-        <FILE id="Dp9Wdv" name="AudioWaveformComponent.cpp" compile="1" resource="0"
-              file="Source/Components/AudioWaveformComponent.cpp"/>
-        <FILE id="wDMR9b" name="AudioWaveformComponent.h" compile="0" resource="0"
-              file="Source/Components/AudioWaveformComponent.h"/>
-        <FILE id="C9Wk5S" name="AudioWaveformOpenGLComponent.cpp" compile="1"
-              resource="0" file="Source/Components/AudioWaveformOpenGLComponent.cpp"/>
-        <FILE id="XHLSKi" name="AudioWaveformOpenGLComponent.h" compile="0"
-              resource="0" file="Source/Components/AudioWaveformOpenGLComponent.h"/>
         <FILE id="L4cLYz" name="ParametersBox.cpp" compile="1" resource="0"
               file="Source/Components/ParametersBox.cpp"/>
         <FILE id="e1mr4v" name="ParametersBox.h" compile="0" resource="0" file="Source/Components/ParametersBox.h"/>
