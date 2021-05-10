@@ -86,10 +86,8 @@ bool WhooshGeneratorAudioProcessor::acceptsMidi() const
 
 bool WhooshGeneratorAudioProcessor::producesMidi() const
 {
-#if JucePlugin_ProducesMidiOutput return true;
-#else
 	return false;
-#endif
+
 }
 
 bool WhooshGeneratorAudioProcessor::isMidiEffect() const
