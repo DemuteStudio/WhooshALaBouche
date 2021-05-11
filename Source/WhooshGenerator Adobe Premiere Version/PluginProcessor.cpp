@@ -206,8 +206,6 @@ void WhooshGeneratorAudioProcessor::processBlock(juce::AudioBuffer<float>& buffe
 		element->getNextAudioBlock(foley_input);
 	}
 
-	//TODO: change implementation
-	audioSource.getNextAudioBlock(AudioSourceChannelInfo(foley_input));
 
 	for (int channel = 0; channel < 2; ++channel)
 	{
