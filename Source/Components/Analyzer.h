@@ -10,7 +10,6 @@ using namespace juce;
 class Analyzer : public AudioChainElement
 {
 public:
-
 	Analyzer(AudioParameterFloat* out_parameter, AudioProcessorValueTreeState* in_state, util::parameter_type type);
 	~Analyzer() = default;
 

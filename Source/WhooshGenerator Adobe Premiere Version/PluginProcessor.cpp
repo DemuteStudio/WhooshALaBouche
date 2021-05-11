@@ -24,12 +24,11 @@ WhooshGeneratorAudioProcessor::WhooshGeneratorAudioProcessor() : out_parameters_
 			                                                                 out_parameters_->
 			                                                                 get_state()->getParameter(
 				                                                                 parameters::volume_out.id)),
-		                                                                 gain_processor_->get_gain_parameter(),
 		                                                                 in_parameters_->get_state())),
                                                                  gain_processor_(
 	                                                                 std::make_unique<GainProcess>(
 		                                                                 out_parameters_->get_state()->getParameter(
-			                                                                 parameters::volume_out.id))),
+			                                                                 parameters::volume_out.id), volume_analyzer_.get())),
 #ifndef JucePlugin_PreferredChannelConfigurations
                                                                  AudioProcessor(BusesProperties()
 #if ! JucePlugin_IsMidiEffect
@@ -67,7 +66,6 @@ WhooshGeneratorAudioProcessor::WhooshGeneratorAudioProcessor() : out_parameters_
 
 	analyzers_ = {volume_analyzer_.get()};
 
-	OutputTimer::set_intern_parameters(intern_parameters_.get());
 }
 
 WhooshGeneratorAudioProcessor::~WhooshGeneratorAudioProcessor()
@@ -190,13 +188,6 @@ void WhooshGeneratorAudioProcessor::processBlock(juce::AudioBuffer<float>& buffe
 	}
 	AudioPlayHead* playHead = getPlayHead();
 	AudioPlayHead::CurrentPositionInfo positionInfo{};
-	is_playing_ = false;
-
-	if (playHead != nullptr)
-	{
-		playHead->getCurrentPosition(positionInfo);
-		is_playing_ = positionInfo.isPlaying;
-	}
 
 	const int input_buses_count = getBusCount(true);
 
