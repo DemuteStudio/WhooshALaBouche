@@ -11,6 +11,9 @@ public:
 	void getNextAudioBlock(juce::AudioBuffer<float>& bufferToFill) override;
 	void prepareToPlay(double sampleRate, int samplesPerBlock) override;
 
+	float* get_gain_parameter();
+	void set_gain(float new_gain);
+
 private:
 	struct Interpolation
 	{
@@ -35,5 +38,7 @@ private:
 	juce::RangedAudioParameter* parameter_;
 
 	float previous_parameter_value = 0.;
+
+	float gain_value{0};
 };
 

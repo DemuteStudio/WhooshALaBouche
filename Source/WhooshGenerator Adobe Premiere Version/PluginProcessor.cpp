@@ -24,12 +24,12 @@ WhooshGeneratorAudioProcessor::WhooshGeneratorAudioProcessor() : out_parameters_
 			                                                                 out_parameters_->
 			                                                                 get_state()->getParameter(
 				                                                                 parameters::volume_out.id)),
+		                                                                 gain_processor_->get_gain_parameter(),
 		                                                                 in_parameters_->get_state())),
                                                                  gain_processor_(
 	                                                                 std::make_unique<GainProcess>(
 		                                                                 out_parameters_->get_state()->getParameter(
 			                                                                 parameters::volume_out.id))),
-                                                                 OutputTimer(analyzers_),
 #ifndef JucePlugin_PreferredChannelConfigurations
                                                                  AudioProcessor(BusesProperties()
 #if ! JucePlugin_IsMidiEffect
@@ -92,7 +92,6 @@ bool WhooshGeneratorAudioProcessor::acceptsMidi() const
 bool WhooshGeneratorAudioProcessor::producesMidi() const
 {
 	return false;
-
 }
 
 bool WhooshGeneratorAudioProcessor::isMidiEffect() const
@@ -222,14 +221,13 @@ void WhooshGeneratorAudioProcessor::processBlock(juce::AudioBuffer<float>& buffe
 	for (int channel = 0; channel < 2; ++channel)
 	{
 		auto* buffer_to_fill = buffer.getWritePointer(channel);
-		auto* buffer_with_noise= foley_input.getWritePointer(channel);
-		
+		auto* buffer_with_noise = foley_input.getWritePointer(channel);
+
 		for (int sample = 0; sample < buffer.getNumSamples(); ++sample)
 		{
 			buffer_to_fill[sample] = buffer_with_noise[sample];
 		}
 	}
-
 }
 
 //==============================================================================

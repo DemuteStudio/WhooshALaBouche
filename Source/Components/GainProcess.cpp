@@ -28,6 +28,16 @@ void GainProcess::prepareToPlay(double sampleRate, int samplesPerBlock)
 	AudioChainElement::prepareToPlay(sampleRate, samplesPerBlock);
 }
 
+float GainProcess::get_gain_parameter()
+{
+	return gain_value;
+}
+
+void GainProcess::set_gain(float new_gain)
+{
+	gain_value = juce::jlimit<float>(0., 1., new_gain);
+}
+
 GainProcess::Interpolation::Interpolation(const point start, const point end): y_range(end.y - start.y),
                                                                                x_range(end.x - start.x),
                                                                                step(y_range / x_range),
