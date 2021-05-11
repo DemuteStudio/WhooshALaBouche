@@ -16,8 +16,8 @@ WhooshGeneratorAudioProcessorEditor::WhooshGeneratorAudioProcessorEditor(WhooshG
 
 	audio_source = &audioProcessor.getAudioSource();
 
-	components = {&waveform_, &in_parameters_box_, &sample_manager_};
-	// components = {&out_parameters_box_, &in_parameters_box_, &sample_manager_};
+	// components = {&waveform_, &in_parameters_box_, &sample_manager_};
+	components = {&in_parameters_box_, &sample_manager_};
 
 	for (std::vector<Component*>::value_type component : components)
 	{
