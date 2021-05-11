@@ -4,7 +4,4 @@ Analyzer::Analyzer(AudioParameterFloat* out_parameter, AudioProcessorValueTreeSt
 {
 }
 
-float Analyzer::get_last_value_parameter() const
-{
-}
 
