@@ -1,4 +1,5 @@
 #pragma once
+#include "Analyzer.h"
 #include "AudioChainElement.h"
 
 
@@ -6,10 +7,11 @@ class GainProcess : public AudioChainElement
 {
 public:
 
-	GainProcess(juce::RangedAudioParameter* parameter);
+	GainProcess(juce::RangedAudioParameter* parameter, Analyzer* analyzer);
 	//========================================================================================================================
 	void getNextAudioBlock(juce::AudioBuffer<float>& bufferToFill) override;
 	void prepareToPlay(double sampleRate, int samplesPerBlock) override;
+
 
 private:
 	struct Interpolation
@@ -35,5 +37,8 @@ private:
 	juce::RangedAudioParameter* parameter_;
 
 	float previous_parameter_value = 0.;
+
+	float gain_value{0};
+	Analyzer* analyzer_;
 };
 

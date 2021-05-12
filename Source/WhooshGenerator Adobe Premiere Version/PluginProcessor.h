@@ -29,7 +29,7 @@ using namespace juce;
 //==============================================================================
 /**
 */
-class WhooshGeneratorAudioProcessor : public AudioProcessor, private OutputTimer
+class WhooshGeneratorAudioProcessor : public AudioProcessor
 {
 public:
 	//==============================================================================

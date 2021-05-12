@@ -7,6 +7,7 @@ SpectrumAnalyzer::SpectrumAnalyzer(AudioParameterFloat* parameter, AudioProcesso
 	Analyzer(parameter, in_state, util::FREQUENCY_PEAK)
 
 {
+	scopeData.fill(0);
 }
 
 void SpectrumAnalyzer::getNextAudioBlock(juce::AudioBuffer<float>& bufferToFill)

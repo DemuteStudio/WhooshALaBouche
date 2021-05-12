@@ -1,13 +1,14 @@
 #include "GainProcess.h"
 
-GainProcess::GainProcess(juce::RangedAudioParameter* parameter): parameter_(parameter)
+GainProcess::GainProcess(juce::RangedAudioParameter* parameter, Analyzer* analyzer): parameter_(parameter), analyzer_(analyzer)
 {
 }
 
 void GainProcess::getNextAudioBlock(juce::AudioBuffer<float>& bufferToFill)
 {
+	const auto gain_value = analyzer_->get_last_value();
 	const Interpolation interpolator(Interpolation::point(0, previous_parameter_value),
-	                                 Interpolation::point(bufferToFill.getNumSamples(), parameter_->getValue()));
+	                                 Interpolation::point(bufferToFill.getNumSamples(), gain_value));
 
 	for (int channel = 0; channel < bufferToFill.getNumChannels(); ++channel)
 	{
@@ -19,7 +20,7 @@ void GainProcess::getNextAudioBlock(juce::AudioBuffer<float>& bufferToFill)
 			output_buffer[sample] = input_buffer[sample] * interpolator.get_value(sample);
 		}
 	}
-	previous_parameter_value = parameter_->getValue();
+	previous_parameter_value = gain_value;
 	// DBG("previous_parameter_value:  " << previous_parameter_value);
 }
 

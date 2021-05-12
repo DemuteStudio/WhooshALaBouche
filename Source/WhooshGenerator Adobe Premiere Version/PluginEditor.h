@@ -45,7 +45,7 @@ private:
 
 	//==================================================
 	WaveFormDisplay waveform_;
-	OutParametersBox out_parameters_box_;
+//	OutParametersBox out_parameters_box_;
 	SampleManager sample_manager_;
 
 	//==================================================

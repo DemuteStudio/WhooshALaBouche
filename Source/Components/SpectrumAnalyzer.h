@@ -54,7 +54,7 @@ public:
 	float fft_upper_limit;
 
 
-	float scopeData[scope_size];
+	std::array<float, scope_size>scopeData;
 private:
 
 	juce::dsp::FFT forwardFFT;

@@ -5,7 +5,7 @@
 WhooshGeneratorAudioProcessorEditor::WhooshGeneratorAudioProcessorEditor(WhooshGeneratorAudioProcessor& p)
 	: AudioProcessorEditor(&p), audioProcessor(p),
 	  in_parameters_box_(&p, p.get_in_parameters()->get_state(), SpectrumAnalyzer::fft_size),
-	  out_parameters_box_(p.get_out_parameters()->get_state(), p.get_intern_parameters()->get_state()),
+//	  out_parameters_box_(p.get_out_parameters()->get_state(), p.get_intern_parameters()->get_state()),
 	   sample_manager_(p.get_internal_foley_input())
 {
 	setLookAndFeel(&my_look_and_feel_);
@@ -16,8 +16,8 @@ WhooshGeneratorAudioProcessorEditor::WhooshGeneratorAudioProcessorEditor(WhooshG
 
 	audio_source = &audioProcessor.getAudioSource();
 
-	components = {&waveform_, &out_parameters_box_, &in_parameters_box_, &sample_manager_};
-	// components = {&out_parameters_box_, &in_parameters_box_, &sample_manager_};
+	// components = {&waveform_, &in_parameters_box_, &sample_manager_};
+	components = {&in_parameters_box_, &sample_manager_};
 
 	for (std::vector<Component*>::value_type component : components)
 	{

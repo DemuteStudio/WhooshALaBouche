@@ -81,8 +81,6 @@
         <FILE id="j6GGpM" name="GuiParameter.h" compile="0" resource="0" file="Source/Components/GuiParameter.h"/>
         <FILE id="xmJuvW" name="ISpectrumAnalyzer.h" compile="0" resource="0"
               file="Source/Components/ISpectrumAnalyzer.h"/>
-        <FILE id="eN60mY" name="OpenGLComponent.h" compile="0" resource="0"
-              file="Source/Components/OpenGLComponent.h"/>
         <FILE id="YaqNU1" name="Parameter.cpp" compile="1" resource="0" file="Source/Components/Parameter.cpp"/>
         <FILE id="OZTRgq" name="Parameter.h" compile="0" resource="0" file="Source/Components/Parameter.h"/>
       </GROUP>
@@ -103,14 +101,6 @@
               file="Source/Components/SpectrumComponent.cpp"/>
         <FILE id="N2uY5V" name="SpectrumComponent.h" compile="0" resource="0"
               file="Source/Components/SpectrumComponent.h"/>
-        <FILE id="Dp9Wdv" name="AudioWaveformComponent.cpp" compile="1" resource="0"
-              file="Source/Components/AudioWaveformComponent.cpp"/>
-        <FILE id="wDMR9b" name="AudioWaveformComponent.h" compile="0" resource="0"
-              file="Source/Components/AudioWaveformComponent.h"/>
-        <FILE id="C9Wk5S" name="AudioWaveformOpenGLComponent.cpp" compile="1"
-              resource="0" file="Source/Components/AudioWaveformOpenGLComponent.cpp"/>
-        <FILE id="XHLSKi" name="AudioWaveformOpenGLComponent.h" compile="0"
-              resource="0" file="Source/Components/AudioWaveformOpenGLComponent.h"/>
         <FILE id="L4cLYz" name="ParametersBox.cpp" compile="1" resource="0"
               file="Source/Components/ParametersBox.cpp"/>
         <FILE id="e1mr4v" name="ParametersBox.h" compile="0" resource="0" file="Source/Components/ParametersBox.h"/>
@@ -142,29 +132,6 @@
         <MODULEPATH id="juce_dsp" path="C:/Users/arnau/Documents/JUCE/JUCE/modules"/>
       </MODULEPATHS>
     </VS2017>
-    <CODEBLOCKS_WINDOWS targetFolder="Builds/CodeBlocksWindows">
-      <CONFIGURATIONS>
-        <CONFIGURATION isDebug="1" name="Debug"/>
-        <CONFIGURATION isDebug="0" name="Release"/>
-      </CONFIGURATIONS>
-      <MODULEPATHS>
-        <MODULEPATH id="juce_osc"/>
-        <MODULEPATH id="juce_opengl"/>
-        <MODULEPATH id="juce_gui_extra"/>
-        <MODULEPATH id="juce_gui_basics"/>
-        <MODULEPATH id="juce_graphics"/>
-        <MODULEPATH id="juce_events"/>
-        <MODULEPATH id="juce_dsp"/>
-        <MODULEPATH id="juce_data_structures"/>
-        <MODULEPATH id="juce_core"/>
-        <MODULEPATH id="juce_audio_utils"/>
-        <MODULEPATH id="juce_audio_processors"/>
-        <MODULEPATH id="juce_audio_plugin_client"/>
-        <MODULEPATH id="juce_audio_formats"/>
-        <MODULEPATH id="juce_audio_devices"/>
-        <MODULEPATH id="juce_audio_basics"/>
-      </MODULEPATHS>
-    </CODEBLOCKS_WINDOWS>
     <VS2019 targetFolder="Builds/VisualStudio2019">
       <CONFIGURATIONS>
         <CONFIGURATION isDebug="1" name="Debug"/>
@@ -188,6 +155,29 @@
         <MODULEPATH id="juce_audio_basics"/>
       </MODULEPATHS>
     </VS2019>
+    <XCODE_MAC targetFolder="Builds/MacOSX">
+      <CONFIGURATIONS>
+        <CONFIGURATION isDebug="1" name="Debug"/>
+        <CONFIGURATION isDebug="0" name="Release"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_osc" path="../../juce"/>
+        <MODULEPATH id="juce_opengl" path="../../juce"/>
+        <MODULEPATH id="juce_gui_extra" path="../../juce"/>
+        <MODULEPATH id="juce_gui_basics" path="../../juce"/>
+        <MODULEPATH id="juce_graphics" path="../../juce"/>
+        <MODULEPATH id="juce_events" path="../../juce"/>
+        <MODULEPATH id="juce_dsp" path="../../juce"/>
+        <MODULEPATH id="juce_data_structures" path="../../juce"/>
+        <MODULEPATH id="juce_core" path="../../juce"/>
+        <MODULEPATH id="juce_audio_utils" path="../../juce"/>
+        <MODULEPATH id="juce_audio_processors" path="../../juce"/>
+        <MODULEPATH id="juce_audio_plugin_client" path="../../juce"/>
+        <MODULEPATH id="juce_audio_formats" path="../../juce"/>
+        <MODULEPATH id="juce_audio_devices" path="../../juce"/>
+        <MODULEPATH id="juce_audio_basics" path="../../juce"/>
+      </MODULEPATHS>
+    </XCODE_MAC>
   </EXPORTFORMATS>
   <MODULES>
     <MODULE id="juce_audio_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
@@ -209,5 +199,6 @@
   </MODULES>
   <LIVE_SETTINGS>
     <WINDOWS/>
+    <OSX/>
   </LIVE_SETTINGS>
 </JUCERPROJECT>

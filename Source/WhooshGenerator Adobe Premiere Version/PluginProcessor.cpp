@@ -28,8 +28,7 @@ WhooshGeneratorAudioProcessor::WhooshGeneratorAudioProcessor() : out_parameters_
                                                                  gain_processor_(
 	                                                                 std::make_unique<GainProcess>(
 		                                                                 out_parameters_->get_state()->getParameter(
-			                                                                 parameters::volume_out.id))),
-                                                                 OutputTimer(analyzers_),
+			                                                                 parameters::volume_out.id), volume_analyzer_.get())),
 #ifndef JucePlugin_PreferredChannelConfigurations
                                                                  AudioProcessor(BusesProperties()
 #if ! JucePlugin_IsMidiEffect
@@ -67,7 +66,6 @@ WhooshGeneratorAudioProcessor::WhooshGeneratorAudioProcessor() : out_parameters_
 
 	analyzers_ = {volume_analyzer_.get()};
 
-	OutputTimer::set_intern_parameters(intern_parameters_.get());
 }
 
 WhooshGeneratorAudioProcessor::~WhooshGeneratorAudioProcessor()
@@ -91,10 +89,7 @@ bool WhooshGeneratorAudioProcessor::acceptsMidi() const
 
 bool WhooshGeneratorAudioProcessor::producesMidi() const
 {
-#if JucePlugin_ProducesMidiOutput return true;
-#else
 	return false;
-#endif
 }
 
 bool WhooshGeneratorAudioProcessor::isMidiEffect() const
@@ -193,13 +188,6 @@ void WhooshGeneratorAudioProcessor::processBlock(juce::AudioBuffer<float>& buffe
 	}
 	AudioPlayHead* playHead = getPlayHead();
 	AudioPlayHead::CurrentPositionInfo positionInfo{};
-	is_playing_ = false;
-
-	if (playHead != nullptr)
-	{
-		playHead->getCurrentPosition(positionInfo);
-		is_playing_ = positionInfo.isPlaying;
-	}
 
 	const int input_buses_count = getBusCount(true);
 
@@ -218,20 +206,17 @@ void WhooshGeneratorAudioProcessor::processBlock(juce::AudioBuffer<float>& buffe
 		element->getNextAudioBlock(foley_input);
 	}
 
-	//TODO: change implementation
-	audioSource.getNextAudioBlock(AudioSourceChannelInfo(foley_input));
 
 	for (int channel = 0; channel < 2; ++channel)
 	{
 		auto* buffer_to_fill = buffer.getWritePointer(channel);
-		auto* buffer_with_noise= foley_input.getWritePointer(channel);
-		
+		auto* buffer_with_noise = foley_input.getWritePointer(channel);
+
 		for (int sample = 0; sample < buffer.getNumSamples(); ++sample)
 		{
 			buffer_to_fill[sample] = buffer_with_noise[sample];
 		}
 	}
-
 }
 
 //==============================================================================

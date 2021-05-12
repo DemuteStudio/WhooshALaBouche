@@ -3,7 +3,6 @@
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
 #include "../Components/ParametersBox.h"
-#include "../Components/AudioWaveformComponent.h"
 #include "../Components/MyLookAndFeel.h"
 #include "../Components/OutParameterBox.h"
 #include "../Components/VolumeAnalyzer.h"
@@ -43,7 +42,6 @@ private:
 	AudioSampleBuffer* audioBuffer;
 
 	//==================================================
-	AudioWaveformComponent waveform;
 	OutParametersBox out_parameters_box_;
 	SpectrumComponent fft_visualizer_;
 	//==================================================
