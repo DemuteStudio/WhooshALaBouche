@@ -15,13 +15,14 @@ class ParametersBox : public juce::Component
 {
 public:
 	ParametersBox(AudioProcessor* processor,AudioProcessorValueTreeState* parameters_state,
-	                             int fft_size);
+	              int fft_size);
 	~ParametersBox() override;
 
 	void paint(juce::Graphics&) override;
 	void resized() override;
 
 	void add_sliders_listener(Slider::Listener* listener) const;
+	void set_paramater_value_to_default();
 
 
 	std::vector<std::unique_ptr<AudioProcessorValueTreeState::SliderAttachment>> sliders_attachment;

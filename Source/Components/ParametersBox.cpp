@@ -3,6 +3,7 @@
 #include <JuceHeader.h>
 
 
+
 ParametersBox::ParametersBox(AudioProcessor* processor,AudioProcessorValueTreeState* parameters_state, int fft_size):
 	threshold(util::Parameter{parameters::threshold,parameters_state}),
 	frequency_band(util::Parameter{parameters::frequency_band, parameters_state}),
@@ -44,11 +45,6 @@ ParametersBox::ParametersBox(AudioProcessor* processor,AudioProcessorValueTreeSt
 		                             NotificationType::dontSendNotification);
 	};
 
-	for (auto parameter_gui : one_parameter_guis)
-	{
-		parameter_gui->set_parameter_default_value();
-	}
-	threshold.slider->setValue(0);
 	
 }
 
@@ -144,4 +140,12 @@ void ParametersBox::set_parameters_value_to_text() const
 	{
 		return std::to_string((int)(value * 100)) + " %";
 	};
+}
+
+void ParametersBox::set_paramater_value_to_default()
+{
+	for (auto parameter_gui : one_parameter_guis)
+	{
+		parameter_gui->set_parameter_default_value();
+	}
 }
