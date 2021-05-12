@@ -40,13 +40,13 @@ public:
 
 	struct TwoValuesParameterGuiComponent : public ParameterGui
 	{
-		TwoValuesParameterGuiComponent(util::Parameter parameter): ParameterGui(
-			parameter, Slider::SliderStyle::TwoValueHorizontal)
+		TwoValuesParameterGuiComponent(std::vector<util::Parameter> parameters, parameters::AudioParameterString audio_parameter_string):
+        ParameterGui(parameters,audio_parameter_string,  Slider::SliderStyle::TwoValueHorizontal)
 		{
 			value.setJustificationType(Justification::centred);
 			addAndMakeVisible(value);
 		}
-
+        
 		Label value;
 		void resized() override;
 	};

@@ -6,7 +6,7 @@
 
 ParametersBox::ParametersBox(AudioProcessor* processor,AudioProcessorValueTreeState* parameters_state, int fft_size):
 	threshold(util::Parameter{parameters::threshold,parameters_state}),
-	frequency_band(util::Parameter{parameters::frequency_band, parameters_state}),
+frequency_band({util::Parameter{parameters::min_frequency, parameters_state},util::Parameter{parameters::max_frequency, parameters_state}}, parameters::frequency_band),
 	frequency_variation_speed(util::Parameter(parameters::frequency_speed, parameters_state)),
 	volume_variation_speed(util::Parameter(parameters::volume_speed, parameters_state)),
 	 processor(processor),parameters_state(parameters_state)
@@ -44,6 +44,8 @@ ParametersBox::ParametersBox(AudioProcessor* processor,AudioProcessorValueTreeSt
 		frequency_band.value.setText(std::to_string(min_frequency) + " / " + std::to_string(max_frequency) + " Hz",
 		                             NotificationType::dontSendNotification);
 	};
+    
+    set_paramater_value_to_default();
 
 	
 }
@@ -146,6 +148,8 @@ void ParametersBox::set_paramater_value_to_default()
 {
 	for (auto parameter_gui : one_parameter_guis)
 	{
-		parameter_gui->set_parameter_default_value();
+		parameter_gui->set_parameters_default_value();
 	}
+    
+    frequency_band.set_parameters_default_value();
 }
