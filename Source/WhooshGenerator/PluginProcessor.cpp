@@ -33,7 +33,7 @@ WhooshGeneratorAudioProcessor::WhooshGeneratorAudioProcessor() : out_parameters_
                                                                  gain_processor_(
 	                                                                 std::make_unique<GainProcess>(
 		                                                                 out_parameters_->get_state()->getParameter(
-			                                                                 parameters::volume_out.id))),
+			                                                                 parameters::volume_out.id), volume_analyzer_.get())),
                                                                  OutputTimer(analyzers_),
 #ifndef JucePlugin_PreferredChannelConfigurations
                                                                  AudioProcessor(BusesProperties()
