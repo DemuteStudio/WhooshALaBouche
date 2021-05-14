@@ -1,5 +1,6 @@
 #include "VolumeAnalyzer.h"
 
+
 VolumeAnalyzer::VolumeAnalyzer(AudioParameterFloat* out_parameter, AudioProcessorValueTreeState* in_state): Analyzer(
 	out_parameter, in_state, util::VOLUME)
 {

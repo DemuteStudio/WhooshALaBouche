@@ -2,7 +2,6 @@
 #include <JuceHeader.h>
 
 #include "Analyzer.h"
-#include "AudioChainElement.h"
 
 using namespace juce;
 

@@ -33,7 +33,8 @@ WhooshGeneratorAudioProcessor::WhooshGeneratorAudioProcessor() : out_parameters_
                                                                  gain_processor_(
 	                                                                 std::make_unique<GainProcess>(
 		                                                                 out_parameters_->get_state()->getParameter(
-			                                                                 parameters::volume_out.id), volume_analyzer_.get())),
+			                                                                 parameters::volume_out.id),
+		                                                                 volume_analyzer_.get())),
                                                                  OutputTimer(analyzers_),
 #ifndef JucePlugin_PreferredChannelConfigurations
                                                                  AudioProcessor(BusesProperties()
@@ -63,6 +64,16 @@ WhooshGeneratorAudioProcessor::WhooshGeneratorAudioProcessor() : out_parameters_
 	analyzers_ = {volume_analyzer_.get(), spectrum_analyzer_.get()};
 
 	OutputTimer::set_intern_parameters(intern_parameters_.get());
+
+
+	auto intern_parameters_state = in_parameters_->get_state()->state;
+
+	parameters_.emplace_back(std::make_unique<ParameterInterface>(util::Parameter(parameters::threshold, in_parameters_->get_state())));
+	parameters_.emplace_back(std::make_unique<ParameterInterface>(util::Parameter(parameters::min_frequency, in_parameters_->get_state())));
+	parameters_.emplace_back(std::make_unique<ParameterInterface>(util::Parameter(parameters::max_frequency, in_parameters_->get_state())));
+	parameters_.emplace_back(std::make_unique<ParameterInterface>(util::Parameter(parameters::frequency_speed, in_parameters_->get_state())));
+	parameters_.emplace_back(std::make_unique<ParameterInterface>(util::Parameter(parameters::volume_speed, in_parameters_->get_state())));
+
 }
 
 WhooshGeneratorAudioProcessor::~WhooshGeneratorAudioProcessor()
@@ -87,7 +98,6 @@ bool WhooshGeneratorAudioProcessor::acceptsMidi() const
 bool WhooshGeneratorAudioProcessor::producesMidi() const
 {
 	return false;
-
 }
 
 bool WhooshGeneratorAudioProcessor::isMidiEffect() const
@@ -292,6 +302,14 @@ ParametersState* WhooshGeneratorAudioProcessor::get_intern_parameters() const
 ParametersState* WhooshGeneratorAudioProcessor::get_out_parameters() const
 {
 	return out_parameters_.get();
+}
+
+void WhooshGeneratorAudioProcessor::set_parameters_default_value() const
+{
+	for (auto& parameter : parameters_)
+	{
+		parameter->set_parameter_default_value();
+	}
 }
 
 

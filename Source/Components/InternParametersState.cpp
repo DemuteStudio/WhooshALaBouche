@@ -1,6 +1,5 @@
 #include "InternParametersState.h"
 
-#include "Util.h"
 
 InternParametersState::InternParametersState(AudioProcessor* processor) 
 {

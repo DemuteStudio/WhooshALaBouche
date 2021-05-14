@@ -19,6 +19,7 @@
 #include "../Components/SpectrumAnalyzer.h"
 #include "../Components/OutputTimer.h"
 #include "../Components/GainProcess.h"
+#include "../Components/ParameterInterface.h"
 #include "../Components/InternParametersState.h"
 
 using namespace juce;
@@ -84,12 +85,14 @@ public:
 	[[nodiscard]] ParametersState* get_intern_parameters() const;
 	[[nodiscard]] ParametersState* get_out_parameters() const;
 
+    void set_parameters_default_value() const;
+	bool just_created{ true };
+
 private:
 	std::unique_ptr<OutParametersState> out_parameters_;
 	std::unique_ptr<InParametersState> in_parameters_;
 	std::unique_ptr<InternParametersState> intern_parameters_;
 
-private:
 	//==============================================================================
 	RecordingBuffer audioSource;
 	//==============================================================================
@@ -104,6 +107,7 @@ private:
 
 	std::vector<Analyzer*> analyzers_;
 
+    std::vector<std::unique_ptr<ParameterInterface>> parameters_;
 	//==============================================================================
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(WhooshGeneratorAudioProcessor)
 };

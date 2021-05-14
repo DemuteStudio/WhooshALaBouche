@@ -4,6 +4,7 @@
 
 #include "AudioChainElement.h"
 #include "ParametersState.h"
+#include "AudioParametersString.h"
 #include "Util.h"
 using namespace juce;
 

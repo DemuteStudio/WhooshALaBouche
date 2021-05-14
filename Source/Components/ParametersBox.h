@@ -22,7 +22,6 @@ public:
 	void resized() override;
 
 	void add_sliders_listener(Slider::Listener* listener) const;
-	void set_paramater_value_to_default();
 
 
 	std::vector<std::unique_ptr<AudioProcessorValueTreeState::SliderAttachment>> sliders_attachment;
