@@ -66,14 +66,17 @@ WhooshGeneratorAudioProcessor::WhooshGeneratorAudioProcessor() : out_parameters_
 	OutputTimer::set_intern_parameters(intern_parameters_.get());
 
 
-	auto intern_parameters_state = in_parameters_->get_state()->state;
-
-	parameters_.emplace_back(std::make_unique<ParameterInterface>(util::Parameter(parameters::threshold, in_parameters_->get_state())));
-	parameters_.emplace_back(std::make_unique<ParameterInterface>(util::Parameter(parameters::min_frequency, in_parameters_->get_state())));
-	parameters_.emplace_back(std::make_unique<ParameterInterface>(util::Parameter(parameters::max_frequency, in_parameters_->get_state())));
-	parameters_.emplace_back(std::make_unique<ParameterInterface>(util::Parameter(parameters::frequency_speed, in_parameters_->get_state())));
-	parameters_.emplace_back(std::make_unique<ParameterInterface>(util::Parameter(parameters::volume_speed, in_parameters_->get_state())));
-
+	parameters_.emplace_back(
+		std::make_unique<ParameterInterface>(util::Parameter(parameters::threshold, in_parameters_->get_state())));
+	parameters_.emplace_back(
+		std::make_unique<ParameterInterface>(util::Parameter(parameters::min_frequency, in_parameters_->get_state())));
+	parameters_.emplace_back(
+		std::make_unique<ParameterInterface>(util::Parameter(parameters::max_frequency, in_parameters_->get_state())));
+	parameters_.emplace_back(
+		std::make_unique<ParameterInterface>(
+			util::Parameter(parameters::frequency_speed, in_parameters_->get_state())));
+	parameters_.emplace_back(
+		std::make_unique<ParameterInterface>(util::Parameter(parameters::volume_speed, in_parameters_->get_state())));
 }
 
 WhooshGeneratorAudioProcessor::~WhooshGeneratorAudioProcessor()
@@ -250,15 +253,12 @@ AudioProcessorEditor* WhooshGeneratorAudioProcessor::createEditor()
 //==============================================================================
 void WhooshGeneratorAudioProcessor::getStateInformation(juce::MemoryBlock& destData)
 {
-	// You should use this method to store your parameters in the memory block.
-	// You could do that either as raw data, or use the XML or ValueTree classes
-	// as intermediaries to make it easy to save and load complex data.
+	getCurrentProgramStateInformation(destData);
 }
 
 void WhooshGeneratorAudioProcessor::setStateInformation(const void* data, int sizeInBytes)
 {
-	// You should use this method to restore your parameters from this memory block,
-	// whose contents will have been created by the getStateInformation() call.
+	setCurrentProgramStateInformation(data, sizeInBytes);
 }
 
 RecordingBuffer& WhooshGeneratorAudioProcessor::getAudioSource()

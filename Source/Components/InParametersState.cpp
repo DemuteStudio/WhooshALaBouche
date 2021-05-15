@@ -4,7 +4,7 @@ InParametersState::InParametersState(AudioProcessor* processor, int fft_size): f
 {
 	state_ =
 		std::make_unique<AudioProcessorValueTreeState>(
-			*processor, nullptr, "IN PARAMETERS",
+			*processor, nullptr, "IN_PARAMETERS",
 			create_parameters());
 }
 

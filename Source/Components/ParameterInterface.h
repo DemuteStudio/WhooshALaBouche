@@ -14,11 +14,11 @@ protected:
 public:
     void set_parameter_default_value() const
     {
-        const auto parameter_default_value = parameter_.ranged_parameter->getDefaultValue();
+        const auto current_value = parameter_.ranged_parameter->getValue();
         
-        parameter_.ranged_parameter->setValueNotifyingHost(parameter_default_value*0.9);
-        parameter_.ranged_parameter->setValueNotifyingHost(parameter_default_value+0.1);
-        parameter_.ranged_parameter->setValueNotifyingHost(parameter_default_value);
+        parameter_.ranged_parameter->setValueNotifyingHost(current_value*0.9);
+        parameter_.ranged_parameter->setValueNotifyingHost(current_value+0.1);
+        parameter_.ranged_parameter->setValueNotifyingHost(current_value);
     }
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ParameterInterface)
