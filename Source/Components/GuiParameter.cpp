@@ -13,7 +13,7 @@ ParameterGui::ParameterGui(const util::Parameter parameter,
 
 ParameterGui::ParameterGui(std::vector<util::Parameter> _parameters,
                            parameters::AudioParameterString audio_parameter_string, const Slider::SliderStyle style):
-	ParameterGui(_parameters, _parameters.at(0).audio_parameter_string)
+	ParameterGui(_parameters, audio_parameter_string)
 {
 	slider->setSliderStyle(style);
 }

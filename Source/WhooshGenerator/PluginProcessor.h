@@ -86,7 +86,6 @@ public:
 	[[nodiscard]] ParametersState* get_out_parameters() const;
 
     void set_parameters_default_value() const;
-	bool just_created{ true };
 
 private:
 	std::unique_ptr<OutParametersState> out_parameters_;
