@@ -20,7 +20,7 @@ void VolumeAnalyzer::getNextAudioBlock(AudioBuffer<float>& bufferToFill)
 
 		auto* outputBuffer = bufferToFill.getWritePointer(channel);
 
-		apply_threshold_to_buffer(inputBuffer, outputBuffer);
+		// apply_threshold_to_buffer(inputBuffer, outputBuffer);
 		accumulate_samples_squares(inputBuffer);
 
 		if (end_of_integration_period())
